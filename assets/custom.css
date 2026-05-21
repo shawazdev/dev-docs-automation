@@ -2427,7 +2427,7 @@ legend.bundly__product_option_name span {
 
 @media screen and (max-width: 768px) {
   .wd-image-text-overlay .section {
-    padding: 24px 0;
+    padding: 24px 20px;
   }
 }
 
