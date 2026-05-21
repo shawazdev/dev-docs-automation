@@ -40,11 +40,7 @@
                 </div>
               {%- endif -%}
 
-              {%- if block.settings.content != blank -%}
-                <blockquote class="blockquote h3" reveal-on-scroll="true">
-                  {%- render 'styled-text', content: block.settings.content, text_color: section.settings.heading_color, gradient: section.settings.heading_gradient -%}
-                </blockquote>
-              {%- endif -%}
+              
 
               {%- if block.settings.logo != blank or block.settings.author != blank -%}
                 <div class="v-stack gap-2">
