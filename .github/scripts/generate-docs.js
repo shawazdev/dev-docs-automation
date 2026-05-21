@@ -58,6 +58,28 @@ const repoName   = process.env.REPO_NAME || 'unknown-repo';
 
 let entryId, entryTitle, entryBody, entryUrl, entryAuthor, entryTime, labels, shortSha;
 
+// Recognised inline tags developers can include in commit messages or PR
+// titles/descriptions. Useful for direct pushes (which have no PR labels)
+// or as a backup when someone forgets to apply a label on a PR.
+//
+// Format: just write [tag-name] anywhere in the commit message or PR body.
+//   git commit -m "fix: emergency cart bug [hotfix]"
+//   git commit -m "wip: experiments [skip-log]"
+//   git commit -m "feat: full cart drawer rewrite [log-detailed]"
+const KNOWN_TAGS = [
+  'skip-log', 'log-detailed', 'hotfix',
+  'bug', 'bugfix', 'fix',
+  'feature', 'feat', 'enhancement',
+  'refactor',
+];
+
+function extractTagsFromText(text) {
+  if (!text) return [];
+  const pattern = new RegExp(`\\[(${KNOWN_TAGS.join('|')})\\]`, 'gi');
+  const matches = [...text.matchAll(pattern)];
+  return [...new Set(matches.map(m => m[1].toLowerCase()))];
+}
+
 if (isPushEvent) {
   const sha = process.env.COMMIT_SHA || '';
   shortSha    = sha.slice(0, 7) || 'unknown';
@@ -67,7 +89,8 @@ if (isPushEvent) {
   entryUrl    = process.env.COMMIT_URL || '';
   entryAuthor = process.env.COMMIT_AUTHOR || process.env.PUSHER || 'unknown';
   entryTime   = process.env.COMMIT_TIME || new Date().toISOString();
-  labels      = [];
+  // No GitHub labels on a raw push — extract tags from commit message instead
+  labels = extractTagsFromText(entryBody);
 } else {
   entryId     = process.env.PR_NUMBER || '?';
   entryTitle  = process.env.PR_TITLE || '(no title)';
@@ -78,6 +101,11 @@ if (isPushEvent) {
   try {
     labels = JSON.parse(process.env.PR_LABELS || '[]').map(l => l.name.toLowerCase());
   } catch (_) { labels = []; }
+  // Backup: also pick up tags written in the PR title/body, in case a label
+  // wasn't applied. Union with any real labels already set.
+  for (const t of extractTagsFromText(`${entryTitle} ${entryBody}`)) {
+    if (!labels.includes(t)) labels.push(t);
+  }
 }
 
 const additions  = parseInt(process.env.DIFF_ADDITIONS || '0', 10);
@@ -128,6 +156,9 @@ const isDoc = f =>
   /\.(md|markdown|rst|txt|adoc)$/i.test(f) ||
   /(^|\/)(README|LICENSE|CHANGELOG|CONTRIBUTING)/i.test(f) ||
   /(^|\/)docs?\//i.test(f);
+
+const isGithubMeta = f =>
+  /^\.github\//i.test(f);
 
 const isTranslation = f =>
   /(^|\/)(locales?|lang|i18n|translations?)\//i.test(f) ||
@@ -209,6 +240,11 @@ function classify() {
   if (labels.includes('log-detailed')) return { action: 'full', reason: 'log-detailed label' };
   if (labels.includes('hotfix'))       return { action: 'full', reason: 'hotfix label', tag: 'HOTFIX' };
   if (/^revert/i.test(entryTitle))     return { action: 'full', reason: 'revert', tag: 'REVERT' };
+
+  // .github-only changes (workflow tweaks, this script, config) — never logged.
+  // Avoids the meta-noise of every workflow iteration spamming the dev log.
+  if (filesArr.length > 0 && filesArr.every(isGithubMeta))
+    return { action: 'skip', reason: '.github-only change (workflow / scripts / metadata)' };
 
   // Upstream merges → one-liner. The real work was documented in the original PRs.
   if (isUpstreamMergeCommit())
