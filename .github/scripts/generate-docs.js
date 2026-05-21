@@ -437,7 +437,7 @@ DO NOT create functionality blocks for these noise categories — skip them enti
 
 If the diff contains BOTH meaningful features AND noise from the list above,
 include only the meaningful features. You may briefly mention the noise in NOTES
-(e.g. "Also includes translation updates and a font addition.") but do not give
+(e.g "Also includes translation updates and a font addition.") but do not give
 them their own blocks.
 
 ${isLargeChange ? `- This is a LARGE change (${meaningfulFilesArr.length} files). Aim for 8–15 functionality
