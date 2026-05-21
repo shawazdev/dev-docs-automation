@@ -1,0 +1,38 @@
+{%- comment -%}
+  WebPage + MerchantReturnPolicy JSON-LD — rendered ONLY on /pages/returns-policy.
+  Source of truth: Schema Optimizations - Strongsize - Q2 2026 / Final Markup / Default Page (rich version).
+{%- endcomment -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "@id": "{{ shop.url }}{{ page.url }}#WebPage",
+  "name": {{ page.title | json }},
+  "url": "{{ shop.url }}{{ page.url }}",
+  {%- assign returns_description = page.metafields.global.description_tag | default: page.content | strip_html | truncate: 200 -%}
+  {%- if returns_description != blank -%}
+  "description": {{ returns_description | json }},
+  {%- endif -%}
+  "mainEntity": {
+    "@type": "Organization",
+    "@id": "{{ shop.url }}/#Organization",
+    "name": "Strongsize",
+    "url": "{{ shop.url }}/",
+    "hasMerchantReturnPolicy": {
+      "@type": "MerchantReturnPolicy",
+      "@id": "{{ shop.url }}{{ page.url }}#MerchantReturnPolicy",
+      "applicableCountry": "US",
+      "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+      "merchantReturnDays": 30,
+      "returnMethod": "https://schema.org/ReturnByMail",
+      "returnFees": "https://schema.org/FreeReturn",
+      "itemCondition": "https://schema.org/NewCondition",
+      "returnLabelSource": "https://schema.org/ReturnLabelDownloadAndPrint",
+      "refundType": [
+        "https://schema.org/FullRefund",
+        "https://schema.org/StoreCreditRefund"
+      ]
+    }
+  }
+}
+</script>

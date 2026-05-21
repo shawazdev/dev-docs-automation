@@ -1,0 +1,56 @@
+{%- comment -%}
+  Blog JSON-LD — rendered on blog category pages (request.page_type == 'blog').
+  Source of truth: Schema Optimizations - Strongsize - Q2 2026 / Final Markup / Blog Category.
+{%- endcomment -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  "@id": "{{ shop.url }}{{ blog.url }}#Blog",
+  "name": {{ blog.title | json }},
+  "url": "{{ shop.url }}{{ blog.url }}",
+  {%- assign blog_meta_description = blog.metafields.global.description_tag | default: page_description -%}
+  {%- if blog_meta_description != blank -%}
+  "description": {{ blog_meta_description | strip_html | json }},
+  {%- endif -%}
+  "publisher": {
+    "@type": "Organization",
+    "@id": "{{ shop.url }}/#Organization",
+    "name": "Strongsize",
+    "url": "{{ shop.url }}/",
+    "logo": "{{ shop.url }}/cdn/shop/files/Strongsize-Wordmark-Green.png?v=1747432368&width=540"
+  },
+  "blogPost": [
+    {%- for article in blog.articles -%}
+      {
+        "@type": "BlogPosting",
+        "@id": "{{ shop.url }}{{ article.url }}#BlogPosting",
+        "url": "{{ shop.url }}{{ article.url }}",
+        "headline": {{ article.title | json }},
+        {%- assign art_excerpt = article.excerpt | default: article.content | strip_html | truncate: 160 -%}
+        {%- if art_excerpt != blank -%}
+        "description": {{ art_excerpt | json }},
+        {%- endif -%}
+        "datePublished": "{{ article.published_at | date: '%Y-%m-%d' }}",
+        {%- if article.image -%}
+          {%- assign _img_blog_raw = article.image | image_url: width: 1000 -%}
+          {%- assign _img_blog_prefix = _img_blog_raw | slice: 0, 2 -%}
+          {%- if _img_blog_raw contains '://' -%}
+            {%- assign _img_blog_abs = _img_blog_raw -%}
+          {%- elsif _img_blog_prefix == '//' -%}
+            {%- assign _img_blog_abs = _img_blog_raw | prepend: 'https:' -%}
+          {%- else -%}
+            {%- assign _img_blog_abs = _img_blog_raw | prepend: shop.url -%}
+          {%- endif -%}
+        "image": "{{ _img_blog_abs }}",
+        {%- endif -%}
+        "author": {
+          "@type": "Organization",
+          "name": "Strongsize",
+          "url": "{{ shop.url }}/"
+        }
+      }{%- unless forloop.last -%},{%- endunless -%}
+    {%- endfor -%}
+  ]
+}
+</script>

@@ -1,0 +1,88 @@
+<div {% render 'section-properties', narrow: section.settings.reduce_width %}>
+  <div class="wd-wrapper" style="flex-direction: {{ section.settings.position }}">
+    {%- if section.settings.image -%}
+      <div class="image">
+        {{ section.settings.image | image_url: width: '900' | image_tag: loading: 'lazy' }}
+      </div>
+    {%- endif -%}
+    <div class="content">
+      {%- if section.settings.title -%}
+        <h2 class="title">{{ section.settings.title }}</h2>
+      {%- endif -%}
+      {%- if section.settings.subtitle -%}
+        <div class="subtitle">{{ section.settings.subtitle }}</div>
+      {%- endif -%}
+      {%- if section.blocks.size > 0 -%}
+        <div class="benefits">
+          {% for block in section.blocks %}
+            <div class="benefit">
+              <div class="number">0{{ forloop.index }}</div>
+              <h3>{{ block.settings.title }}</h3>
+            </div>
+          {% endfor %}
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+  {
+    "name": "WD Benefits",
+    "tag": "section",
+    "class": "wd-benefits",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title"
+      },
+      {
+        "type": "textarea",
+        "id": "subtitle",
+        "label": "Subtitle"
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Image"
+      },
+      {
+        "type": "select",
+        "id": "position",
+        "label": "Image position",
+        "options": [
+          {
+            "value": "row",
+            "label": "Left"
+          },
+          {
+            "value": "row-reverse",
+            "label": "Right"
+          }
+        ],
+        "default": "row-reverse"
+      }      
+    ],
+    "blocks": [
+      {
+        "name": "Benefit",
+        "type": "benefit",
+        "settings": [
+           {
+             "type": "text",
+             "id": "title",
+             "label": "Title"
+           }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "WD Benefits",
+        "settings": {
+        }
+      }
+    ]
+  }
+{% endschema %}

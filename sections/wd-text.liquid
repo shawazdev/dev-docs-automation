@@ -1,0 +1,52 @@
+{%- assign ss = section.settings -%}
+<div {% render 'section-properties', narrow: section.settings.reduce_width %}>
+  <div class="wd-wrapper">
+    {%- if ss.text -%}
+      <{{ ss.use_tag }} class="title">
+        {{ ss.text }}
+      </{{ ss.use_tag }}>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+  {
+    "name": "WD text",
+    "tag": "section",
+    "class": "wd-text-solo",
+    "settings": [
+      {
+        "type": "textarea",
+        "id": "text",
+        "label": "Text"
+      },
+      {
+        "type": "select",
+        "id": "use_tag",
+        "label": "Use tag",
+        "options": [
+          {
+            "value": "h1",
+            "label": "h1"
+          },
+          {
+            "value": "h2",
+            "label": "h2"
+          },
+          {
+            "value": "div",
+            "label": "div"
+          }
+        ],
+        "default": "div"
+      }
+    ],
+    "presets": [
+      {
+        "name": "WD text",
+        "settings": {
+        }
+      }
+    ]
+  }
+{% endschema %}

@@ -1,0 +1,34 @@
+{%- comment -%}
+  AboutPage JSON-LD — rendered on /pages/about (or /pages/about-us).
+  Source of truth: Schema Optimizations - Strongsize - Q2 2026 / Final Markup / About.
+{%- endcomment -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "AboutPage",
+  "@id": "{{ shop.url }}{{ page.url }}#AboutPage",
+  "name": {{ page.title | json }},
+  "url": "{{ shop.url }}{{ page.url }}",
+  {%- assign about_description = page.metafields.global.description_tag | default: page.content | strip_html | truncate: 200 -%}
+  {%- if about_description != blank -%}
+  "description": {{ about_description | json }},
+  {%- endif -%}
+  "mainEntity": {
+    "@type": "Organization",
+    "@id": "{{ shop.url }}/#Organization",
+    "name": "Strongsize",
+    "url": "{{ shop.url }}/",
+    "logo": "{{ shop.url }}/cdn/shop/files/Strongsize-Wordmark-Green.png?v=1747432368&width=540",
+    "description": "Strongsize is redefining your expectations of big and tall clothing. Come see how we're changing the game.",
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "contactType": "Customer Service",
+      "email": "hello@strongsize.com"
+    },
+    "sameAs": [
+      "https://www.facebook.com/Thestrongsize/",
+      "https://www.instagram.com/thestrongsize/"
+    ]
+  }
+}
+</script>

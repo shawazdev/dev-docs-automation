@@ -1,0 +1,272 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "custom_html_LV3WGY": {
+      "type": "custom-html",
+      "custom_css": [
+        ".responsive-banner {position: relative; width: 100%; overflow: hidden;}",
+        ".desktop-banner {width: 100%; height: auto; display: block;}",
+        ".mobile-banner {width: 100%; height: auto; display: none;}",
+        "@media only screen and (max-width: 768px) {.desktop-banner {display: none; } .mobile-banner {display: block; }}",
+        "@media only screen and (max-width: 480px) {.desktop-banner {display: none; } .mobile-banner {display: block; }}"
+      ],
+      "settings": {
+        "full_width": false,
+        "remove_vertical_spacing": false,
+        "remove_horizontal_spacing": true,
+        "html": "<div class=\"responsive-banner\">\n  <!-- Desktop Image -->\n  <img src=\"https://cdn.shopify.com/s/files/1/0643/3429/9321/files/DECEMBER_SALE_-_COLLECTION_PAGE_-_DESKTOP_FINAL_6a7b068a-5bc5-4f3b-8372-f783059a12c8.jpg?v=1733790252\" alt=\"Desktop Banner\" class=\"desktop-banner\">\n  \n  <!-- Mobile Image -->\n  <img src=\"https://cdn.shopify.com/s/files/1/0643/3429/9321/files/DECEMBER_SALE_-_COLLECTION_PAGE_CONDENSED_-_MOBILE_FINAL_35456f2a-0011-453c-bd87-7813b6fafc7b.jpg?v=1733790253\" alt=\"Mobile Banner\" class=\"mobile-banner\">\n</div>",
+        "background": "",
+        "background_gradient": "",
+        "text_color": ""
+      }
+    },
+    "wd_slideshow_GAgnFC": {
+      "type": "wd-slideshow",
+      "blocks": {
+        "image_BGR6AQ": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/DECEMBER_SALE_-_DESKTOP_FINAL_55e22992-0b19-4d92-92de-2cf2d4f87422.jpg",
+            "mobile_image": "shopify://shop_images/DECEMBER_SALE_-_HOME_PAGE_-_MOBILE_FINAL.jpg",
+            "content_max_width": 740,
+            "mobile_text_position": "place-self-center text-center",
+            "desktop_text_position": "sm:place-self-center sm:text-center",
+            "mobile_text": false,
+            "uptitle": "",
+            "uptitle_tag": "div",
+            "subheading": "",
+            "title": "",
+            "h_tag": "div",
+            "heading_tag": "h0",
+            "button_text": "",
+            "button_link": "",
+            "button_text2": "",
+            "button_link2": "",
+            "text_color": "#ffffff",
+            "button_background": "#ffffff",
+            "button_text_color": "#000000",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0,
+            "background": "",
+            "background_gradient": ""
+          }
+        }
+      },
+      "block_order": [
+        "image_BGR6AQ"
+      ],
+      "disabled": true,
+      "settings": {
+        "full_width": true,
+        "allow_transparent_header": true,
+        "image_size": "auto",
+        "mobile_full": false,
+        "controls_type": "dots",
+        "transition_type": "fade_with_text",
+        "autoplay": false,
+        "cycle_speed": 4,
+        "background": "#f2f2f2",
+        "background_gradient": ""
+      }
+    },
+    "banner": {
+      "type": "collection-banner",
+      "disabled": true,
+      "custom_css": [
+        "@media only screen and (max-width: 768px) {img {max-width: 100%; height: auto; display: block; }}",
+        "@media only screen and (max-width: 480px) {img {max-width: 100%; height: auto; display: block; }}"
+      ],
+      "settings": {
+        "full_width": false,
+        "allow_transparent_header": false,
+        "enable_parallax": false,
+        "show_collection_title": false,
+        "show_collection_description": false,
+        "show_collection_image": false,
+        "collection_title_size": "h0",
+        "image_size": "auto",
+        "image": "shopify://shop_images/DECEMBER_SALE_-_DESKTOP_FINAL_55e22992-0b19-4d92-92de-2cf2d4f87422.jpg",
+        "mobile_image": "shopify://shop_images/DECEMBER_SALE_-_HOME_PAGE_-_MOBILE_FINAL.jpg",
+        "mobile_text_position": "place-self-start-center text-center",
+        "desktop_text_position": "sm:place-self-center sm:text-center",
+        "featured_product": "",
+        "featured_product_heading": "Featured product",
+        "text_color": "#ffffff",
+        "overlay_color": "#1a1a1a",
+        "overlay_opacity": 12
+      }
+    },
+    "wd_banner_PryD8f": {
+      "type": "wd-banner",
+      "disabled": true,
+      "custom_css": [
+        "@media only screen and (max-width: 768px) {img {max-width: 100%; height: auto; display: block; }}",
+        "@media only screen and (max-width: 480px) {img {max-width: 100%; height: auto; display: block; }}"
+      ],
+      "settings": {
+        "empty_mobile": false,
+        "full_width": true,
+        "enable_parallax": false,
+        "title": "",
+        "bolder_title": false,
+        "title_tag": "h1",
+        "subtitle": "",
+        "uptitle": "",
+        "uptitle_tag": "div",
+        "title_size": "h0",
+        "image_size": "auto",
+        "image": "shopify://shop_images/DECEMBER_SALE_-_COLLECTION_PAGE_-_DESKTOP_FINAL.jpg",
+        "mobile_image": "shopify://shop_images/DECEMBER_SALE_-_COLLECTION_PAGE_-_MOBILE_FINAL.jpg",
+        "mobile_smaller_text": false,
+        "mobile_full_height": false,
+        "mobile_text_position": "place-self-center text-center",
+        "desktop_text_position": "sm:place-self-center sm:text-center",
+        "featured_product": "",
+        "featured_product_heading": "Featured product",
+        "text_color": "#ffffff",
+        "overlay_color": "#000000",
+        "overlay_opacity": 0
+      }
+    },
+    "main": {
+      "type": "wd-main-collection",
+      "blocks": {
+        "promotion_image_UgHxWy": {
+          "type": "promotion_image",
+          "disabled": true,
+          "settings": {
+            "position": 4,
+            "image": "shopify://shop_images/1_749814ae-3eca-460c-9954-1b5c4559cd9b.jpg",
+            "title": "",
+            "content": "",
+            "link_url": "",
+            "link_text": "",
+            "heading_tag": "h4",
+            "text_position": "place-self-end-start text-start",
+            "text_color": "#ffffff",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0
+          }
+        },
+        "promotion_image_hCz9eh": {
+          "type": "promotion_image",
+          "disabled": true,
+          "settings": {
+            "position": 10,
+            "image": "shopify://shop_images/3_80c9b945-f613-4a42-8379-87c5a5a67f7a.jpg",
+            "title": "",
+            "content": "",
+            "link_url": "",
+            "link_text": "",
+            "heading_tag": "h4",
+            "text_position": "place-self-end-start text-start",
+            "text_color": "#ffffff",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0
+          }
+        },
+        "promotion_image_4TjiK7": {
+          "type": "promotion_image",
+          "disabled": true,
+          "settings": {
+            "position": 16,
+            "image": "shopify://shop_images/2_a5b8c216-6839-4bf1-bbb9-300c94d79bc3.jpg",
+            "title": "",
+            "content": "",
+            "link_url": "",
+            "link_text": "",
+            "heading_tag": "h4",
+            "text_position": "place-self-end-start text-start",
+            "text_color": "#ffffff",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0
+          }
+        }
+      },
+      "block_order": [
+        "promotion_image_UgHxWy",
+        "promotion_image_hCz9eh",
+        "promotion_image_4TjiK7"
+      ],
+      "settings": {
+        "products_per_page": 24,
+        "products_per_row_mobile": "2",
+        "products_per_row_desktop": 4,
+        "filter_layout": "sidebar",
+        "show_sort_by": true,
+        "show_filters": true,
+        "show_filter_group_name": false,
+        "show_color_swatch": true,
+        "show_empty_filter_values": false,
+        "show_filter_values_count": true,
+        "open_first_filter_group": true
+      }
+    },
+    "wd_faq_naLkg8": {
+      "type": "wd-faq",
+      "blocks": {
+        "item_FzwQfc": {
+          "type": "item",
+          "settings": {
+            "title": "Do you ship overseas?",
+            "content": "<p>Yes, we ship all over the world. Shipping costs will apply, and will be added at checkout. We run discounts and promotions all year, so stay tuned for exclusive deals.</p>"
+          }
+        },
+        "item_BreHtn": {
+          "type": "item",
+          "settings": {
+            "title": "How long will it take to get my orders?",
+            "content": "<p>It depends on where you are. Orders processed here will take 5-7 business days to arrive. Overseas deliveries can take anywhere from 7-16 days. Delivery details will be provided in your confirmation email.</p>"
+          }
+        },
+        "item_L7dUDR": {
+          "type": "item",
+          "settings": {
+            "title": "Any question?",
+            "content": "<p>You can contact us through our contact page! We will be happy to assist you.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "item_FzwQfc",
+        "item_BreHtn",
+        "item_L7dUDR"
+      ],
+      "disabled": true,
+      "settings": {
+        "full_width": true,
+        "subheading": "",
+        "title": "FAQ",
+        "use_tag": "h2",
+        "content": "",
+        "team_avatar_width": 160,
+        "text_position": "center",
+        "background": "",
+        "background_gradient": "",
+        "text_color": "",
+        "heading_color": "",
+        "heading_gradient": "",
+        "button_background": "",
+        "button_text_color": "",
+        "accordion_background": "",
+        "accordion_text_color": ""
+      }
+    }
+  },
+  "order": [
+    "custom_html_LV3WGY",
+    "wd_slideshow_GAgnFC",
+    "banner",
+    "wd_banner_PryD8f",
+    "main",
+    "wd_faq_naLkg8"
+  ]
+}

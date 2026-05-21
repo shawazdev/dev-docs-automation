@@ -1,0 +1,91 @@
+{%- assign ss = section.settings -%}
+<div class="hr-line"></div>
+
+<div {% render 'section-properties', narrow: section.settings.reduce_width %}>
+  
+  <div class="wd-wrapper">
+    <div class="left-part">
+      {%- if ss.title -%}
+        <h2 class="title">{{ ss.title }}</h2>
+      {%- endif -%}
+      {%- if ss.subtitle -%}
+        <div class="subtitle">{{ ss.subtitle }}</div>
+      {%- endif -%}
+      {%- if ss.button_text -%}
+        <a href="{{ ss.button_url }}" class="wd-button">{{ ss.button_text }}</a>
+      {%- endif -%}
+    </div>
+    <div class="right-part">
+      {%- if section.blocks.size > 0 -%}
+        <div class="wd-table">
+          <div class="wd-row">
+            <div>Size</div>
+            <div>Chest</div>
+          </div>
+          {% for block in section.blocks %}
+            {%- assign bs = block.settings -%}
+            <div class="wd-row extended">
+              <div>{{ bs.size }}</div>
+              <div>{{ bs.size_value }}</div>
+            </div>
+          {% endfor %}
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+  {
+    "name": "WD Find Size",
+    "tag": "section",
+    "class": "wd-find-size",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title"
+      },
+      {
+        "type": "richtext",
+        "id": "subtitle",
+        "label": "Subtitle"
+      },
+      {
+        "type": "text",
+        "id": "button_text",
+        "label": "Button text"
+      },
+      {
+        "type": "url",
+        "id": "button_url",
+        "label": "Button url"
+      }
+    ],
+    "blocks": [
+      {
+        "name": "Sizes",
+        "type": "sizes",
+        "settings": [
+           {
+             "type": "text",
+             "id": "size",
+             "label": "Size 1"
+           },
+           {
+             "type": "text",
+             "id": "size_value",
+             "label": "Size 1 Value"
+           }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "WD Find Size",
+        "settings": {
+        }
+      }
+    ]
+  }
+{% endschema %}

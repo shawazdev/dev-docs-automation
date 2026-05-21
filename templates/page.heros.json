@@ -1,0 +1,75 @@
+{
+  "sections": {
+    "wd_slideshow_k4ghdb": {
+      "type": "wd-slideshow",
+      "blocks": {
+        "image_pdtUhA": {
+          "type": "image",
+          "settings": {
+            "image": "shopify:\/\/shop_images\/Hero-Discount-2_50293236-adff-4e41-9daa-242378314847.jpg",
+            "mobile_image": "shopify:\/\/shop_images\/Hero-Discount-Mobile.jpg",
+            "content_max_width": 780,
+            "mobile_text_position": "place-self-center text-center",
+            "desktop_text_position": "sm:place-self-center sm:text-center",
+            "mobile_text": false,
+            "uptitle": "",
+            "uptitle_tag": "div",
+            "subheading": "We offer a 15% discount to military personnel, first responders, government employees and teachers.",
+            "title": "A DISCOUNT FOR OUR HEROES",
+            "h_tag": "h1",
+            "heading_tag": "h1",
+            "button_text": "",
+            "button_link": "",
+            "button_text2": "",
+            "button_link2": "",
+            "text_color": "#ffffff",
+            "button_background": "#ffffff",
+            "button_text_color": "#000000",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0,
+            "background": "",
+            "background_gradient": ""
+          }
+        }
+      },
+      "block_order": [
+        "image_pdtUhA"
+      ],
+      "name": "WD Slideshow",
+      "settings": {
+        "full_width": true,
+        "allow_transparent_header": false,
+        "image_size": "auto",
+        "mobile_full": false,
+        "controls_type": "dots",
+        "transition_type": "fade_with_text",
+        "autoplay": false,
+        "cycle_speed": 4,
+        "background": "#f2f2f2",
+        "background_gradient": ""
+      }
+    },
+    "main": {
+      "type": "main-page",
+      "settings": {
+        "content_width": "80ch"
+      }
+    },
+    "1721158444e32c2fc4": {
+      "type": "apps",
+      "settings": {
+        "full_width": true,
+        "remove_vertical_spacing": false,
+        "remove_horizontal_spacing": false,
+        "background": "",
+        "background_gradient": "",
+        "text_color": ""
+      }
+    }
+  },
+  "order": [
+    "wd_slideshow_k4ghdb",
+    "main",
+    "1721158444e32c2fc4"
+  ]
+}

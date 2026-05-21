@@ -1,0 +1,391 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "banner": {
+      "type": "wd-collection-banner",
+      "settings": {
+        "full_width": true,
+        "allow_transparent_header": false,
+        "enable_parallax": true,
+        "show_collection_title": true,
+        "show_collection_description": true,
+        "show_collection_image": false,
+        "collection_title_size": "h0",
+        "image_size": "auto",
+        "image": "shopify://shop_images/Rich_Text_1.png",
+        "mobile_text_position": "place-self-center text-center",
+        "desktop_text_position": "sm:place-self-center sm:text-center",
+        "featured_product": "",
+        "featured_product_heading": "Featured product",
+        "text_color": "#ffffff",
+        "bg_color": "#052B1B",
+        "overlay_color": "#1a1a1a",
+        "overlay_opacity": 12
+      }
+    },
+    "main": {
+      "type": "wd-main-collection",
+      "blocks": {
+        "promotion_image_YTe3Cc": {
+          "type": "promotion_image",
+          "disabled": true,
+          "settings": {
+            "position": 3,
+            "image": "shopify://shop_images/1_749814ae-3eca-460c-9954-1b5c4559cd9b.jpg",
+            "title": "",
+            "content": "",
+            "link_url": "",
+            "link_text": "",
+            "heading_tag": "h4",
+            "text_position": "place-self-end-start text-start",
+            "text_color": "#ffffff",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0
+          }
+        },
+        "promotion_image_Jtdxeq": {
+          "type": "promotion_image",
+          "disabled": true,
+          "settings": {
+            "position": 10,
+            "image": "shopify://shop_images/3_80c9b945-f613-4a42-8379-87c5a5a67f7a.jpg",
+            "title": "",
+            "content": "",
+            "link_url": "",
+            "link_text": "",
+            "heading_tag": "h4",
+            "text_position": "place-self-end-start text-start",
+            "text_color": "#ffffff",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0
+          }
+        },
+        "promotion_image_Q4Mwed": {
+          "type": "promotion_image",
+          "disabled": true,
+          "settings": {
+            "position": 16,
+            "image": "shopify://shop_images/2_a5b8c216-6839-4bf1-bbb9-300c94d79bc3.jpg",
+            "title": "",
+            "content": "",
+            "link_url": "",
+            "link_text": "",
+            "heading_tag": "h4",
+            "text_position": "place-self-end-start text-start",
+            "text_color": "#ffffff",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0
+          }
+        }
+      },
+      "block_order": [
+        "promotion_image_YTe3Cc",
+        "promotion_image_Jtdxeq",
+        "promotion_image_Q4Mwed"
+      ],
+      "settings": {
+        "products_per_page": 24,
+        "products_per_row_mobile": "2",
+        "products_per_row_desktop": 4,
+        "filter_layout": "sidebar",
+        "show_sort_by": true,
+        "show_filters": true,
+        "show_filter_group_name": false,
+        "show_color_swatch": true,
+        "show_empty_filter_values": false,
+        "show_filter_values_count": true,
+        "open_first_filter_group": false
+      }
+    },
+    "custom_html_t8nBNJ": {
+      "type": "custom-html",
+      "settings": {
+        "full_width": true,
+        "remove_vertical_spacing": false,
+        "remove_horizontal_spacing": false,
+        "html": "<br>",
+        "background": "",
+        "background_gradient": "",
+        "text_color": ""
+      }
+    },
+    "accordion_content_AMDJgB": {
+      "type": "accordion-content",
+      "blocks": {
+        "item_NY3dLY": {
+          "type": "item",
+          "settings": {
+            "title": "{{ collection.metafields.custom.feature1_heading.value }}",
+            "content": "{{ collection.metafields.custom.feature1_text | metafield_tag }}"
+          }
+        },
+        "item_bRH8Ch": {
+          "type": "item",
+          "settings": {
+            "title": "{{ collection.metafields.custom.feature2_heading.value }}",
+            "content": "{{ collection.metafields.custom.feature2_text | metafield_tag }}"
+          }
+        },
+        "item_GpiiHh": {
+          "type": "item",
+          "settings": {
+            "title": "{{ collection.metafields.custom.feature3_heading.value }}",
+            "content": "{{ collection.metafields.custom.feature3_text | metafield_tag }}"
+          }
+        }
+      },
+      "block_order": [
+        "item_NY3dLY",
+        "item_bRH8Ch",
+        "item_GpiiHh"
+      ],
+      "settings": {
+        "full_width": true,
+        "subheading": "",
+        "title": "{{ collection.metafields.custom.features_heading.value }}",
+        "content": "{{ collection.metafields.custom.features_text | metafield_tag }}",
+        "button_text": "",
+        "button_url": "",
+        "text_position": "start",
+        "background": "",
+        "background_gradient": "",
+        "text_color": "",
+        "heading_color": "",
+        "heading_gradient": "",
+        "button_background": "",
+        "button_text_color": "",
+        "accordion_background": "",
+        "accordion_text_color": ""
+      }
+    },
+    "image_link_blocks_yMCtUh": {
+      "type": "image-link-blocks",
+      "blocks": {
+        "item_yB9ze4": {
+          "type": "item",
+          "settings": {
+            "image": "shopify://shop_images/Screenshot_2024-06-19_at_10.19.22_AM.png",
+            "stretch_image": false,
+            "link_text": "",
+            "link_url": "https://strongsize.com/collections/xl-pocket-t-shirts",
+            "background": "#052B1B",
+            "text_color": "#ffffff",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0
+          }
+        },
+        "item_hVUFkP": {
+          "type": "item",
+          "settings": {
+            "image": "shopify://shop_images/2XLicon.png",
+            "stretch_image": false,
+            "link_text": "",
+            "link_url": "https://strongsize.com/collections/2xl-pocket-t-shirts-for-men",
+            "background": "#052B1B",
+            "text_color": "#ffffff",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0
+          }
+        },
+        "item_ijRHRt": {
+          "type": "item",
+          "settings": {
+            "image": "shopify://shop_images/Screenshot_2024-06-18_at_4.42.08_PM.png",
+            "stretch_image": false,
+            "link_text": "",
+            "link_url": "https://strongsize.com/collections/3xl-pocket-t-shirts-for-men",
+            "background": "#052B1B",
+            "text_color": "#ffffff",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0
+          }
+        },
+        "item_eKkmtp": {
+          "type": "item",
+          "settings": {
+            "image": "shopify://shop_images/Screenshot_2024-06-19_at_10.18.04_AM.png",
+            "stretch_image": false,
+            "link_text": "",
+            "link_url": "https://strongsize.com/collections/4xl-long-sleeve-t-shirts-for-men",
+            "background": "#052B1B",
+            "text_color": "#ffffff",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0
+          }
+        },
+        "item_FT4DzE": {
+          "type": "item",
+          "settings": {
+            "image": "shopify://shop_images/Screenshot_2024-06-19_at_10.17.23_AM.png",
+            "stretch_image": false,
+            "link_text": "",
+            "link_url": "https://strongsize.com/collections/5xl-pocket-t-shirts-for-men",
+            "background": "#052B1B",
+            "text_color": "#ffffff",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0
+          }
+        },
+        "item_F9DMPn": {
+          "type": "item",
+          "settings": {
+            "image": "shopify://shop_images/Screenshot_2024-06-19_at_10.16.40_AM.png",
+            "stretch_image": false,
+            "link_text": "",
+            "link_url": "https://strongsize.com/collections/6xl-pocket-t-shirts-for-men",
+            "background": "#052B1B",
+            "text_color": "#ffffff",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0
+          }
+        },
+        "item_Qk4nDm": {
+          "type": "item",
+          "settings": {
+            "image": "shopify://shop_images/Screenshot_2024-06-19_at_10.15.49_AM.png",
+            "stretch_image": false,
+            "link_text": "",
+            "link_url": "https://strongsize.com/collections/7xl-pocket-t-shirts-for-men",
+            "background": "#052B1B",
+            "text_color": "#ffffff",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0
+          }
+        },
+        "item_bLaj64": {
+          "type": "item",
+          "settings": {
+            "image": "shopify://shop_images/Screenshot_2024-06-19_at_10.15.07_AM.png",
+            "stretch_image": false,
+            "link_text": "",
+            "link_url": "https://strongsize.com/collections/8xl-pocket-t-shirts-for-men",
+            "background": "#052B1B",
+            "text_color": "#ffffff",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0
+          }
+        }
+      },
+      "block_order": [
+        "item_yB9ze4",
+        "item_hVUFkP",
+        "item_ijRHRt",
+        "item_eKkmtp",
+        "item_FT4DzE",
+        "item_F9DMPn",
+        "item_Qk4nDm",
+        "item_bLaj64"
+      ],
+      "disabled": true,
+      "settings": {
+        "full_width": false,
+        "block_size": "small",
+        "subheading": "",
+        "title": "Find Your Fit",
+        "content": "",
+        "link_url": "",
+        "link_text": "",
+        "background": "#f2f2f2",
+        "background_gradient": "",
+        "text_color": "",
+        "heading_color": "",
+        "heading_gradient": ""
+      }
+    },
+    "wd_faq_QehgC9": {
+      "type": "wd-faq",
+      "blocks": {
+        "item_MnyiJW": {
+          "type": "item",
+          "settings": {
+            "title": "{{ collection.metafields.custom.faq_q1.value }}",
+            "content": "{{ collection.metafields.custom.faq_a1 | metafield_tag }}"
+          }
+        },
+        "item_B9ReCz": {
+          "type": "item",
+          "settings": {
+            "title": "{{ collection.metafields.custom.faq_q2.value }}",
+            "content": "{{ collection.metafields.custom.faq_a2 | metafield_tag }}"
+          }
+        },
+        "item_GmJrH7": {
+          "type": "item",
+          "settings": {
+            "title": "{{ collection.metafields.custom.faq_q3.value }}",
+            "content": "{{ collection.metafields.custom.faq_a3 | metafield_tag }}"
+          }
+        }
+      },
+      "block_order": [
+        "item_MnyiJW",
+        "item_B9ReCz",
+        "item_GmJrH7"
+      ],
+      "settings": {
+        "full_width": true,
+        "subheading": "",
+        "title": "FAQ",
+        "use_tag": "h2",
+        "content": "",
+        "team_avatar_width": 160,
+        "text_position": "center",
+        "background": "",
+        "background_gradient": "",
+        "text_color": "",
+        "heading_color": "",
+        "heading_gradient": "",
+        "button_background": "",
+        "button_text_color": "",
+        "accordion_background": "",
+        "accordion_text_color": ""
+      }
+    },
+    "wd_collectoin_faq_EHpTbU": {
+      "type": "wd-collectoin-faq",
+      "blocks": {
+        "item_PQmagQ": {
+          "type": "item",
+          "settings": {
+            "title": "Question",
+            "content": "<p>Write content to answer to common questions your customers may have about your products, shipping policies..</p>"
+          }
+        }
+      },
+      "block_order": [
+        "item_PQmagQ"
+      ],
+      "disabled": true,
+      "settings": {
+        "full_width": true,
+        "text_position": "center",
+        "background": "#ffffff",
+        "background_gradient": "",
+        "text_color": "",
+        "heading_color": "",
+        "heading_gradient": "",
+        "button_background": "",
+        "button_text_color": "",
+        "accordion_background": "#ffffff",
+        "accordion_text_color": ""
+      }
+    }
+  },
+  "order": [
+    "banner",
+    "main",
+    "custom_html_t8nBNJ",
+    "accordion_content_AMDJgB",
+    "image_link_blocks_yMCtUh",
+    "wd_faq_QehgC9",
+    "wd_collectoin_faq_EHpTbU"
+  ]
+}

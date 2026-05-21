@@ -1,0 +1,83 @@
+<div class="wd-stories">
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-element-bundle.min.js"></script>
+  {%- assign mo = product.metafields.prts.ucg_videos.value -%}
+  {%- assign block = section.blocks | where: 'type', 'wd_stories' | first -%}
+  <div class="wd-icons">
+    
+    {%- for item in mo -%}
+      {%- if item.video -%}
+        <div class="wd-icon-wrapper">
+          <div class="wd-icon" data-id="{{ forloop.index }}">
+            {{ item.image | image_url: width: '100' | image_tag }}
+          </div>
+          {%- if item.visible_title -%}
+            {{ item.visible_title }}
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+
+  <div class="stories">
+    <div class="overlay"></div>
+    <div class="stories-wrapper">
+      <div class="mobile-close">
+        <svg height="48" viewBox="0 0 48 48" width="48" xmlns="http://www.w3.org/2000/svg"><path d="M38 12.83l-2.83-2.83-11.17 11.17-11.17-11.17-2.83 2.83 11.17 11.17-11.17 11.17 2.83 2.83 11.17-11.17 11.17 11.17 2.83-2.83-11.17-11.17z"/><path d="M0 0h48v48h-48z" fill="none"/></svg>
+      </div>
+      <div class="progresses">
+        {%- for item in mo -%}
+          {%- if item.video -%}
+            <div class="progress" data-id="{{ forloop.index }}">
+              <div class="bar"></div>
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+      <swiper-container class="videos">
+        {%- for item in mo -%}
+          {%- if item.video -%}
+            <swiper-slide class="video" data-id="{{ i }}">
+              {{ item.video.value | video_tag: image_size: '600x' }}
+              {% comment %} {% if block.settings.button_text != blank %}
+                <a class="video-button" href="{{ block.settings.button_url }}">{{ block.settings.button_text }}</a>
+              {% endif %} {% endcomment %}
+            </swiper-slide>
+          {%- endif -%}
+        {%- endfor -%}
+      </swiper-container>
+      {% comment %} <div class="mobile-navs">
+        <div class="prev"></div>
+        <div class="next"></div>
+      </div> {% endcomment %}
+      <prev-next-buttons
+        class="product-list__prev-next"
+      >
+        <button class="prev-next-button prev-next-button--prev">
+          <span class="visually-hidden">Previous</span>
+          {% comment %} <svg
+            focusable="false"
+            width="17"
+            height="14"
+            class="icon icon--nav-arrow-left  icon--direction-aware "
+            viewBox="0 0 17 14"
+          >
+            <path d="M17 7H2M8 1L2 7l6 6" stroke="currentColor" stroke-width="2" fill="none"></path>
+          </svg> {% endcomment %}
+        </button>
+
+        <button class="prev-next-button prev-next-button--next">
+          <span class="visually-hidden">Next</span>
+          {% comment %} <svg
+            focusable="false"
+            width="17"
+            height="14"
+            class="icon icon--nav-arrow-right  icon--direction-aware "
+            viewBox="0 0 17 14"
+          >
+            <path d="M0 7h15M9 1l6 6-6 6" stroke="currentColor" stroke-width="2" fill="none"></path>
+          </svg> {% endcomment %}
+        </button>
+      </prev-next-buttons>
+    </div>
+  </div>
+</div>

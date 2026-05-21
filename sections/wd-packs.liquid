@@ -1,0 +1,110 @@
+<div {% render 'section-properties', narrow: section.settings.reduce_width %}>
+  <div class="wd-wrapper" style="flex-direction: {{ section.settings.position }}">
+    <div class="mobile-head">
+      <div class="heading">
+        {%- if section.settings.title != blank -%}
+          <h2>{{ section.settings.title }}</h2>
+        {%- endif -%}
+        {%- if section.settings.shop_link != blank -%}
+          <a class="wd-button" href="{{ section.settings.shop_link }}">{{ section.settings.shop_text }}</a>
+        {%- endif -%}
+      </div>
+      {%- if section.settings.description != blank -%}
+        <div class="descr">{{ section.settings.description }}</div>
+      {%- endif -%}
+    </div>
+    {%- if section.settings.image != blank -%}
+      <div class="wd-bg">
+        {{ section.settings.image | image_url: width: '800' | image_tag: loading: 'lazy' }}
+      </div>
+    {%- endif -%}
+    <div class="content">
+      {%- if section.settings.title != blank -%}
+        <h2>{{ section.settings.title }}</h2>
+      {%- endif -%}
+      {%- if section.settings.description != blank -%}
+        <div class="descr">{{ section.settings.description }}</div>
+      {%- endif -%}
+      <div class="products">
+        {% for block in section.blocks %}
+          {%- render 'wd-product-card', product: block.settings.product, stacked: section.settings.stack_products, background: section.settings.product_card_background, text_color: section.settings.product_card_text_color, show_badges: true -%}
+        {% endfor %}
+      </div>
+      {%- if section.settings.shop_link != blank -%}
+        <a class="wd-button" href="{{ section.settings.shop_link }}">{{ section.settings.shop_text }}</a>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+  {
+    "name": "WD Packs",
+    "tag": "section",
+    "class": "wd-packs",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title"
+      },
+      {
+        "type": "textarea",
+        "id": "description",
+        "label": "Description"
+      },
+      {
+        "type": "text",
+        "id": "shop_text",
+        "label": "Shop All text",
+        "default": "Shop All"
+      },
+      {
+        "type": "url",
+        "id": "shop_link",
+        "label": "Shop All link"
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Image"
+      },
+      {
+        "type": "select",
+        "id": "position",
+        "label": "Image position",
+        "options": [
+          {
+            "value": "row",
+            "label": "Left"
+          },
+          {
+            "value": "row-reverse",
+            "label": "Right"
+          }
+        ],
+        "default": "row"
+      }
+    ],
+    "blocks": [
+      {
+        "name": "Product",
+        "type": "product",
+        "settings": [
+           {
+             "type": "product",
+             "id": "product",
+             "label": "Product"
+           }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "WD Packs",
+        "settings": {
+        }
+      }
+    ]
+  }
+{% endschema %}

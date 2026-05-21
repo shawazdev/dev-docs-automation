@@ -1,0 +1,77 @@
+{%- assign ss = section.settings -%}
+{%- if ss.image -%}
+  {%- if ss.mobile_image != blank -%}
+    {%- assign class = 'desktop' -%}
+  {%- endif -%}
+  <div class="bg-image">
+    {{ ss.image | image_url: width: 1920 | image_tag: loading: 'lazy', class: class }}
+    {%- if ss.mobile_image -%}
+      {{ ss.mobile_image | image_url: width: 768 | image_tag: loading: 'lazy', class: 'mobile' }}
+    {%- endif -%}
+  </div>
+{%- endif -%}
+
+<div {% render 'section-properties' %}>
+  <div class="wd-wrapper">
+    
+    <div class="stars">
+      {% for i in (1..ss.stars) %}
+        <svg xmlns="http://www.w3.org/2000/svg" width="35" height="33" viewBox="0 0 35 33" fill="none">
+          <path d="M17.8092 0.155273L21.8077 12.4612H34.7468L24.2788 20.0666L28.2772 32.3725L17.8092 24.767L7.34123 32.3725L11.3397 20.0666L0.871647 12.4612H13.8108L17.8092 0.155273Z" fill="white"/>
+        </svg>
+      {% endfor %}
+    </div>
+    {%- if ss.review -%}
+      <div class="review">{{ ss.review }}</div>
+    {%- endif -%}
+    {%- if ss.author -%}
+      <div class="author">{{ ss.author }}</div>
+    {%- endif -%}
+  </div>
+</div>
+{% schema %}
+  {
+    "name": "WD Testimonial",
+    "tag": "section",
+    "class": "wd-testimonial",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Image"
+      },
+      {
+        "type": "image_picker",
+        "id": "mobile_image",
+        "label": "Image"
+      },
+      {
+        "type": "range",
+        "id": "stars",
+        "min": 1,
+        "max": 5,
+        "step": 1,
+        "unit": "str",
+        "label": "Stars",
+        "default": 5
+      },
+      {
+        "type": "textarea",
+        "id": "review",
+        "label": "Review"
+      },
+      {
+        "type": "text",
+        "id": "author",
+        "label": "Author"
+      }
+    ],
+    "presets": [
+      {
+        "name": "WD Testimonial",
+        "settings": {
+        }
+      }
+    ]
+  }
+{% endschema %}

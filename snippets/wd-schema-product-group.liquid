@@ -1,0 +1,186 @@
+{%- comment -%}
+  ProductGroup JSON-LD — rendered on product pages (request.page_type == 'product').
+  Source of truth: Schema Optimizations - Strongsize - Q2 2026 / Final Markup / Product.
+
+  Notes:
+  - productGroupID uses product.id (stable Shopify ID), not the SKU prefix shown in the spec.
+  - color/size option detection mirrors snippets/wd-variant-picker.liquid:39 — uses the
+    'general.label.color' / 'general.label.size' translation keys so localized labels work.
+  - aggregateRating uses Okendo metafield path (.value.rating / .value.scale_max), matching
+    snippets/product-rating.liquid:18-20. Only renders when rating_count > 0.
+{%- endcomment -%}
+
+{%- if product == blank -%}
+{%- else -%}
+  {%- liquid
+    assign color_label_list = 'general.label.color' | t | replace: ', ', ',' | downcase | split: ','
+    assign size_label_list = 'general.label.size' | t | replace: ', ', ',' | downcase | split: ','
+
+    assign color_idx = -1
+    assign size_idx = -1
+    for option in product.options_with_values
+      assign opt_name = option.name | downcase
+      if color_idx == -1 and color_label_list contains opt_name
+        assign color_idx = forloop.index0
+      elsif size_idx == -1 and size_label_list contains opt_name
+        assign size_idx = forloop.index0
+      elsif size_idx == -1 and opt_name contains 'size'
+        assign size_idx = forloop.index0
+      endif
+    endfor
+
+    assign _img_main_raw = product.featured_image | image_url: width: 1024
+    assign _img_main_prefix = _img_main_raw | slice: 0, 2
+    if _img_main_raw contains '://'
+      assign group_image = _img_main_raw
+    elsif _img_main_prefix == '//'
+      assign group_image = _img_main_raw | prepend: 'https:'
+    else
+      assign group_image = _img_main_raw | prepend: shop.url
+    endif
+
+    assign group_description = product.description | strip_html | truncate: 500
+  -%}
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ProductGroup",
+      "@id": "{{ shop.url }}{{ product.url }}#ProductGroup",
+      "name": {{ product.title | json }},
+      "url": "{{ shop.url }}{{ product.url }}",
+      {%- if group_image != blank -%}
+      "image": "{{ group_image }}",
+      {%- endif -%}
+      {%- if group_description != blank -%}
+      "description": {{ group_description | json }},
+      {%- endif -%}
+      "brand": {
+        "@type": "Brand",
+        "name": {{ product.vendor | default: 'Strongsize' | json }},
+        "url": "{{ shop.url }}/"
+      },
+      {%- if product.metafields.reviews.rating.value != blank and product.metafields.reviews.rating_count.value > 0 -%}
+        {%- assign rating_value = product.metafields.reviews.rating.value.rating | round: 1 -%}
+        {%- assign rating_count = product.metafields.reviews.rating_count.value -%}
+        {%- assign rating_max   = product.metafields.reviews.rating.value.scale_max | default: 5 -%}
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "{{ rating_value }}",
+        "bestRating": "{{ rating_max }}",
+        "worstRating": "1",
+        "reviewCount": "{{ rating_count }}"
+      },
+      {%- endif -%}
+      "productGroupID": "{{ product.id }}",
+      {%- if color_idx != -1 or size_idx != -1 -%}
+      "variesBy": [
+        {%- if color_idx != -1 -%}"https://schema.org/color"{%- endif -%}
+        {%- if color_idx != -1 and size_idx != -1 -%},{%- endif -%}
+        {%- if size_idx != -1 -%}"https://schema.org/size"{%- endif -%}
+      ],
+      {%- endif -%}
+      "hasVariant": [
+        {%- for variant in product.variants -%}
+          {%- liquid
+            if color_idx == 0
+              assign v_color = variant.option1
+            elsif color_idx == 1
+              assign v_color = variant.option2
+            elsif color_idx == 2
+              assign v_color = variant.option3
+            else
+              assign v_color = ''
+            endif
+
+            if size_idx == 0
+              assign v_size = variant.option1
+            elsif size_idx == 1
+              assign v_size = variant.option2
+            elsif size_idx == 2
+              assign v_size = variant.option3
+            else
+              assign v_size = ''
+            endif
+
+            assign v_image_src = variant.featured_image | default: product.featured_image
+            assign _img_var_raw = v_image_src | image_url: width: 1024
+            assign _img_var_prefix = _img_var_raw | slice: 0, 2
+            if _img_var_raw contains '://'
+              assign v_image = _img_var_raw
+            elsif _img_var_prefix == '//'
+              assign v_image = _img_var_raw | prepend: 'https:'
+            else
+              assign v_image = _img_var_raw | prepend: shop.url
+            endif
+            assign v_price = variant.price | money_without_currency | strip_html | replace: ',', ''
+          -%}
+          {
+            "@type": "Product",
+            "name": {{ product.title | append: ' - ' | append: variant.title | json }},
+            {%- if group_description != blank -%}
+            "description": {{ group_description | json }},
+            {%- endif -%}
+            "url": "{{ shop.url }}{{ variant.url }}",
+            {%- if v_image != blank -%}
+            "image": "{{ v_image }}",
+            {%- endif -%}
+            {%- if variant.sku != blank -%}
+            "sku": {{ variant.sku | json }},
+            {%- endif -%}
+            {%- if v_color != blank -%}
+            "color": {{ v_color | json }},
+            {%- endif -%}
+            {%- if v_size != blank -%}
+            "size": {{ v_size | json }},
+            {%- endif -%}
+            "offers": {
+              "@type": "Offer",
+              "price": "{{ v_price }}",
+              "priceCurrency": "{{ cart.currency.iso_code }}",
+              "availability": "{% if variant.available %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}",
+              "url": "{{ shop.url }}{{ variant.url }}",
+              "shippingDetails": {
+                "@type": "OfferShippingDetails",
+                "shippingRate": {
+                  "@type": "MonetaryAmount",
+                  "value": "0.00",
+                  "currency": "{{ cart.currency.iso_code }}"
+                },
+                "shippingDestination": {
+                  "@type": "DefinedRegion",
+                  "addressCountry": "US"
+                },
+                "deliveryTime": {
+                  "@type": "ShippingDeliveryTime",
+                  "transitTime": {
+                    "@type": "QuantitativeValue",
+                    "minValue": 4,
+                    "maxValue": 7,
+                    "unitCode": "d"
+                  },
+                  "handlingTime": {
+                    "@type": "QuantitativeValue",
+                    "minValue": 0,
+                    "maxValue": 1,
+                    "unitCode": "d"
+                  }
+                }
+              },
+              "hasMerchantReturnPolicy": {
+      "@type": "MerchantReturnPolicy",
+      "applicableCountry": "US",
+      "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+      "merchantReturnDays": 30,
+      "returnShippingFeesAmount": {
+        "@type": "MonetaryAmount",
+        "value": "0.00",
+        "currency": "USD"
+      }
+    }
+            }
+          }{%- unless forloop.last -%},{%- endunless -%}
+        {%- endfor -%}
+      ]
+    }
+  </script>
+{%- endif -%}

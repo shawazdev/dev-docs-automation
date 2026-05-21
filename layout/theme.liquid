@@ -1,0 +1,694 @@
+{%- comment -%}
+  ------------------------------------------------------------------------------------------------------------------------
+  NOTE TO DEVELOPERS: welcome to Impact theme! We hope that you will enjoy editing this theme as much as we did for
+    developing it. We have put a lot of work to make this theme as developer friendly as possible by offering you
+    hooks to integrate into critical parts of the theme. You will find the complete technical documentation (including
+    all events, dependencies...) in the "documentation.txt" file, located in the Assets folder..
+  ------------------------------------------------------------------------------------------------------------------------
+{%- endcomment -%}
+
+<!doctype html>
+
+<html class="no-js" lang="{{ request.locale.iso_code }}" dir="{% render 'direction' %}">
+  <head>
+    {% render 'replo-head' %}
+    {% comment %}
+      <!-- Google Tag Manager -->
+      <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer','GTM-5W3FMH37');</script>
+      <!-- End Google Tag Manager -->
+    {% endcomment %}
+    <!-- Google Tag Manager -->
+    <script>
+      (function (w, d, s, l, i) {
+        w[l] = w[l] || [];
+        w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+        var f = d.getElementsByTagName(s)[0],
+          j = d.createElement(s),
+          dl = l != 'dataLayer' ? '&l=' + l : '';
+        j.async = true;
+        j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+        f.parentNode.insertBefore(j, f);
+      })(window, document, 'script', 'dataLayer', 'GTM-KP74CRJD');
+    </script>
+    <!-- End Google Tag Manager -->
+
+    <script>
+      /* >> Heatmap.com :: Snippet << */ (function (h, e, a, t, m, ap) {
+        (h._heatmap_paq = []).push(['setTrackerUrl', (h.heatUrl = e) + a]);
+        h.hErrorLogs = h.hErrorLogs || [];
+        ap = t.createElement('script');
+        ap.src = h.heatUrl + 'preprocessor.min.js?sid=' + m;
+        ap.defer = true;
+        t.head.appendChild(ap);
+        ['error', 'unhandledrejection'].forEach(function (ty) {
+          h.addEventListener(ty, function (et) {
+            h.hErrorLogs.push({ type: ty, event: et });
+          });
+        });
+      })(window, 'https://dashboard.heatmap.com/', 'heatmap.php', document, 5480);
+    </script>
+    <meta name="facebook-domain-verification" content="8nuvqpl1g6mqpjf2eq9vcp65lfqq4m">
+    <meta charset="utf-8">
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, height=device-height, minimum-scale=1.0, maximum-scale=1.0"
+    >
+    <meta name="theme-color" content="{{ settings.header_background }}">
+
+    <title>
+      {% if page_title == blank -%}
+        {{- shop.name -}}
+      {%- else -%}
+        {{- page_title -}}
+        {%- if current_page != 1 %} &ndash; {{ 'general.page' | t: page: current_page }}{% endif -%}
+      {%- endif %}
+    </title>
+    {% render 'canonical-logic' %}
+
+    {% if page_description %}
+      <meta name="description" content="{{ page_description | escape }}">
+    {% endif %}
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/css/intlTelInput.css">
+
+    {%- if settings.favicon -%}
+      <link rel="shortcut icon" href="{{ settings.favicon | image_url: width: 96 }}">
+      <link rel="apple-touch-icon" href="{{ settings.favicon | image_url: width: 180 }}">
+    {%- endif -%}
+
+    {%- comment -%}Few prefetch to increase performance on commonly used third-parties{%- endcomment -%}
+    <link rel="preconnect" href="https://cdn.shopify.com">
+    <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
+    <link rel="dns-prefetch" href="https://productreviews.shopifycdn.com">
+
+    {%- unless settings.heading_font.system? -%}
+      <link rel="preload" href="{{ settings.heading_font | font_url }}" as="font" type="font/woff2" crossorigin>
+    {%- endunless -%}
+
+    {%- unless settings.text_font.system? -%}
+      <link rel="preload" href="{{ settings.text_font | font_url }}" as="font" type="font/woff2" crossorigin>
+    {%- endunless -%}
+
+    {%- render 'social-meta-tags' -%}
+    {%- case request.page_type -%}
+      {%- when 'index' -%}
+        {%- render 'wd-schema-organization' -%}
+      {%- when 'product' -%}
+        {%- render 'wd-schema-product-group' -%}
+      {%- when 'collection' -%}
+        {%- render 'wd-schema-collection-page' -%}
+      {%- when 'blog' -%}
+        {%- render 'wd-schema-blog' -%}
+      {%- when 'article' -%}
+        {%- render 'wd-schema-blog-posting' -%}
+      {%- when 'page' -%}
+        {%- case page.handle -%}
+          {%- when 'about', 'about-us' -%}
+            {%- render 'wd-schema-about-page' -%}
+          {%- when 'contact' -%}
+            {%- render 'wd-schema-contact-page' -%}
+          {%- when 'returns-policy' -%}
+            {%- render 'wd-schema-webpage-returns' -%}
+          {%- when 'faq' -%}
+            {%- comment -%}FAQ schema is rendered inside sections/wd-faq.liquid{%- endcomment -%}
+          {%- else -%}
+            {%- render 'wd-schema-webpage-generic' -%}
+        {%- endcase -%}
+    {%- endcase -%}
+    {%- render 'css-variables' -%}
+    {%- render 'js-variables' -%}
+
+    <script type="module" src="{{ 'vendor.min.js' | asset_url }}"></script>
+    <script type="module" src="{{ 'theme.js' | asset_url }}"></script>
+    <script type="module" src="{{ 'sections.js' | asset_url }}"></script>
+
+    {{ content_for_header }}
+
+    {{- 'theme.css' | asset_url | stylesheet_tag: preload: true -}}
+
+    {{- 'custom.css' | asset_url | stylesheet_tag: preload: true -}}
+
+    {{- 'custom-style.css' | asset_url | stylesheet_tag: preload: true -}}
+
+    {% if current_tags %}
+      <meta name="robots" content="noindex, follow">
+    {% endif %}
+    {% if collection.handle == 'big-and-tall-crewneck-tshirts-packs' %}
+      <meta name="robots" content="noindex, follow">
+    {% endif %}
+    {% if collection.handle == 'all' %}
+      <meta name="robots" content="noindex, follow">
+    {% endif %}
+    {% if request.query_string != blank %}
+      <meta name="robots" content="noindex, follow">
+    {% endif %}
+    {% if request.query_string != blank %}
+    {% endif %}
+    {% assign noindex_urls = 'get-first-in-line,html-sitemap,resources,news,internal,thank-you,thank-you-1,thank-you-for-participating,avada-sitemap,avada-sitemap-products,avada-sitemap-blogs,avada-sitemap-pages,avada-sitemap-collections,avada-sitemap-articles,listicles-for-strongsize-v1,listicles-for-strongsize-v2,listicles-for-strongsize-v3'
+      | split: ','
+    %}
+
+    {% for item in noindex_urls %}
+      {% if request.path contains item %}
+        <meta name="robots" content="noindex, nofollow">
+      {% endif %}
+    {% endfor %}
+  {% include 'pagefly-app-header' %}</head>
+
+  <body class="{% if settings.show_page_transition %}page-transition{% endif %} {% if settings.zoom_image_on_hover %}zoom-image--enabled{% endif %}">
+    {% comment %}
+      <!-- Google Tag Manager (noscript) -->
+      <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5W3FMH37" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+      <!-- End Google Tag Manager (noscript) -->
+    {% endcomment %}
+    <!-- Google Tag Manager (noscript) -->
+    <noscript
+      ><iframe
+        src="https://www.googletagmanager.com/ns.html?id=GTM-KP74CRJD"
+        height="0"
+        width="0"
+        style="display:none;visibility:hidden"
+      ></iframe
+    ></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+    {%- render 'shadow-dom-templates' -%}
+
+    <a href="#main" class="skip-to-content sr-only">{{ 'general.accessibility.skip_to_content' | t }}</a>
+
+    {%- if request.page_type != 'password' -%}
+      {%- sections 'header-group' -%}
+      {%- sections 'overlay-group' -%}
+
+      {%- if settings.cart_type == 'popover' -%}
+        <cart-notification-drawer open-from="bottom" class="quick-buy-drawer drawer"></cart-notification-drawer>
+      {%- endif -%}
+    {%- endif -%}
+
+    {%- if request.page_type == 'customers/account'
+      or request.page_type == 'customers/order'
+      or request.page_type == 'customers/addresses'
+    -%}
+      {%- section 'account-banner' -%}
+    {%- endif -%}
+
+    <main role="main" id="main" class="anchor">
+      {{ content_for_layout }}
+
+      {%- comment -%}
+        IMPLEMENTATION NOTE: due to the very complex logic of margin/padding collapsing in Impact, the footer group is
+        added into the main element to ensure that dynamic sections added into the footer group are properly laid out.
+      {%- endcomment -%}
+      {%- if request.page_type != 'password' -%}
+        {%- sections 'footer-group' -%}
+      {%- endif -%}
+      <script src="{{ 'custom.js' | asset_url }}" defer></script>
+    </main>
+    {% if product %}
+      <script>
+        window.addEventListener('load', function () {
+          var _learnq = window._learnq || [];
+          function addedToCart() {
+            fetch(`${window.location.origin}/cart.js`).then((res) =>
+              res
+                .clone()
+                .json()
+                .then((data) => {
+                  var cart = {
+                    total_price: data.total_price / 100,
+                    $value: data.total_price / 100,
+                    total_discount: data.total_discount,
+                    original_total_price: data.original_total_price / 100,
+                    items: data.items,
+                  };
+                  if (item !== 'undefined') {
+                    cart = Object.assign(cart, item);
+                  }
+                  if (klAjax) {
+                    _learnq.push(['track', 'Added to Cart', cart]);
+                    klAjax = false;
+                  }
+                })
+            );
+          }
+          (function (ns, fetch) {
+            ns.fetch = function () {
+              const response = fetch.apply(this, arguments);
+              response.then((res) => {
+                if (`${window.location.origin}/cart/add.js`.includes(res.url) && res.url !== '') {
+                  addedToCart();
+                }
+              });
+              return response;
+            };
+          })(window, window.fetch);
+          var klAjax = true;
+          var atcButtons = document.querySelectorAll("form[action*='/cart/add'] button[type='submit']");
+          for (var i = 0; i < atcButtons.length; i++) {
+            atcButtons[i].addEventListener('click', function () {
+              if (klAjax) {
+                _learnq.push(['track', 'Added to Cart', item]);
+                klAjax = false;
+              }
+            });
+          }
+        });
+      </script>
+    {% endif %}
+    <script>
+      document.querySelectorAll('a').forEach((el) => {
+        if (el.textContent.trim() === 'Sale') {
+          el.classList.add('red-text');
+        }
+      });
+
+      document.querySelectorAll('span.reversed-link').forEach((el) => {
+        if (el.textContent.trim() === 'Sale') {
+          el.classList.add('red-text');
+        }
+      });
+    </script>
+    {% if template == 'product' %}
+      <style>
+        div#shopify-chat {
+          display: none !important;
+        }
+      </style>
+    {% endif %}
+
+    <!-- Email Notification Modal -->
+    <div id="notifyModal" class="modal">
+      <div class="modal-content">
+        <span class="close">
+          <svg
+            role="img"
+            width="32"
+            height="32"
+            viewBox="0 0 20 20"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+            class="needsclick"
+          >
+            <title id="title-Close-dialog">Close dialog</title><circle cx="10" cy="10" r="9.5" fill="rgba(255,255,255,0)" stroke="rgba(255,255,255,0)" style="cursor: pointer;"></circle><path d="M6 6L14 14M6 14L14 6L6 14Z" stroke="rgba(75,74,74)" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="cursor: pointer;"></path>
+          </svg>
+        </span>
+
+        <h2>
+          Notify Me When<br>
+          Back in Stock
+        </h2>
+        <p>Join the waitlist and we'll send you a heads-up when it returns.</p>
+
+        <form id="notifyForm">
+          <input type="hidden" id="variant_id" name="variant_id" value="">
+          <input type="hidden" id="product_handle" name="product_handle" value="">
+
+          <!-- Email -->
+          <input type="email" id="email" name="email" placeholder="Enter your email address" required>
+
+          <!-- Checkbox -->
+          <label>
+            <input type="checkbox" id="subscribe_marketing" name="subscribe_marketing">
+            also receive promotional marketing emails.
+          </label>
+
+          <!-- Buttons -->
+          <button type="submit" class="btn-primary">Notify Me!</button>
+          <button type="button" class="btn-secondary">Text Me Instead</button>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const modal = document.getElementById('notifyModal');
+        const closeBtn = modal.querySelector('.close');
+        const form = document.getElementById('notifyForm');
+        const emailInput = document.getElementById('email');
+        const variantInput = document.getElementById('variant_id');
+        const productInput = document.getElementById('product_handle');
+        const textMeBtn = document.querySelector('.btn-secondary');
+        const subscribe_marketing = document.getElementById('subscribe_marketing');
+        // Create a message box inside modal
+        let messageBox = document.createElement('div');
+        messageBox.id = 'notifyMessage';
+        messageBox.style.marginTop = '10px';
+        messageBox.style.textAlign = 'center';
+        messageBox.style.fontSize = '14px';
+        form.appendChild(messageBox);
+
+        // --- Open modal ---
+        document.body.addEventListener('click', (e) => {
+          const notifyBtn = e.target.closest('#notify-me');
+          if (!notifyBtn) return;
+
+          e.preventDefault();
+          console.log('✅ Notify Me clicked');
+
+          // close quick-buy-drawer if open
+          const quickDrawer = document.querySelector('quick-buy-drawer[open]');
+          if (quickDrawer) {
+            quickDrawer.removeAttribute('open');
+            console.log('🛒 Quick Buy Drawer closed');
+          }
+
+          // set hidden inputs
+          variantInput.value = notifyBtn.dataset.variantId || '';
+          productInput.value = notifyBtn.dataset.productHandle || '';
+          console.log('📥 Hidden fields:', {
+            variant: variantInput.value,
+            product: productInput.value,
+          });
+
+          modal.style.display = 'flex';
+          messageBox.textContent = ''; // clear old messages
+        });
+
+        // --- Close modal ---
+        const closeModal = (reason = '') => {
+          modal.style.display = 'none';
+          const smsForm = document.getElementById('smsNotifyForm');
+          const notifyForm = document.getElementById('NotifyForm');
+
+          if (smsForm) smsForm.reset();
+          if (notifyForm) notifyForm.reset();
+          messageBox.textContent = '';
+          if (reason) console.log(`❌ Modal closed: ${reason}`);
+        };
+        closeBtn.addEventListener('click', () => closeModal('button'));
+        window.addEventListener('click', (e) => {
+          if (e.target === modal) closeModal('outside click');
+        });
+
+        // --- Form submission ---
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+
+          const email = emailInput.value.trim();
+          const variantId = variantInput.value;
+          const productSlug = productInput.value;
+          const promotionalcheck = subscribe_marketing.checked ? 1 : 0;
+
+          console.log('📨 Submit with:', { email, variantId, productSlug });
+
+          // Validate email
+          const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (!emailPattern.test(email)) {
+            messageBox.style.color = '#971b1b';
+            messageBox.textContent = '❌ Please enter a valid email address.';
+            return;
+          }
+
+          if (!variantId || !productSlug) {
+            messageBox.style.color = '#971b1b';
+            messageBox.textContent = '❌ Missing product/variant data.';
+            return;
+          }
+
+          try {
+            // 1. Check variant availability
+            const productRes = await fetch(`/products/${productSlug}.js`);
+            const productData = await productRes.json();
+            const variant = productData.variants.find((v) => v.id == variantId);
+
+            if (!variant) {
+              messageBox.style.color = '#971b1b';
+              messageBox.textContent = '❌ Variant not found in product.';
+              return;
+            }
+            if (variant.available) {
+              messageBox.style.color = 'green';
+              messageBox.textContent = '✅ This variant is already available. You can add it to cart.';
+              return;
+            }
+
+            // 2. Send request to API
+            console.log('🌐 Sending to API...');
+            const response = await fetch('https://apps.strongsize.com/script-for-backinstock/backinstock.php', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+              body: new URLSearchParams({ email, variant_id: variantId, promotionalcheck }),
+            });
+
+            const result = await response.json();
+            console.log('✅ API Response:', result);
+
+            if (result.back_in_stock.success) {
+              messageBox.style.color = 'green';
+              messageBox.textContent = "🎉 Successfully subscribed! We'll notify you when back in stock.";
+              form.reset();
+            } else {
+              messageBox.style.color = 'orange';
+              messageBox.textContent = '⚠️ Something went wrong: ' + (result.message || 'Please try again later.');
+            }
+          } catch (err) {
+            console.error('🚨 Error:', err);
+            messageBox.style.color = '#971b1b';
+            messageBox.textContent = '⚠️ Network or server error. Please try again.';
+          }
+          setTimeout(() => {
+            document.getElementById('notifyModal').style.display = 'none';
+            const smsForm = document.getElementById('smsNotifyForm');
+            const notifyForm = document.getElementById('NotifyForm');
+
+            if (smsForm) smsForm.reset();
+            if (notifyForm) notifyForm.reset();
+            MessageBox.textContent = '';
+          }, 3000);
+        });
+
+        // --- Text Me Instead functionality ---
+        textMeBtn.addEventListener('click', () => {
+          // Replace the modal content with the SMS notification version
+          const modalContent = document.querySelector('#notifyModal .modal-content');
+          modalContent.innerHTML = `
+                <span class="close"><svg role="img" width="32" height="32" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="needsclick"><title id="title-Close-dialog">Close dialog</title><circle cx="10" cy="10" r="9.5" fill="rgba(255,255,255,0)" stroke="rgba(255,255,255,0)" style="cursor: pointer;"></circle><path d="M6 6L14 14M6 14L14 6L6 14Z" stroke="rgba(75,74,74)" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="cursor: pointer;"></path></svg></span>
+
+                <h2>Get Notified First</h2>
+                <p>Get a text alert when it's back in stock.</p>
+
+                <form id="smsNotifyForm">
+                    <input type="hidden" id="sms_variant_id" name="variant_id" value="${variantInput.value}">
+                    <input type="hidden" id="sms_product_handle" name="product_handle" value="${productInput.value}">
+
+                    <!-- Phone Number Input with intl-tel-input -->
+                    <input id="phone" name="phone" type="number" placeholder="Phone Number" required>
+
+                    <!-- Consent Text -->
+                    <div class="consent-text">
+                        By submitting this form, you consent to receive informational (e.g., order updates) and/or
+                        marketing texts (e.g., cart reminders) from Strongsize, including texts sent by autodialer.
+                        Consent is not a condition of purchase. Msg & data rates may apply. Msg frequency varies.
+                        Unsubscribe at any time by replying STOP or clicking the unsubscribe link (where available)
+                        <a href="#">Privacy Policy</a> & <a href="#">Terms</a>.
+                    </div>
+
+                    <!-- Button -->
+                    <button type="submit" class="btn-primary">Notify Me</button>
+                </form>
+            `;
+
+          // Initialize intl-tel-input
+          const phoneInput = document.querySelector('#phone');
+          let iti;
+          if (window.intlTelInput) {
+            iti = window.intlTelInput(phoneInput, {
+              initialCountry: 'us',
+              preferredCountries: ['us', 'gb', 'ca', 'pk'],
+              separateDialCode: true,
+              utilsScript: 'https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js',
+            });
+          }
+          // On blur, final cleanup
+          phoneInput.addEventListener('blur', () => {
+            if (iti.getValidationError() !== 0) {
+              // keep trimming until it's valid or empty
+              while (iti.getValidationError() === 2) {
+                phoneInput.value = phoneInput.value.slice(0, -1);
+              }
+            }
+          });
+          // Reattach close functionality
+          const newCloseBtn = modalContent.querySelector('.close');
+          newCloseBtn.addEventListener('click', () => closeModal('button'));
+
+          // Add message box for SMS form
+          let smsMessageBox = document.createElement('div');
+          smsMessageBox.id = 'smsNotifyMessage';
+          smsMessageBox.style.marginTop = '10px';
+          smsMessageBox.style.textAlign = 'center';
+          smsMessageBox.style.fontSize = '14px';
+          document.getElementById('smsNotifyForm').appendChild(smsMessageBox);
+
+          // Prevent form submission (this is the key change)
+          document.getElementById('smsNotifyForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const form = document.getElementById('smsNotifyForm');
+            const phoneInput = document.getElementById('phone');
+            const smsvariantInput = document.getElementById('sms_variant_id');
+            const smsproductInput = document.getElementById('sms_product_handle');
+
+            const variantId = smsvariantInput.value;
+            const productSlug = smsproductInput.value;
+            const phone = iti ? iti.getNumber() : phoneInput.value;
+
+            if (!phone || iti.getValidationError() !== 0) {
+              smsMessageBox.style.color = '#971b1b';
+              smsMessageBox.textContent = '❌ Please enter a valid phone number.';
+              return;
+            }
+
+            if (!variantId || !productSlug) {
+              smsMessageBox.style.color = '#971b1b';
+              smsMessageBox.textContent = '❌ Missing product/variant data.';
+              return;
+            }
+
+            try {
+              // 1. Check variant availability
+              const productRes = await fetch(`/products/${productSlug}.js`);
+              const productData = await productRes.json();
+              const variant = productData.variants.find((v) => v.id == variantId);
+
+              if (!variant) {
+                smsMessageBox.style.color = '#971b1b';
+                smsMessageBox.textContent = '❌ Variant not found in product.';
+                return;
+              }
+              if (variant.available) {
+                smsMessageBox.style.color = 'green';
+                smsMessageBox.textContent = '✅ This variant is already available. You can add it to cart.';
+                return;
+              }
+
+              // 2. Send request to API
+              console.log('🌐 Sending to API...');
+              const response = await fetch('https://apps.strongsize.com/script-for-backinstock/backinstock.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams({ phone, variant_id: variantId }),
+              });
+
+              const result = await response.json();
+              console.log('✅ API Response:', result);
+
+              if (result.back_in_stock.success) {
+                smsMessageBox.style.color = 'green';
+                smsMessageBox.textContent = "🎉 Successfully subscribed! We'll notify you when back in stock.";
+                form.reset();
+              } else {
+                smsMessageBox.style.color = 'orange';
+                smsMessageBox.textContent = '⚠️ Something went wrong: ' + (result.message || 'Please try again later.');
+              }
+            } catch (err) {
+              console.error('🚨 Error:', err);
+              smsMessageBox.style.color = '#971b1b';
+              smsMessageBox.textContent = '⚠️ Network or server error. Please try again.';
+            }
+
+            // Auto-close modal after 3 seconds
+            setTimeout(() => {
+              document.getElementById('notifyModal').style.display = 'none';
+              const smsForm = document.getElementById('smsNotifyForm');
+              const notifyForm = document.getElementById('NotifyForm');
+
+              if (smsForm) smsForm.reset();
+              if (notifyForm) notifyForm.reset();
+              smsMessageBox.textContent = '';
+            }, 3000);
+          });
+        });
+      });
+    </script>
+    <script>
+      // Function to check variant availability and toggle buttons
+      function checkVariantAvailability() {
+        const quickBuyDrawer = document.querySelector('quick-buy-drawer[open]');
+
+        if (!quickBuyDrawer) return;
+
+        const form = quickBuyDrawer.querySelector('form[id^="quick-buy-form-"]');
+        const notifyMe = quickBuyDrawer.querySelector('#notify-me');
+        const addToCartButton = quickBuyDrawer.querySelector('button[type="submit"]');
+
+        if (!form || !notifyMe || !addToCartButton) return;
+
+        const variantIdInput = form.querySelector('input[name="id"]');
+        if (!variantIdInput) return;
+
+        const variantId = variantIdInput.value;
+
+        // Fetch variant data from Shopify (using product handle from drawer)
+        const productHandle = quickBuyDrawer.getAttribute('handle');
+
+        if (productHandle) {
+          fetch(`/products/${productHandle}.js`)
+            .then((response) => response.json())
+            .then((product) => {
+              const variant = product.variants.find((v) => v.id == variantId);
+
+              if (variant) {
+                if (variant.available) {
+                  // Variant is available - show Add to Cart, hide Notify Me
+                  addToCartButton.style.display = 'block';
+                  notifyMe.style.display = 'none';
+                  notifyMe.setAttribute('data-variant-id', variant.id);
+                } else {
+                  // Variant is sold out - hide Add to Cart, show Notify Me
+                  addToCartButton.style.display = 'none';
+                  notifyMe.style.display = 'block';
+                  notifyMe.setAttribute('data-variant-id', variant.id);
+                }
+              }
+            })
+            .catch((error) => {
+              console.error('Error fetching product data:', error);
+            });
+        }
+      }
+
+      // Listen for variant changes in quick-buy-drawer
+      document.addEventListener('change', function (event) {
+        const quickBuyDrawer = document.querySelector('quick-buy-drawer[open]');
+
+        // Check if change occurred inside an open quick-buy-drawer
+        if (quickBuyDrawer && quickBuyDrawer.contains(event.target)) {
+          // Check if it's a variant option input (radio buttons for options)
+          if (event.target.matches('input[type="radio"][name^="option"]')) {
+            // Wait a moment for Shopify's JS to update the variant ID
+            setTimeout(checkVariantAvailability, 100);
+          }
+        }
+      });
+
+      // Also check availability when quick-buy-drawer opens
+      const quickobserver = new MutationObserver(function (mutations) {
+        mutations.forEach(function (mutation) {
+          if (mutation.type === 'attributes' && mutation.attributeName === 'open') {
+            if (mutation.target.hasAttribute('open')) {
+              // Wait for drawer content to be fully rendered
+              setTimeout(checkVariantAvailability, 300);
+            }
+          }
+        });
+      });
+
+      // Observe all quick-buy-drawer elements
+      document.querySelectorAll('quick-buy-drawer').forEach((drawer) => {
+        quickobserver.observe(drawer, { attributes: true });
+      });
+    </script>
+  </body>
+</html>
+{% if content_for_header contains 'kimonix_void_script' %}
+  <script
+    async
+    id="kimonix_elements_script"
+    src="https://api.kimonix.com/kimonix_elements.js?shop=strongsize.myshopify.com"
+  ></script>
+{% endif %}

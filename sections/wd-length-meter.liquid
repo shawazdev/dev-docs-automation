@@ -1,0 +1,153 @@
+{%- assign ss = section.settings -%}
+{%- assign hide = false -%}
+{%- if request.page_type == 'product' -%}
+  {%- assign hide = product.metafields.custom.hide_length_meter.value -%}
+{%- endif -%}
+
+{%- unless hide -%}
+  
+
+<div {% render 'section-properties', narrow: section.settings.reduce_width %}>
+  <div class="wd-wrapper">
+    <div class="top-wrapper">
+      {%- if ss.title -%}
+        <h2 class="title">{{ ss.title }}</h2>
+      {%- endif -%}
+      {%- if ss.subtitle -%}
+        <div class="subtitle">{{ ss.subtitle }}</div>
+      {%- endif -%}
+      {%- if ss.mobile_image -%}
+        <div class="mob-image">
+          {{ ss.mobile_image | image_url: width: 768 | image_tag: loading: 'lazy' }}
+        </div>
+      {%- endif -%}
+      {%- if section.blocks.size > 0 -%}
+        <div class="wd-table">
+          <div class="wd-row">
+            <div>Regular</div><div>Size</div><div>Longer</div>
+          </div>
+          {% for block in section.blocks %}
+            {%- assign bs = block.settings -%}
+            <div class="wd-row extended">
+              <div class="size">{{ bs.reg_size }}</div><div class="s-title">{{ bs.size }}</div><div class="size">{{ bs.lon_size }}</div>
+            </div>
+          {% endfor %}
+        </div>
+      {%- endif -%}
+      <div class="wd-3-cols images">
+        {%- if ss.reg_image -%}
+          <div class="image">
+            {{ ss.reg_image | image_url: width: 600 | image_tag: loading: 'lazy' }}
+          </div>
+        {%- endif -%}
+        <div class="image"></div>
+        {%- if ss.lon_image -%}
+          <div class="image">
+            {{ ss.lon_image | image_url: width: 600 | image_tag: loading: 'lazy' }}
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+    <div class="bottom-wrapper">
+      <div class="wd-3-cols">
+        <div class="space">
+          <h3 class="s-title">{{ ss.reg_title }}</h3>
+          <div class="s-text">{{ ss.reg_subtitle }}</div>
+        </div>
+        <div class="space">
+          
+        </div>
+        <div class="space">
+          <h3 class="s-title">{{ ss.lon_title }}</h3>
+          <div class="s-text">{{ ss.lon_subtitle }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{%- endunless -%}
+
+{% schema %}
+  {
+    "name": "WD Length Meter",
+    "tag": "section",
+    "class": "wd-length-meter",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title"
+      },
+      {
+        "type": "textarea",
+        "id": "subtitle",
+        "label": "Subtitle"
+      },
+      {
+        "type": "image_picker",
+        "id": "reg_image",
+        "label": "Regular Image"
+      },
+      {
+        "type": "text",
+        "id": "reg_title",
+        "label": "Regular title"
+      },
+      {
+        "type": "textarea",
+        "id": "reg_subtitle",
+        "label": "Regular subtitle"
+      },
+      {
+        "type": "image_picker",
+        "id": "lon_image",
+        "label": "Longer Image"
+      },
+      {
+        "type": "text",
+        "id": "lon_title",
+        "label": "Longer title"
+      },
+      {
+        "type": "textarea",
+        "id": "lon_subtitle",
+        "label": "Longer subtitle"
+      },
+      {
+        "type": "image_picker",
+        "id": "mobile_image",
+        "label": "Mobile image"
+      }
+    ],
+    "blocks": [
+      {
+        "name": "Size",
+        "type": "size",
+        "settings": [
+          {
+            "type": "text",
+            "id": "size",
+            "label": "Size"
+          },
+          {
+            "type": "text",
+            "id": "reg_size",
+            "label": "Regular size"
+          },
+          {
+            "type": "text",
+            "id": "lon_size",
+            "label": "Longer size"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "WD Length Meter",
+        "settings": {
+        }
+      }
+    ]
+  }
+{% endschema %}

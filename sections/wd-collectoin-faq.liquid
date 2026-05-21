@@ -1,0 +1,197 @@
+{%- render 'section-spacing-collapsing' -%}
+
+{%- assign text_position = section.settings.text_position -%}
+{%- assign custom_faq = collection.metafields.custom.custom_faq.value -%}
+{%- if custom_faq -%}
+  <style>
+    #shopify-section-{{ section.id }} {
+      --section-stack-intro: {% if text_position == 'center' %}60%{% else %}50%{% endif %};
+      --section-stack-main: {% if text_position == 'center' %}60%{% else %}50%{% endif %};
+    }
+  </style>
+  
+  <div {% render 'section-properties' %}>
+    <div class="section-stack {% if text_position != 'center' %}section-stack--horizontal{% else %}section-stack--center{% endif %} {% if text_position == 'end' %}section-stack--reverse{% endif %}">
+      {%- capture content -%}
+  
+        {%- if custom_faq.title != blank -%}
+          <h2 class="h2">
+            {%- render 'styled-text', content: custom_faq.title, text_color: section.settings.heading_color, gradient: section.settings.heading_gradient -%}
+          </h2>
+        {%- endif -%}
+  
+        {{- custom_faq.subheading | metafield_tag -}}
+      {%- endcapture -%}
+  
+      {%- if content != blank -%}
+        <div class="section-stack__intro">
+          <div class="v-stack gap-10">
+            {%- if content != blank -%}
+              <div class="prose {% if text_position == 'center' %}text-center{% endif %}">
+                {{- content -}}
+              </div>
+            {%- endif -%}
+          </div>
+        </div>
+      {%- endif -%}
+      
+        <div class="section-stack__main" >
+          <div {% render 'surface', class: 'accordion-box rounded', background: section.settings.accordion_background, text_color: section.settings.accordion_text_color, background_fallback: 'bg-secondary' %}>
+            {%- for meta in custom_faq.questions.value -%}
+              {%- if meta.question != blank and meta.answer != blank -%}
+                {%- capture accordion_content -%}
+                  <div class="prose">{{ meta.answer | metafield_tag }}</div>
+                {%- endcapture -%}
+  
+                {%- render 'accordion', title: meta.question, content: accordion_content -%}
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+        </div>
+      
+    </div>
+  </div>
+  
+  {%- comment -%}On the FAQ page, we also output the content with JSON microdata for SEO{%- endcomment -%}
+  
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {%- for block in section.blocks -%}
+          {
+            "@type": "Question",
+            "name": {{ block.settings.title | json }},
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": {{ block.settings.content | json }}
+            }
+          }{% unless forloop.last %},{% endunless %}
+        {%- endfor -%}
+      ]
+    }
+  </script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "WD Collection FAQ",
+  "class": "shopify-section--faq wd-faq",
+  "tag": "section",
+  "disabled_on": {
+    "groups": ["header", "custom.overlay"]
+  },
+  "blocks": [
+    {
+      "name": "Item",
+      "type": "item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Question",
+          "default": "Question"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Answer",
+          "default": "<p>Write content to answer to common questions your customers may have about your products, shipping policies..</p>"
+        }
+      ]
+    }
+  ],
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Structured data is automatically created on FAQ page to improve SEO. [Learn more](https://developers.google.com/search/docs/advanced/structured-data/faqpage)"
+    },
+    {
+      "type": "paragraph",
+      "content": "Content is managed in collection metafield 'Custom FAQ'"
+    },
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Full width",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "text_position",
+      "label": "Text position",
+      "options": [
+        {
+          "value": "start",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "end",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Colors",
+      "info": "Gradient replaces solid colors when set."
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "Background gradient"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color"
+    },
+    {
+      "type": "color_background",
+      "id": "heading_gradient",
+      "label": "Heading gradient"
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "Button background"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text"
+    },
+    {
+      "type": "color",
+      "id": "accordion_background",
+      "label": "Accordion background"
+    },
+    {
+      "type": "color",
+      "id": "accordion_text_color",
+      "label": "Accordion text"
+    }
+  ],
+  "presets": [
+    {
+      "name": "WD Collection FAQ"
+    }
+  ]
+}
+{% endschema %}

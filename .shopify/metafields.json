@@ -1,0 +1,891 @@
+{
+  "article": [
+    {
+      "key": "hidden",
+      "namespace": "seo",
+      "name": "Hide from sitemap",
+      "description": "",
+      "type": {
+        "name": "number_integer",
+        "category": "NUMBER"
+      }
+    }
+  ],
+  "blog": [
+    {
+      "key": "hidden",
+      "namespace": "seo",
+      "name": "Hide from sitemap",
+      "description": "",
+      "type": {
+        "name": "number_integer",
+        "category": "NUMBER"
+      }
+    }
+  ],
+  "collection": [
+    {
+      "key": "hidden",
+      "namespace": "seo",
+      "name": "Hide from sitemap",
+      "description": "",
+      "type": {
+        "name": "number_integer",
+        "category": "NUMBER"
+      }
+    },
+    {
+      "key": "custom_faq",
+      "namespace": "custom",
+      "name": "Custom FAQ",
+      "description": "",
+      "type": {
+        "name": "metaobject_reference",
+        "category": "REFERENCE"
+      }
+    },
+    {
+      "key": "features_text",
+      "namespace": "custom",
+      "name": "features - text",
+      "description": "1-2 paragraphs about features",
+      "type": {
+        "name": "rich_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "feature1_heading",
+      "namespace": "custom",
+      "name": "feature1-heading",
+      "description": "heading1",
+      "type": {
+        "name": "single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "feature1_text",
+      "namespace": "custom",
+      "name": "feature1-text",
+      "description": "1-2 paragraphs",
+      "type": {
+        "name": "rich_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "feature2_heading",
+      "namespace": "custom",
+      "name": "feature2-heading",
+      "description": "feature2 heading",
+      "type": {
+        "name": "single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "feature2_text",
+      "namespace": "custom",
+      "name": "feature2-text",
+      "description": "1-2 paragraphs",
+      "type": {
+        "name": "rich_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "feature3_heading",
+      "namespace": "custom",
+      "name": "feature3-heading",
+      "description": "feature3 heading",
+      "type": {
+        "name": "single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "feature3_text",
+      "namespace": "custom",
+      "name": "feature3-text",
+      "description": "1-2 paragraphs",
+      "type": {
+        "name": "rich_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "faq_q1",
+      "namespace": "custom",
+      "name": "faq-q1",
+      "description": "faq question 1",
+      "type": {
+        "name": "single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "faq_a1",
+      "namespace": "custom",
+      "name": "faq-a1",
+      "description": "1-2 paragraphs",
+      "type": {
+        "name": "rich_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "faq_q2",
+      "namespace": "custom",
+      "name": "faq-q2",
+      "description": "faq2 question",
+      "type": {
+        "name": "single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "faq_a2",
+      "namespace": "custom",
+      "name": "faq-a2",
+      "description": "1-2 paragraphs",
+      "type": {
+        "name": "rich_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "faq_q3",
+      "namespace": "custom",
+      "name": "faq-q3",
+      "description": "faq question3",
+      "type": {
+        "name": "single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "faq_a3",
+      "namespace": "custom",
+      "name": "faq-a3",
+      "description": "1-2 paragraphs",
+      "type": {
+        "name": "rich_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "features_heading",
+      "namespace": "custom",
+      "name": "features_heading",
+      "description": "",
+      "type": {
+        "name": "single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "breadcrumb_parent",
+      "namespace": "custom",
+      "name": "Breadcrumb Parent",
+      "description": "",
+      "type": {
+        "name": "collection_reference",
+        "category": "REFERENCE"
+      }
+    },
+    {
+      "key": "collection_menu_items",
+      "namespace": "custom",
+      "name": "Collection Menu Items",
+      "description": "",
+      "type": {
+        "name": "list.metaobject_reference",
+        "category": "REFERENCE"
+      }
+    }
+  ],
+  "company": [],
+  "company_location": [],
+  "location": [],
+  "market": [],
+  "order": [],
+  "page": [
+    {
+      "key": "hidden",
+      "namespace": "seo",
+      "name": "Hide from sitemap",
+      "description": "",
+      "type": {
+        "name": "number_integer",
+        "category": "NUMBER"
+      }
+    }
+  ],
+  "product": [
+    {
+      "key": "variable_colors",
+      "namespace": "prts",
+      "name": "Variable color products",
+      "description": "Fake colors functionality to aviod Shopify variants limit",
+      "type": {
+        "name": "list.product_reference",
+        "category": "REFERENCE"
+      }
+    },
+    {
+      "key": "variable_length",
+      "namespace": "prts",
+      "name": "Variable length product",
+      "description": "Fake length products. Visible on product page.",
+      "type": {
+        "name": "list.product_reference",
+        "category": "REFERENCE"
+      }
+    },
+    {
+      "key": "length",
+      "namespace": "prts",
+      "name": "Length",
+      "description": "Length field. Used in collection filter and on product page",
+      "type": {
+        "name": "metaobject_reference",
+        "category": "REFERENCE"
+      }
+    },
+    {
+      "key": "queries",
+      "namespace": "shopify--discovery--product_search_boost",
+      "name": "Search product boosts",
+      "description": "List of search queries for which a product gets higher rank in search results",
+      "type": {
+        "name": "list.single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "related_products",
+      "namespace": "shopify--discovery--product_recommendation",
+      "name": "Related products",
+      "description": "List of related products",
+      "type": {
+        "name": "list.product_reference",
+        "category": "REFERENCE"
+      }
+    },
+    {
+      "key": "related_products_display",
+      "namespace": "shopify--discovery--product_recommendation",
+      "name": "Related products settings",
+      "description": "Determines how related products are displayed along with algorithmic product recommendations",
+      "type": {
+        "name": "single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "complementary_products",
+      "namespace": "shopify--discovery--product_recommendation",
+      "name": "Complementary products",
+      "description": "List of complementary products",
+      "type": {
+        "name": "list.product_reference",
+        "category": "REFERENCE"
+      }
+    },
+    {
+      "key": "hidden",
+      "namespace": "seo",
+      "name": "Hide from sitemap",
+      "description": "Set 1 if you want to hide from SEO",
+      "type": {
+        "name": "number_integer",
+        "category": "NUMBER"
+      }
+    },
+    {
+      "key": "packs",
+      "namespace": "prts",
+      "name": "Packs",
+      "description": "Used with bundles. Also take part in collection filter.",
+      "type": {
+        "name": "metaobject_reference",
+        "category": "REFERENCE"
+      }
+    },
+    {
+      "key": "color_array",
+      "namespace": "prts",
+      "name": "Color Array",
+      "description": "Used in filter and on product page. (possible to add many colors for bundles)",
+      "type": {
+        "name": "list.metaobject_reference",
+        "category": "REFERENCE"
+      }
+    },
+    {
+      "key": "complex_bundle",
+      "namespace": "prts",
+      "name": "Bundle",
+      "description": "Custom bundle functionality",
+      "type": {
+        "name": "list.metaobject_reference",
+        "category": "REFERENCE"
+      }
+    },
+    {
+      "key": "product_type",
+      "namespace": "prts",
+      "name": "Product Type",
+      "description": "Used in collection filter",
+      "type": {
+        "name": "metaobject_reference",
+        "category": "REFERENCE"
+      }
+    },
+    {
+      "key": "badges",
+      "namespace": "custom",
+      "name": "Badges",
+      "description": "Additional product badges",
+      "type": {
+        "name": "list.single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "size_chart",
+      "namespace": "prts",
+      "name": "Size chart",
+      "description": "Product size chart. If empty - button is hidden on product page.",
+      "type": {
+        "name": "metaobject_reference",
+        "category": "REFERENCE"
+      }
+    },
+    {
+      "key": "features",
+      "namespace": "prts",
+      "name": "Features",
+      "description": "Collapsible tabs on product page.",
+      "type": {
+        "name": "metaobject_reference",
+        "category": "REFERENCE"
+      }
+    },
+    {
+      "key": "th_images",
+      "namespace": "prts",
+      "name": "3 Images",
+      "description": "Used in 3-images section",
+      "type": {
+        "name": "list.metaobject_reference",
+        "category": "REFERENCE"
+      }
+    },
+    {
+      "key": "ucg_videos",
+      "namespace": "prts",
+      "name": "UCG Videos",
+      "description": "Used for product stories block",
+      "type": {
+        "name": "list.metaobject_reference",
+        "category": "REFERENCE"
+      }
+    },
+    {
+      "key": "custom_product",
+      "namespace": "mm-google-shopping",
+      "name": "Google: Custom Product",
+      "description": "Use to indicate whether or not the unique product identifiers (UPIs) GTIN, MPN, and brand are available for your product.",
+      "type": {
+        "name": "boolean",
+        "category": "TRUE_FALSE"
+      }
+    },
+    {
+      "key": "rating",
+      "namespace": "reviews",
+      "name": "Product rating",
+      "description": "Average rating from customers",
+      "type": {
+        "name": "rating",
+        "category": "RATING"
+      }
+    },
+    {
+      "key": "rating_count",
+      "namespace": "reviews",
+      "name": "Product rating count",
+      "description": "Total number of ratings from customers",
+      "type": {
+        "name": "number_integer",
+        "category": "NUMBER"
+      }
+    },
+    {
+      "key": "color-pattern",
+      "namespace": "shopify",
+      "name": "Color",
+      "description": "Defines the primary color or pattern, such as blue or striped",
+      "type": {
+        "name": "list.metaobject_reference",
+        "category": "REFERENCE"
+      }
+    },
+    {
+      "key": "size",
+      "namespace": "shopify",
+      "name": "Size",
+      "description": "Used to specify the size of a product, such as 0-3 months or Extra large (XL)",
+      "type": {
+        "name": "list.metaobject_reference",
+        "category": "REFERENCE"
+      }
+    },
+    {
+      "key": "hide_length_meter",
+      "namespace": "custom",
+      "name": "Hide length meter",
+      "description": "",
+      "type": {
+        "name": "boolean",
+        "category": "TRUE_FALSE"
+      }
+    },
+    {
+      "key": "age-group",
+      "namespace": "shopify",
+      "name": "Age group",
+      "description": "Defines the target age range for a product, such as adults or kids",
+      "type": {
+        "name": "list.metaobject_reference",
+        "category": "REFERENCE"
+      }
+    },
+    {
+      "key": "fabric",
+      "namespace": "shopify",
+      "name": "Fabric",
+      "description": "Identifies the type of fabric used in a product, for example, cotton or denim",
+      "type": {
+        "name": "list.metaobject_reference",
+        "category": "REFERENCE"
+      }
+    },
+    {
+      "key": "neckline",
+      "namespace": "shopify",
+      "name": "Neckline",
+      "description": "Used to describe the neck shape of a garment, such as V-neck or boat",
+      "type": {
+        "name": "list.metaobject_reference",
+        "category": "REFERENCE"
+      }
+    },
+    {
+      "key": "target-gender",
+      "namespace": "shopify",
+      "name": "Target gender",
+      "description": "Identifies the intended gender for a product, such as female, male or unisex",
+      "type": {
+        "name": "list.metaobject_reference",
+        "category": "REFERENCE"
+      }
+    },
+    {
+      "key": "top-length-type",
+      "namespace": "shopify",
+      "name": "Top length type",
+      "description": "Defines the length of tops or shirts, like crop top or long",
+      "type": {
+        "name": "list.metaobject_reference",
+        "category": "REFERENCE"
+      }
+    },
+    {
+      "key": "product_video",
+      "namespace": "custom",
+      "name": "Video",
+      "description": "Product Video (MOV and MP4)",
+      "type": {
+        "name": "file_reference",
+        "category": "REFERENCE"
+      }
+    },
+    {
+      "key": "right_badge",
+      "namespace": "custom",
+      "name": "Right Badge",
+      "description": "Use Text, TextColor, BackgroundColor e.g New, #FFFFFF, #FF0000",
+      "type": {
+        "name": "single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "model_height",
+      "namespace": "custom",
+      "name": "Model height",
+      "description": "",
+      "type": {
+        "name": "single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "single_product_related_to_pack",
+      "namespace": "custom",
+      "name": "Single Product Related To Pack",
+      "description": "",
+      "type": {
+        "name": "product_reference",
+        "category": "REFERENCE"
+      }
+    },
+    {
+      "key": "related_pack_products",
+      "namespace": "custom",
+      "name": "Related Pack Products",
+      "description": "",
+      "type": {
+        "name": "list.product_reference",
+        "category": "REFERENCE"
+      }
+    },
+    {
+      "key": "sleeve-length-type",
+      "namespace": "shopify",
+      "name": "Sleeve length type",
+      "description": "Specifies the style of sleeves on clothing items, such as short or sleeveless",
+      "type": {
+        "name": "list.metaobject_reference",
+        "category": "REFERENCE"
+      }
+    },
+    {
+      "key": "clothing-features",
+      "namespace": "shopify",
+      "name": "Clothing features",
+      "description": "Describes unique properties of apparel, such as water resistant or wrinkle resistant",
+      "type": {
+        "name": "list.metaobject_reference",
+        "category": "REFERENCE"
+      }
+    },
+    {
+      "key": "extra_data",
+      "namespace": "bundly",
+      "name": "Bundly Extra Data",
+      "description": "Extra data to display on the bundle page",
+      "type": {
+        "name": "multi_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "activity",
+      "namespace": "shopify",
+      "name": "Activity",
+      "description": "Specifies the sport or activity the product is designed for, such as tennis or pilates",
+      "type": {
+        "name": "list.metaobject_reference",
+        "category": "REFERENCE"
+      }
+    },
+    {
+      "key": "activewear-clothing-features",
+      "namespace": "shopify",
+      "name": "Activewear clothing features",
+      "description": "Identifies unique characteristics of activewear, such as four-way stretch or breathable design",
+      "type": {
+        "name": "list.metaobject_reference",
+        "category": "REFERENCE"
+      }
+    },
+    {
+      "key": "waist-rise",
+      "namespace": "shopify",
+      "name": "Waist rise",
+      "description": "Indicates where on the waist a garment sits, like low, medium or high",
+      "type": {
+        "name": "list.metaobject_reference",
+        "category": "REFERENCE"
+      }
+    },
+    {
+      "key": "pants-length-type",
+      "namespace": "shopify",
+      "name": "Pants length type",
+      "description": "Used to defines the length of pants, such as cropped or long",
+      "type": {
+        "name": "list.metaobject_reference",
+        "category": "REFERENCE"
+      }
+    },
+    {
+      "key": "find_your_size",
+      "namespace": "custom",
+      "name": "Find Your Size + How to Measure",
+      "description": "",
+      "type": {
+        "name": "metaobject_reference",
+        "category": "REFERENCE"
+      }
+    },
+    {
+      "key": "breadcrumb_parent",
+      "namespace": "custom",
+      "name": "Breadcrumb Parent",
+      "description": "",
+      "type": {
+        "name": "collection_reference",
+        "category": "REFERENCE"
+      }
+    },
+    {
+      "key": "pdp_multi_column_show",
+      "namespace": "custom",
+      "name": "PDP Multi Column Show",
+      "description": "",
+      "type": {
+        "name": "boolean",
+        "category": "TRUE_FALSE"
+      }
+    },
+    {
+      "key": "on_sale",
+      "namespace": "custom",
+      "name": "On Sale",
+      "description": "",
+      "type": {
+        "name": "boolean",
+        "category": "TRUE_FALSE"
+      }
+    },
+    {
+      "key": "right_badge_option",
+      "namespace": "custom",
+      "name": "Right Badge",
+      "description": "",
+      "type": {
+        "name": "metaobject_reference",
+        "category": "REFERENCE"
+      }
+    }
+  ],
+  "variant": [
+    {
+      "key": "hidden",
+      "namespace": "seo",
+      "name": "Hide from sitemap",
+      "description": "",
+      "type": {
+        "name": "number_integer",
+        "category": "NUMBER"
+      }
+    },
+    {
+      "key": "age_group",
+      "namespace": "mm-google-shopping",
+      "name": "Google: Age Group",
+      "description": "The demographic for which your product is intended.",
+      "type": {
+        "name": "single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "condition",
+      "namespace": "mm-google-shopping",
+      "name": "Google: Condition",
+      "description": "The condition of your product at time of sale.",
+      "type": {
+        "name": "single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "gender",
+      "namespace": "mm-google-shopping",
+      "name": "Google: Gender",
+      "description": "The gender for which your product is intended.",
+      "type": {
+        "name": "single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "mpn",
+      "namespace": "mm-google-shopping",
+      "name": "Google: MPN",
+      "description": "Your product’s Manufacturer Part Number (MPN).",
+      "type": {
+        "name": "single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "size_type",
+      "namespace": "mm-google-shopping",
+      "name": "Google: Size Type",
+      "description": "Your apparel product’s cut.",
+      "type": {
+        "name": "single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "size_system",
+      "namespace": "mm-google-shopping",
+      "name": "Google: Size System",
+      "description": "The country of the size system used by your product.",
+      "type": {
+        "name": "single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "custom_label_0",
+      "namespace": "mm-google-shopping",
+      "name": "Google: Custom Label 0",
+      "description": "Label that you assign to a product to help organize bidding and reporting in Shopping campaigns.",
+      "type": {
+        "name": "single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "custom_label_1",
+      "namespace": "mm-google-shopping",
+      "name": "Google: Custom Label 1",
+      "description": "Label that you assign to a product to help organize bidding and reporting in Shopping campaigns.",
+      "type": {
+        "name": "single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "custom_label_2",
+      "namespace": "mm-google-shopping",
+      "name": "Google: Custom Label 2",
+      "description": "Label that you assign to a product to help organize bidding and reporting in Shopping campaigns.",
+      "type": {
+        "name": "single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "custom_label_3",
+      "namespace": "mm-google-shopping",
+      "name": "Google: Custom Label 3",
+      "description": "Label that you assign to a product to help organize bidding and reporting in Shopping campaigns.",
+      "type": {
+        "name": "single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "custom_label_4",
+      "namespace": "mm-google-shopping",
+      "name": "Google: Custom Label 4",
+      "description": "Label that you assign to a product to help organize bidding and reporting in Shopping campaigns.",
+      "type": {
+        "name": "single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "product_images",
+      "namespace": "custom",
+      "name": "Product Images",
+      "description": "",
+      "type": {
+        "name": "list.file_reference",
+        "category": "REFERENCE"
+      }
+    },
+    {
+      "key": "product_images_variants",
+      "namespace": "custom",
+      "name": "Product Images Variants",
+      "description": "",
+      "type": {
+        "name": "metaobject_reference",
+        "category": "REFERENCE"
+      }
+    }
+  ],
+  "shop": [
+    {
+      "key": "protectionProduct",
+      "namespace": "SavedBy",
+      "name": "SavedBy - Protection Product",
+      "description": null,
+      "type": {
+        "name": "product_reference",
+        "category": "REFERENCE"
+      }
+    },
+    {
+      "key": "status",
+      "namespace": "SavedBy",
+      "name": "SavedBy - Status",
+      "description": null,
+      "type": {
+        "name": "single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "subMap",
+      "namespace": "SavedBy",
+      "name": "SavedBy - Sub Map",
+      "description": null,
+      "type": {
+        "name": "json",
+        "category": "JSON"
+      }
+    },
+    {
+      "key": "exchangeRate",
+      "namespace": "SavedBy",
+      "name": "SavedBy - Exchange Rate",
+      "description": null,
+      "type": {
+        "name": "money",
+        "category": "MONEY"
+      }
+    },
+    {
+      "key": "widgetConfig",
+      "namespace": "SavedBy",
+      "name": "SavedBy - Widget Config",
+      "description": null,
+      "type": {
+        "name": "json",
+        "category": "JSON"
+      }
+    },
+    {
+      "key": "show_store_widget_app_embed_block",
+      "namespace": "mm_google_shopping_extension",
+      "name": "Google: Show Store Widget App Embed Block",
+      "description": "Indicates if the store widget app embed block should be shown.",
+      "type": {
+        "name": "boolean",
+        "category": "TRUE_FALSE"
+      }
+    },
+    {
+      "key": "merchant_id",
+      "namespace": "mm_google_shopping_extension",
+      "name": "Google: Merchant ID",
+      "description": "Currently Linked Merchant Center ID",
+      "type": {
+        "name": "single_line_text_field",
+        "category": "TEXT"
+      }
+    }
+  ]
+}
