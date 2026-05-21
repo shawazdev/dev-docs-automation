@@ -1,0 +1,294 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "current": {
+    "page_width": 1320,
+    "section_vertical_spacing": "xsmall",
+    "section_boxed_horizontal_spacing": "xsmall",
+    "button_border_radius": 60,
+    "input_border_radius": 8,
+    "block_border_radius": 24,
+    "block_shadow_opacity": 10,
+    "block_shadow_vertical_offset": 18,
+    "icon_stroke_width": 2,
+    "button_style": "fill",
+    "button_hover_effect": "fade",
+    "background": "#ffffff",
+    "text_color": "#273125",
+    "success_color": "#00a341",
+    "warning_color": "#ffb74a",
+    "error_color": "#f83a3a",
+    "header_background": "#ffffff",
+    "header_text_color": "#052B1B",
+    "footer_background": "#052B1B",
+    "footer_text_color": "#ffffff",
+    "primary_button_background": "#052B1B",
+    "primary_button_text_color": "#ffffff",
+    "secondary_button_background": "#c0c5c8",
+    "secondary_button_text_color": "#ffffff",
+    "product_card_text_color": "#052B1B",
+    "product_on_sale_accent": "#a91a1a",
+    "product_sold_out_badge_background": "#000000",
+    "product_primary_badge_background": "#052B1B",
+    "heading_font": "univers_next_n7",
+    "heading_font_size": "large",
+    "heading_text_transform": "normal",
+    "heading_letter_spacing": 0,
+    "text_font": "roboto_n4",
+    "text_font_size_desktop": 16,
+    "currency_code_enabled": false,
+    "show_page_transition": true,
+    "heading_apparition": "none",
+    "color_swatch_style": "round",
+    "color_swatch_config": "Heather Charcoal:#565656\nNavy Blazer:#1D2A50\nDark Red:#61373F\nHeather Gray:#C2C3C6\nSpartan Green:#35463D\nArmy Green:#545144\nWashed Black:#39373B\nTobacco:#704214\nMidnight: #353A4C\nSmoke: #C4C6C8\nGray: #BABCC0\nWhite: #FAF9F6\nCement: #BABCC0\nDesert Taupe: #8D7E71\nCali Wine Plaid: SZT11_CALI_WINE_PLAID_08.jpg\nBlack Heather Twill: SZT11_BLACK_HEATHER_TWILL_06.jpg\nGray/Navy: SZT14_BG_SWATCH.jpg\nIron Gray: #4E5055\nSilver Gray: #C6BFB8\nCrown Blue: #535D94\nSlate Blue: #52566C\nCrimson Red: #A53636\nOlive: #6E6E5C\nDesert: #B8B0A1\nStorm Blue: #144364\nGraphite: #3B3B48",
+    "show_vendor": false,
+    "show_product_rating": false,
+    "discount_mode": "percentage",
+    "product_color_display": "smart",
+    "product_image_aspect_ratio": "tall_crop",
+    "product_info_alignment": "start",
+    "cart_type": "drawer",
+    "cart_icon": "shopping_cart",
+    "cart_show_free_shipping_threshold": false,
+    "cart_free_shipping_threshold": 60,
+    "favicon": "shopify://shop_images/Strongsize-Avatar-Green.png",
+    "checkout_logo_image": "shopify://shop_images/strongsize-logo.png",
+    "checkout_logo_size": "small",
+    "checkout_body_background_color": "#fff",
+    "checkout_sidebar_background_color": "#f5f5f5",
+    "checkout_accent_color": "#052B1B",
+    "checkout_button_color": "#1a1a1a",
+    "content_for_index": [],
+    "blocks": {
+      "5888675206956468567": {
+        "type": "shopify://apps/loop-returns-exchanges/blocks/onstore/e32ccd84-40d6-4b16-98bf-b6b9da010afd",
+        "disabled": false,
+        "settings": {
+          "show-onstore-bar": false,
+          "api-key": "test-key",
+          "checkout-selector": "#checkout",
+          "replace-checkout-button": false,
+          "preserve-cart": false,
+          "available-credit-bar-label": "in available credit",
+          "bar-value-font-size": "15",
+          "bar-label-font-size": "10",
+          "bar-button-font-size": "10",
+          "bottom-bar-alignment": "full",
+          "bar-color": "rgb(0,0,0)",
+          "bar-text-color": "rgb(255,255,255)",
+          "bump-side-cart": false,
+          "side-cart-selector": ".sidecart"
+        }
+      },
+      "855628211100114053": {
+        "type": "shopify://apps/klaviyo-email-marketing-sms/blocks/klaviyo-onsite-embed/2632fe16-c075-4321-a88b-50b567f42507",
+        "disabled": false,
+        "settings": {}
+      },
+      "733389323033596483": {
+        "type": "shopify://apps/okendo/blocks/theme-settings/bb689e69-ea70-4661-8fb7-ad24a2e23c29",
+        "disabled": false,
+        "settings": {
+          "show_preview_data": true
+        }
+      },
+      "9005256451184024879": {
+        "type": "shopify://apps/uppromote-affiliate/blocks/customer-referral/64c32457-930d-4cb9-9641-e24c0d9cf1f4",
+        "disabled": false,
+        "settings": {}
+      },
+      "17676059084223943535": {
+        "type": "shopify://apps/triplewhale/blocks/triple_pixel_snippet/483d496b-3f1a-4609-aea7-8eee3b6b7a2a",
+        "disabled": false,
+        "settings": {}
+      },
+      "1232542678405107163": {
+        "type": "shopify://apps/instafeed/blocks/head-block/c447db20-095d-4a10-9725-b5977662c9d5",
+        "disabled": false,
+        "settings": {}
+      },
+      "11567226959186545843": {
+        "type": "shopify://apps/savedby-package-protection/blocks/savedby-storefront-widget/6d4bce9c-696c-4f95-8a15-0cc2b2b9e839",
+        "disabled": false,
+        "settings": {
+          "hideSubtotal": true,
+          "showCartTotal": true,
+          "showCompareAtPrice": false,
+          "showInlineCartButton": false,
+          "swapButtonOrder": false,
+          "parentMarginBottom": 4,
+          "infoIconUrl": "https://cdn.savedby.io/logos/savedby/SavedByLogo-small.png",
+          "infoBGColor": "#f5f5f5",
+          "infoTextColor": "#000000",
+          "infoVariant": "SIMPLE",
+          "continueTextColor": "#000000",
+          "continueFontSize": 15,
+          "disclaimerLocation": "bottom",
+          "disclaimer": "",
+          "customCheckoutSelector": "",
+          "customCSS": ":host([data-path=\"/cart\"]) div.sb__info-container {\nborder-radius: 26px;\n}\n\n:host([data-path=\"/cart\"]) div.sb__info-wrapper {\nmargin-top: 0;\n}",
+          "customJS": "document.head.insertAdjacentHTML(\n\t\"beforeend\",\n\t`\n<style>\nbutton#mu-checkout-button {\nmargin: 0 !important;\n}\n\ndiv#monster-cart-wrapper,\ndiv#monster-upsell-cart div:first-of-type {\nz-index: 2147483646;\n}\n</style>\n`\n);\n\nSavedBy.onCheckout((cart) => {\n\tconst noteElm = document.querySelector(\"div.cart [name='note']\") || document.querySelector(\"[name='note']\");\n\tconst noteValue = noteElm.value;\n\tif (noteValue) {\n\t\tcart.note = noteValue;\n\t}\n\treturn cart;\n});",
+          "popupOverride": ""
+        }
+      },
+      "10312807297210203588": {
+        "type": "shopify://apps/aftersell-by-rokt/blocks/utm-triggers/509ec35d-0632-4dfc-a105-fa799cd9d149",
+        "disabled": true,
+        "settings": {}
+      },
+      "14952540001915115444": {
+        "type": "shopify://apps/upcart-cart-drawer/blocks/app-embed/af3da5fb-f5f7-40ec-8273-41bf50059d4b",
+        "disabled": false,
+        "settings": {}
+      },
+      "10840395464443086010": {
+        "type": "shopify://apps/alia/blocks/customer-app-frame/51f1d398-3e41-44da-b81e-defd5804b292",
+        "disabled": false,
+        "settings": {}
+      },
+      "17215572860364850269": {
+        "type": "shopify://apps/bundly/blocks/embed/1cabc354-c7f9-42e9-8322-7655396b33b7",
+        "disabled": false,
+        "settings": {
+          "collection_pages_bundle_prices": false,
+          "collection_pages_bundle_quick_buy_buttons": false,
+          "cart_pages_bundle_price_before_discount": false
+        }
+      },
+      "15683396631634586217": {
+        "type": "shopify://apps/inbox/blocks/chat/841fc607-4181-4ad1-842d-e24d7f8bad6b",
+        "disabled": true,
+        "settings": {
+          "button_color": "#052b1b",
+          "secondary_color": "#ffffff",
+          "ternary_color": "#6a6a6a",
+          "button_icon": "chat_bubble",
+          "button_text": "no_text",
+          "button_horizontal_position": "bottom_right",
+          "button_vertical_position": "lowest",
+          "greeting_message": "Hey there — got a question? We’ve got you covered."
+        }
+      },
+      "2786716548061469553": {
+        "type": "shopify://apps/axon/blocks/app-embed/baa0f014-62ea-462f-a8aa-a94befb1cbad",
+        "disabled": false,
+        "settings": {}
+      },
+      "18356332299842544250": {
+        "type": "shopify://apps/b4b-variants-products/blocks/variable_init/4b5ec290-6de8-4c3d-b99f-b8721f30ea87",
+        "disabled": false,
+        "settings": {}
+      },
+      "pagefly-page-builder": {
+        "type": "shopify://apps/pagefly-page-builder/blocks/app-embed/83e179f7-59a0-4589-8c66-c0dddf959200",
+        "disabled": false,
+        "settings": {}
+      }
+    }
+  },
+  "presets": {
+    "Sound": {
+      "section_vertical_spacing": "medium",
+      "button_border_radius": 60,
+      "input_border_radius": 8,
+      "block_border_radius": 24,
+      "block_shadow_opacity": 10,
+      "block_shadow_vertical_offset": 18,
+      "background": "#f0f0f0",
+      "text_color": "#1a1a1a",
+      "header_background": "#f0f0f0",
+      "header_text_color": "#1a1a1a",
+      "footer_background": "#ffffff",
+      "footer_text_color": "#1a1a1a",
+      "primary_button_background": "#1a1a1a",
+      "primary_button_text_color": "#ffffff",
+      "secondary_button_background": "#f0c417",
+      "secondary_button_text_color": "#1a1a1a",
+      "product_card_text_color": "#1a1a1a",
+      "product_primary_badge_background": "#803cee",
+      "heading_font": "din_next_n7",
+      "heading_font_size": "large",
+      "heading_letter_spacing": -2,
+      "text_font": "din_next_n4",
+      "show_page_transition": true,
+      "cart_icon": "shopping_basket",
+      "heading_apparition": "split_fade",
+      "product_color_display": "swatch",
+      "product_info_alignment": "start",
+      "checkout_accent_color": "#f0c417",
+      "checkout_button_color": "#1a1a1a"
+    },
+    "Home": {
+      "section_vertical_spacing": "medium",
+      "section_boxed_horizontal_spacing": "large",
+      "button_hover_effect": "reverse",
+      "background": "#ffffff",
+      "text_color": "#272727",
+      "success_color": "#708a5c",
+      "warning_color": "#e37e16",
+      "error_color": "#aa2826",
+      "header_background": "#ffffff",
+      "header_text_color": "#272727",
+      "footer_background": "#f2f2f2",
+      "footer_text_color": "#272727",
+      "primary_button_background": "#272727",
+      "primary_button_text_color": "#ffffff",
+      "secondary_button_background": "#3c619e",
+      "secondary_button_text_color": "#ffffff",
+      "product_card_text_color": "#272727",
+      "product_on_sale_accent": "#e34f4f",
+      "product_sold_out_badge_background": "#bebdb9",
+      "product_primary_badge_background": "#3c619e",
+      "heading_font": "futura_n7",
+      "heading_font_size": "large",
+      "heading_text_transform": "normal",
+      "heading_letter_spacing": -1,
+      "text_font": "futura_n4",
+      "cart_icon": "shopping_basket",
+      "heading_apparition": "split_rotation",
+      "color_swatch_style": "rectangle",
+      "product_color_display": "swatch",
+      "cart_type": "drawer",
+      "checkout_body_background_color": "#f2f2f2",
+      "checkout_sidebar_background_color": "#ffffff",
+      "checkout_accent_color": "#3c619e",
+      "checkout_button_color": "#3c619e"
+    },
+    "Shape": {
+      "page_width": 1440,
+      "section_vertical_spacing": "small",
+      "section_boxed_horizontal_spacing": "medium",
+      "button_border_radius": 60,
+      "input_border_radius": 8,
+      "block_border_radius": 20,
+      "icon_stroke_width": 1.5,
+      "button_style": "fill",
+      "button_hover_effect": "reverse",
+      "text_color": "#2a555a",
+      "header_background": "#ffffff",
+      "header_text_color": "#2a555a",
+      "footer_background": "#f7f7f7",
+      "footer_text_color": "#2a555a",
+      "primary_button_background": "#2a555a",
+      "primary_button_text_color": "#ffffff",
+      "secondary_button_background": "#d9967e",
+      "product_card_text_color": "#2a555a",
+      "cart_icon": "tote_bag",
+      "heading_font": "itc_berkeley_old_style_n4",
+      "heading_font_size": "large",
+      "heading_text_transform": "normal",
+      "heading_letter_spacing": -1,
+      "text_font": "muli_n4",
+      "text_font_size_desktop": 15,
+      "product_color_display": "swatch",
+      "product_info_alignment": "center"
+    }
+  }
+}

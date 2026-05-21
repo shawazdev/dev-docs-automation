@@ -1,0 +1,31 @@
+<div class="wd-wrapper">
+  {%- if section.settings.image -%}
+    <div class="image">
+      {{ section.settings.image | image_url: width: 1320 | image_tag }}
+    </div>
+    <button class="wd-slide">
+      {%- render 'icon', icon: 'chevron-right' -%}
+    </button>
+  {%- endif -%}
+</div>
+{% schema %}
+  {
+    "name": "WD Image",
+    "tag": "section",
+    "class": "wd-image-solo",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Image"
+      }
+    ],
+    "presets": [
+      {
+        "name": "WD Image",
+        "settings": {
+        }
+      }
+    ]
+  }
+{% endschema %}

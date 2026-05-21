@@ -1,0 +1,120 @@
+{%- comment -%}
+Optimized Social Meta Tags
+Prevents duplicate meta descriptions and removes fallback text.
+Outputs OG + Twitter tags ONLY when unique content exists.
+{%- endcomment -%}
+
+{%- comment -%}
+---------------------------------------
+CUSTOM SEO OVERRIDE — /collections PAGE
+---------------------------------------
+{%- endcomment -%}
+
+{% if request.page_type == 'list-collections' %}
+
+  <title>Men’s Big & Tall Clothing Collections | Strongsize</title>
+  <meta name="description" content="Shop all Strongsize collections including tees, tanks, long sleeves, and more designed for the perfect big & tall fit.">
+  <link rel="canonical" href="{{ shop.url }}/collections">
+
+  <meta property="og:title" content="Men’s Big & Tall Clothing Collections | Strongsize">
+  <meta property="og:description" content="Shop all Strongsize collections including tees, tanks, long sleeves, and more designed for the perfect big & tall fit.">
+  <meta property="og:url" content="{{ shop.url }}/collections">
+
+  <meta name="twitter:title" content="Men’s Big & Tall Clothing Collections | Strongsize">
+  <meta name="twitter:description" content="Shop all Strongsize collections including tees, tanks, long sleeves, and more designed for the perfect big & tall fit.">
+
+  {% if page_image %}
+    <meta property="og:image" content="https:{{ page_image | image_url: width: 2048 }}">
+    <meta name="twitter:image" content="https:{{ page_image | image_url: width: 1200, height: 1200, crop: 'center' }}">
+  {% endif %}
+
+  {% assign skip_default_seo = true %}
+{% endif %}
+
+{%- unless skip_default_seo -%}
+
+{%- comment -%}
+------------------------------
+OPEN GRAPH (Facebook, Pinterest)
+------------------------------
+{%- endcomment -%}
+
+{% case request.page_type %}
+
+  {% when 'product' %}
+    <meta property="og:type" content="product">
+    <meta property="og:title" content="{{ product.title | strip_html | escape }}">
+    <meta property="product:price:amount" content="{{ product.selected_or_first_available_variant.price | money_without_currency | escape }}">
+    <meta property="product:price:currency" content="{{ cart.currency.iso_code }}">
+
+  {% when 'article' %}
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="{{ article.title | strip_html | escape }}">
+
+  {% when 'collection' %}
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="{{ collection.title | strip_html | escape }}">
+
+  {% else %}
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="{{ page_title | escape }}">
+
+{% endcase %}
+
+{%- if page_image -%}
+  <meta property="og:image" content="https:{{ page_image | image_url: width: 2048 }}">
+  <meta property="og:image:secure_url" content="https:{{ page_image | image_url: width: 2048 }}">
+  <meta property="og:image:width" content="{{ page_image.width }}">
+  <meta property="og:image:height" content="{{ page_image.height }}">
+{%- endif -%}
+
+{%- if page_description and page_description != blank -%}
+  <meta property="og:description" content="{{ page_description | escape }}">
+{%- endif -%}
+
+<meta property="og:site_name" content="{{ shop.name | escape }}">
+
+{%- comment -%}
+------------------------------
+TWITTER CARDS
+------------------------------
+No fallback text. Output only if true description exists.
+------------------------------
+{%- endcomment -%}
+
+<meta name="twitter:card" content="summary">
+
+{% case request.page_type %}
+
+  {% when 'product' %}
+    <meta name="twitter:title" content="{{ product.title | escape }}">
+    {% if product.description != blank %}
+      <meta name="twitter:description" content="{{ product.description | strip_html | truncatewords: 40 | escape }}">
+    {% endif %}
+
+  {% when 'article' %}
+    <meta name="twitter:title" content="{{ article.title | escape }}">
+    {% if article.excerpt_or_content != blank %}
+      <meta name="twitter:description" content="{{ article.excerpt_or_content | strip_html | truncatewords: 40 | escape }}">
+    {% endif %}
+
+  {% when 'collection' %}
+    <meta name="twitter:title" content="{{ collection.title | escape }}">
+    {% if collection.description != blank %}
+      <meta name="twitter:description" content="{{ collection.description | strip_html | truncatewords: 40 | escape }}">
+    {% endif %}
+
+  {% else %}
+    <meta name="twitter:title" content="{{ page_title | escape }}">
+    {% if page_description != blank %}
+      <meta name="twitter:description" content="{{ page_description | escape }}">
+    {% endif %}
+
+{% endcase %}
+
+{%- if page_image -%}
+  <meta name="twitter:image" content="https:{{ page_image | image_url: width: 1200, height: 1200, crop: 'center' }}">
+  <meta name="twitter:image:alt" content="{{ page_image.alt | escape }}">
+{%- endif -%}
+
+{%- endunless -%}

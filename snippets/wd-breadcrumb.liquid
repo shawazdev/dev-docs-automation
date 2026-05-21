@@ -1,0 +1,120 @@
+{%- comment -%}
+  Breadcrumb snippet — Metafield-based hierarchy
+  Impact 4.7.1 — Strongsize
+  Updated: Hybrid collection approach
+    - On product pages: uses the collection the customer navigated through (collection object)
+    - Falls back to custom.breadcrumb_parent metafield if no referral collection is present
+    - On collection pages: uses the current collection as before
+{%- endcomment -%}
+
+{%- liquid
+  assign max_depth = 6
+
+  if current_product != blank
+    comment
+      HYBRID LOGIC: prefer the live referral collection (set when product is
+      accessed via /collections/X/products/Y), fall back to the metafield.
+    endcomment
+    if collection != blank
+      assign start_collection = collection
+    elsif current_product.metafields.custom.breadcrumb_parent != blank
+      assign start_collection = current_product.metafields.custom.breadcrumb_parent.value
+    endif
+
+    assign current_label = current_product.title
+    assign current_url   = current_product.url
+
+  elsif current_collection != blank
+    assign start_collection = current_collection
+    assign current_label    = current_collection.title
+    assign current_url      = current_collection.url
+  endif
+-%}
+
+{%- if current_label != blank -%}
+
+  {%- comment -%} Build ancestor array by walking up the metafield chain {%- endcomment -%}
+  {%- assign bc_handles = "" -%}
+  {%- assign walker = start_collection -%}
+
+  {%- for i in (1..max_depth) -%}
+    {%- if walker == blank -%}{%- break -%}{%- endif -%}
+
+    {%- if bc_handles == "" -%}
+      {%- assign bc_handles = walker.handle -%}
+    {%- else -%}
+      {%- assign bc_handles = walker.handle | append: "|" | append: bc_handles -%}
+    {%- endif -%}
+
+    {%- assign parent = walker.metafields.custom.breadcrumb_parent.value -%}
+    {%- if parent == blank -%}{%- break -%}{%- endif -%}
+    {%- assign walker = parent -%}
+  {%- endfor -%}
+
+  {%- assign bc_items = bc_handles | split: "|" -%}
+
+  {%- comment -%} ── VISUAL BREADCRUMB ── {%- endcomment -%}
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol class="breadcrumb__list">
+
+      <li class="breadcrumb__item">
+        <a class="breadcrumb__link" href="{{ routes.root_url }}">
+          <span>Home</span>
+        </a>
+      </li>
+
+      {%- for handle in bc_items -%}
+        {%- assign anc = collections[handle] -%}
+        {%- if anc == blank -%}{%- continue -%}{%- endif -%}
+        {%- if current_collection != blank and handle == current_collection.handle -%}{%- continue -%}{%- endif -%}
+
+        <li class="breadcrumb__item">
+          <a class="breadcrumb__link" href="{{ anc.url }}">
+            <span>{{ anc.title | escape }}</span>
+          </a>
+        </li>
+      {%- endfor -%}
+
+      <li class="breadcrumb__item breadcrumb__item--current" aria-current="page">
+        <span class="breadcrumb__current">{{ current_label | escape }}</span>
+      </li>
+
+    </ol>
+  </nav>
+
+  {%- comment -%} ── JSON-LD — Google Rich Results ── {%- endcomment -%}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "{{ shop.url }}"
+      }
+      {%- assign json_pos = 2 -%}
+      {%- for handle in bc_items -%}
+        {%- assign anc = collections[handle] -%}
+        {%- if anc == blank -%}{%- continue -%}{%- endif -%}
+        {%- if current_collection != blank and handle == current_collection.handle -%}{%- continue -%}{%- endif -%}
+      ,{
+        "@type": "ListItem",
+        "position": {{ json_pos }},
+        "name": {{ anc.title | json }},
+        "item": "{{ shop.url }}{{ anc.url }}"
+      }
+        {%- assign json_pos = json_pos | plus: 1 -%}
+      {%- endfor -%}
+      ,{
+        "@type": "ListItem",
+        "position": {{ json_pos }},
+        "name": {{ current_label | json }},
+        "item": "{{ shop.url }}{{ current_url }}"
+      }
+    ]
+  }
+  </script>
+
+{%- endif -%}

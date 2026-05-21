@@ -1,0 +1,44 @@
+{%- assign ss = section.settings -%}
+<div {% render 'section-properties' %}>
+  {%- if ss.title -%}
+    <h2 class="title">{{ ss.title }}</h2>
+  {%- endif -%}
+  {%- if ss.link_text -%}
+    <a href="{{ ss.link_url }}" class="wd-button">
+      {%- render 'icon', icon: 'instagram' -%}
+      {{ ss.link_text }}
+    </a>
+  {%- endif -%}
+</div>
+
+{% schema %}
+  {
+    "name": "WD Title & Button",
+    "tag": "section",
+    "class": "wd-title-button",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title"
+      },
+      {
+        "type": "text",
+        "id": "link_text",
+        "label": "Link text"
+      },
+      {
+        "type": "url",
+        "id": "link_url",
+        "label": "Link url"
+      }
+    ],
+    "presets": [
+      {
+        "name": "WD Title & Button",
+        "settings": {
+        }
+      }
+    ]
+  }
+{% endschema %}

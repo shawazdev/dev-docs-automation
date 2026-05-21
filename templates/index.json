@@ -1,0 +1,792 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "wd_slideshow_paiwtn": {
+      "type": "wd-slideshow",
+      "blocks": {
+        "image_Le6Uxt": {
+          "type": "image",
+          "disabled": true,
+          "settings": {
+            "image": "shopify://shop_images/STRONGSIZE_FW25_ECOMM7326-Extended.jpg",
+            "mobile_image": "shopify://shop_images/October_30_2025_-_Mobile.jpg",
+            "content_max_width": 1200,
+            "mobile_text_position": "place-self-center text-center",
+            "desktop_text_position": "sm:place-self-end-start sm:text-start",
+            "mobile_text": true,
+            "uptitle": "The PowerForm™ Collection",
+            "uptitle_tag": "div",
+            "subheading": "Heavyweight comfort that keeps up in cooler weather.",
+            "title": "Built Strong. Made to Move.",
+            "h_tag": "div",
+            "heading_tag": "h0",
+            "button_text": "Shop Hoodie",
+            "button_link": "shopify://products/zip-hoodie-big-and-tall",
+            "button_text2": "Shop Jogger",
+            "button_link2": "shopify://products/jogger-pant-big-and-tall",
+            "text_color": "#ffffff",
+            "button_background": "#ffffff",
+            "button_text_color": "#000000",
+            "overlay_color": "#000000",
+            "overlay_opacity": 25,
+            "background": "",
+            "background_gradient": ""
+          }
+        },
+        "image_qtDmJM": {
+          "type": "image",
+          "disabled": true,
+          "settings": {
+            "image": "shopify://shop_images/STRONGSIZE_FW25_ECOMM7730-Extended.jpg",
+            "mobile_image": "shopify://shop_images/October_30_2025_-_Flannel_-_Mobile.jpg",
+            "content_max_width": 1200,
+            "mobile_text_position": "place-self-center text-center",
+            "desktop_text_position": "sm:place-self-end-start sm:text-start",
+            "mobile_text": true,
+            "uptitle": "The Flannel Sweater Shirt",
+            "uptitle_tag": "div",
+            "subheading": "The Flannel Sweater Shirt blends sweater softness with flannel strength for comfort that lasts.",
+            "title": "Flannel Comfort. Sweater Feel.",
+            "h_tag": "div",
+            "heading_tag": "h0",
+            "button_text": "Shop Now",
+            "button_link": "shopify://products/flannel-sweater-shirt-big-and-tall",
+            "button_text2": "",
+            "button_link2": "",
+            "text_color": "#ffffff",
+            "button_background": "#052b1b",
+            "button_text_color": "#ffffff",
+            "overlay_color": "#000000",
+            "overlay_opacity": 25,
+            "background": "",
+            "background_gradient": ""
+          }
+        },
+        "image_3ddWXD": {
+          "type": "image",
+          "disabled": true,
+          "settings": {
+            "image": "shopify://shop_images/September_2025_-_Desktop.jpg",
+            "mobile_image": "shopify://shop_images/September_2025_-_Mobile.jpg",
+            "content_max_width": 1200,
+            "mobile_text_position": "place-self-center text-center",
+            "desktop_text_position": "sm:place-self-end-start sm:text-start",
+            "mobile_text": true,
+            "uptitle": "Welcome To Strongsize",
+            "uptitle_tag": "div",
+            "subheading": "Built for sizes XL–8XL with better fabric, better fit, and better value. No compromises.",
+            "title": "Big & Tall Clothes That Actually Fit.",
+            "h_tag": "div",
+            "heading_tag": "h0",
+            "button_text": "Shop Best Sellers",
+            "button_link": "shopify://collections/big-tall-shirts-best-sellers",
+            "button_text2": "Shop T-Shirt",
+            "button_link2": "shopify://products/everyday-stretch-crewneck-tee-5-pack-longer-length",
+            "text_color": "#ffffff",
+            "button_background": "#ffffff",
+            "button_text_color": "#000000",
+            "overlay_color": "#000000",
+            "overlay_opacity": 25,
+            "background": "",
+            "background_gradient": ""
+          }
+        },
+        "image_cDzaAX": {
+          "type": "image",
+          "disabled": true,
+          "settings": {
+            "image": "shopify://shop_images/Nov._7_SMSM_-_Desktop_bc5b7d5d-d370-47ec-8284-73e9fa4e25f3.jpg",
+            "mobile_image": "shopify://shop_images/Nov._7_SMSM_-_Mobile_17578811-1050-4145-a8ab-8129258c0ce0.jpg",
+            "content_max_width": 1200,
+            "mobile_text_position": "place-self-center text-center",
+            "desktop_text_position": "sm:place-self-end-start sm:text-start",
+            "mobile_text": true,
+            "uptitle": "",
+            "uptitle_tag": "div",
+            "subheading": "",
+            "title": "",
+            "h_tag": "div",
+            "heading_tag": "h0",
+            "button_text": "",
+            "button_link": "shopify://collections/big-tall-shirts-best-sellers",
+            "button_text2": "",
+            "button_link2": "",
+            "text_color": "#ffffff",
+            "button_background": "#ffffff",
+            "button_text_color": "#000000",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0,
+            "background": "",
+            "background_gradient": ""
+          }
+        },
+        "image_RAk9YU": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/Holiday_Sale_1.png",
+            "mobile_image": "shopify://shop_images/New_Year_New_Gear._1.png",
+            "content_max_width": 1200,
+            "mobile_text_position": "place-self-center text-center",
+            "desktop_text_position": "sm:place-self-end-start sm:text-start",
+            "mobile_text": true,
+            "uptitle": "",
+            "uptitle_tag": "div",
+            "subheading": "",
+            "title": "",
+            "h_tag": "div",
+            "heading_tag": "h0",
+            "button_text": "",
+            "button_link": "shopify://collections/sale",
+            "button_text2": "",
+            "button_link2": "",
+            "text_color": "#ffffff",
+            "button_background": "#ffffff",
+            "button_text_color": "#000000",
+            "overlay_color": "#000000",
+            "overlay_opacity": 0,
+            "background": "",
+            "background_gradient": ""
+          }
+        }
+      },
+      "block_order": [
+        "image_Le6Uxt",
+        "image_qtDmJM",
+        "image_3ddWXD",
+        "image_cDzaAX",
+        "image_RAk9YU"
+      ],
+      "disabled": true,
+      "settings": {
+        "full_width": true,
+        "allow_transparent_header": false,
+        "image_size": "auto",
+        "mobile_full": false,
+        "controls_type": "outline_arrows",
+        "transition_type": "fade",
+        "autoplay": true,
+        "cycle_speed": 6,
+        "background": "#f2f2f2",
+        "background_gradient": ""
+      }
+    },
+    "wd_hero_video_b3RyYh": {
+      "type": "wd-hero-video",
+      "blocks": {
+        "button_mnpf37": {
+          "type": "button",
+          "settings": {
+            "button_type": "secondary_with_icon",
+            "size": "base",
+            "text": "Shop now",
+            "url": "shopify://collections/strongsize-sport"
+          }
+        },
+        "subheading_jmEtDT": {
+          "type": "subheading",
+          "settings": {
+            "text": "Built For All Of It",
+            "font_size": 17,
+            "font_family": "MDSystem-Regular, serif",
+            "font_weight": "400"
+          }
+        },
+        "heading_zHK9pA": {
+          "type": "heading",
+          "settings": {
+            "text": "Strongsize SPORT",
+            "heading_tag": "h1",
+            "font_size": 50,
+            "font_family": "MDSystemNarrow-Medium, sans-serif",
+            "font_weight": "500"
+          }
+        },
+        "richtext_WLRtJp": {
+          "type": "richtext",
+          "settings": {
+            "content": "<p>Performance gear that works as hard as you do. </p>",
+            "font_size": 17,
+            "font_family": "MDSystem-Regular, serif",
+            "font_weight": "400"
+          }
+        }
+      },
+      "block_order": [
+        "button_mnpf37",
+        "subheading_jmEtDT",
+        "heading_zHK9pA",
+        "richtext_WLRtJp"
+      ],
+      "name": "WD Hero Video",
+      "settings": {
+        "full_width": true,
+        "allow_transparent_header": false,
+        "autoplay": true,
+        "video_size": "fill",
+        "content_position": "center",
+        "text_alignment": "center",
+        "video": "shopify://files/videos/Strongsize_Gym_16x9_1080p (no logo, no audio) (1).mp4",
+        "external_video_url": "",
+        "mobile_video": "shopify://files/videos/Strongsize_Gym_9x16_1080p (no logo, no audio) (1).mp4",
+        "mobile_external_video_url": "",
+        "text_color": "#ffffff",
+        "overlay_color": "#000000",
+        "overlay_opacity": 30
+      }
+    },
+    "wd2_feature_collection_fxFFFK": {
+      "type": "wd2-feature-collection",
+      "name": "WD2 Featured collection",
+      "settings": {
+        "collection": "strongsize-sport",
+        "products": [],
+        "full_width": true,
+        "stack_products": false,
+        "show_progress_bar": false,
+        "products_count": 10,
+        "products_per_row_mobile": "2",
+        "products_per_row_desktop": 5,
+        "subheading": "",
+        "title": "Strongsize SPORT",
+        "content": "",
+        "link_url": "shopify://collections/strongsize-sport",
+        "link_text": "Shop Now",
+        "background": "",
+        "background_gradient": "",
+        "text_color": "",
+        "heading_color": "",
+        "heading_gradient": "",
+        "product_card_background": "",
+        "product_card_text_color": ""
+      }
+    },
+    "wd_featured_collection_ECRDUx": {
+      "type": "wd-featured-collection",
+      "settings": {
+        "collection": "big-tall-new-arrivals",
+        "products": [],
+        "full_width": true,
+        "stack_products": false,
+        "show_progress_bar": false,
+        "products_count": 10,
+        "products_per_row_mobile": "2",
+        "products_per_row_desktop": 5,
+        "subheading": "",
+        "title": "New Arrivals",
+        "content": "",
+        "link_url": "shopify://collections/big-tall-new-arrivals",
+        "link_text": "Shop Now",
+        "background": "",
+        "background_gradient": "",
+        "text_color": "",
+        "heading_color": "",
+        "heading_gradient": "",
+        "product_card_background": "",
+        "product_card_text_color": ""
+      }
+    },
+    "wd2_feature_collection_yLHyaF": {
+      "type": "wd2-feature-collection",
+      "disabled": true,
+      "name": "WD2 Featured collection",
+      "settings": {
+        "collection": "big-tall-shirts-best-sellers",
+        "products": [],
+        "full_width": true,
+        "stack_products": false,
+        "show_progress_bar": false,
+        "products_count": 10,
+        "products_per_row_mobile": "2",
+        "products_per_row_desktop": 5,
+        "subheading": "",
+        "title": "Best Sellers",
+        "content": "",
+        "link_url": "shopify://collections/big-tall-shirts-best-sellers",
+        "link_text": "Shop Now",
+        "background": "",
+        "background_gradient": "",
+        "text_color": "",
+        "heading_color": "",
+        "heading_gradient": "",
+        "product_card_background": "",
+        "product_card_text_color": ""
+      }
+    },
+    "wd_featured_collection_8ppWL7": {
+      "type": "wd-featured-collection",
+      "disabled": true,
+      "settings": {
+        "collection": "big-tall-shirts-best-sellers",
+        "products": [],
+        "full_width": true,
+        "stack_products": false,
+        "show_progress_bar": false,
+        "products_count": 10,
+        "products_per_row_mobile": "2",
+        "products_per_row_desktop": 5,
+        "subheading": "",
+        "title": "Best Sellers",
+        "content": "",
+        "link_url": "shopify://collections/big-tall-shirts-best-sellers",
+        "link_text": "Shop Now",
+        "background": "",
+        "background_gradient": "",
+        "text_color": "",
+        "heading_color": "",
+        "heading_gradient": "",
+        "product_card_background": "",
+        "product_card_text_color": ""
+      }
+    },
+    "rich_text_h9Mnt4": {
+      "type": "rich-text",
+      "blocks": {
+        "subheading_8hihm6": {
+          "type": "subheading",
+          "settings": {
+            "text": "Don’t just wear big sizes. Wear better sizes."
+          }
+        },
+        "heading_8F7ePJ": {
+          "type": "heading",
+          "settings": {
+            "text": "Our Top Collections",
+            "heading_tag": "h2",
+            "text_color": "",
+            "gradient": ""
+          }
+        },
+        "richtext_HgzVDd": {
+          "type": "richtext",
+          "settings": {
+            "content": "<p>Finding clothes that actually fit is just the beginning. At Strongsize, we’ve built a full range of apparel engineered specifically for XL–8XL body types, so you never have to compromise on comfort and style.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "subheading_8hihm6",
+        "heading_8F7ePJ",
+        "richtext_HgzVDd"
+      ],
+      "disabled": true,
+      "name": "Rich text",
+      "settings": {
+        "full_width": true,
+        "content_width": "small",
+        "text_position": "center",
+        "background": "",
+        "background_gradient": "",
+        "text_color": ""
+      }
+    },
+    "media_with_text_78qRwD": {
+      "type": "media-with-text",
+      "blocks": {
+        "image_pLrfHU": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/290-7-BBBNNCC_04.jpg",
+            "media_width": 50,
+            "media_position": "start",
+            "text_position": "place-self-center text-center",
+            "icon": "none",
+            "icon_width": 48,
+            "subheading": "",
+            "title": "T-Shirts",
+            "content": "<p>From everyday stretch crewnecks to pocket tees, our big and tall t-shirts provide superior fit across the shoulders, chest, and midsection while keeping you comfortable all day.</p>",
+            "link_text": "Browse",
+            "link_url": "https://strongsize.com/collections/xl-8xl-big-tall-tshirts",
+            "background": "#000000",
+            "background_gradient": "",
+            "text_color": "#ffffff",
+            "text_gradient": "",
+            "button_background": "",
+            "button_text_color": ""
+          }
+        },
+        "image_7gaHpp": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/PACK96_05.jpg",
+            "media_width": 50,
+            "media_position": "end",
+            "text_position": "place-self-center text-center",
+            "icon": "none",
+            "icon_width": 48,
+            "subheading": "",
+            "title": "Polo Shirts",
+            "content": "<p>Reimagined for bigger builds, our premium polo shirts combine classic style with the perfect balance of stretch, structure, and longer length coverage.</p>",
+            "link_text": "Browse",
+            "link_url": "https://strongsize.com/collections/xl-8xl-big-tall-polo-shirts",
+            "background": "#000000",
+            "background_gradient": "",
+            "text_color": "#ffffff",
+            "text_gradient": "",
+            "button_background": "",
+            "button_text_color": ""
+          }
+        },
+        "image_yXY7am": {
+          "type": "image",
+          "settings": {
+            "media_width": 50,
+            "media_position": "start",
+            "text_position": "place-self-center text-center",
+            "icon": "none",
+            "icon_width": 48,
+            "subheading": "",
+            "title": "Henleys",
+            "content": "<p>For a versatile, rugged look, our big and tall henleys deliver cozy warmth, flexible stretch, and a fit that keeps you confident no matter the activity.</p>",
+            "link_text": "Browse",
+            "link_url": "https://strongsize.com/collections/xl-8xl-big-tall-henleys",
+            "background": "#000000",
+            "background_gradient": "",
+            "text_color": "#ffffff",
+            "text_gradient": "",
+            "button_background": "",
+            "button_text_color": ""
+          }
+        }
+      },
+      "block_order": [
+        "image_pLrfHU",
+        "image_7gaHpp",
+        "image_yXY7am"
+      ],
+      "disabled": true,
+      "name": "Media with text",
+      "settings": {
+        "full_width": false,
+        "spacing": "small"
+      }
+    },
+    "wd_text_with_icons_7VxdbC": {
+      "type": "wd-text-with-icons",
+      "blocks": {
+        "item_dJzEqE": {
+          "type": "item",
+          "settings": {
+            "icon": "picto-coupon",
+            "custom_icon": "shopify://shop_images/Fit-Longer-Length.png",
+            "mobile_icon_width": 52,
+            "icon_width": 80,
+            "icon_background_type": "none",
+            "icon_background": "",
+            "icon_color": "",
+            "title": "PERFECT LENGTH, EVERY TIME",
+            "content": ""
+          }
+        },
+        "item_dLmy3z": {
+          "type": "item",
+          "settings": {
+            "icon": "picto-coupon",
+            "custom_icon": "shopify://shop_images/Fabric-Premium-Cotton.png",
+            "mobile_icon_width": 52,
+            "icon_width": 80,
+            "icon_background_type": "none",
+            "icon_background": "",
+            "icon_color": "",
+            "title": "PREMIUM FABRICS",
+            "content": ""
+          }
+        },
+        "item_ULPpWM": {
+          "type": "item",
+          "settings": {
+            "icon": "picto-coupon",
+            "custom_icon": "shopify://shop_images/Feature-Built-Strong.png",
+            "mobile_icon_width": 52,
+            "icon_width": 80,
+            "icon_background_type": "none",
+            "icon_background": "",
+            "icon_color": "",
+            "title": "BUILT TO LAST",
+            "content": ""
+          }
+        },
+        "item_qtjzmk": {
+          "type": "item",
+          "settings": {
+            "icon": "picto-coupon",
+            "custom_icon": "shopify://shop_images/Fit-Big-Tall.png",
+            "mobile_icon_width": 52,
+            "icon_width": 80,
+            "icon_background_type": "none",
+            "icon_background": "",
+            "icon_color": "",
+            "title": "SIZES XL-8XL",
+            "content": ""
+          }
+        },
+        "item_f9KtY8": {
+          "type": "item",
+          "settings": {
+            "icon": "picto-coupon",
+            "custom_icon": "shopify://shop_images/Feature-Crisp-Collar_64fd0df9-3e86-4117-aef7-a7acd63d6a35.png",
+            "mobile_icon_width": 52,
+            "icon_width": 80,
+            "icon_background_type": "none",
+            "icon_background": "",
+            "icon_color": "",
+            "title": "BETTER FIT. BETTER CONFIDENCE.",
+            "content": ""
+          }
+        }
+      },
+      "block_order": [
+        "item_dJzEqE",
+        "item_dLmy3z",
+        "item_ULPpWM",
+        "item_qtjzmk",
+        "item_f9KtY8"
+      ],
+      "settings": {
+        "full_width": true,
+        "stack_on_mobile": true,
+        "title": "Built For Bigger. Made To Move.",
+        "heading_tag": "h4",
+        "text_alignment": "center",
+        "icon_spacing": "small",
+        "background": "",
+        "background_gradient": "",
+        "text_color": ""
+      }
+    },
+    "wd_video_ERrKtq": {
+      "type": "wd-video",
+      "blocks": {
+        "video_iyWUtq": {
+          "type": "video",
+          "settings": {
+            "video": "shopify://files/videos/Strongsize Us vs Them.mp4"
+          }
+        }
+      },
+      "block_order": [
+        "video_iyWUtq"
+      ],
+      "disabled": true,
+      "settings": {
+        "title": "Unrivaled Fit",
+        "subtitle": "<p>Unlike generic brands that merely scale up sizes, Strongsize is solely dedicated to the big and tall community. Our approach is different: we functionally engineer our clothing from scratch, exclusively for big and tall body types. <strong>Explore our </strong><a href=\"https://strongsize.com/collections/big-and-tall-crewneck-tshirts\"><strong>Crewneck T-Shirts</strong></a><strong>, </strong><a href=\"https://strongsize.com/collections/xl-8xl-big-tall-polo-shirts\"><strong>XL–8XL Polo Shirts</strong></a><strong>, and </strong><a href=\"https://strongsize.com/collections/big-tall-shirt-bundles\"><strong>Shirt Bundles</strong></a><strong> crafted exclusively for big & tall men.</strong><br/><br/></p>",
+        "link_text": "Learn More",
+        "link_url": "shopify://pages/fit-guide"
+      }
+    },
+    "wd2_video_9dXQjj": {
+      "type": "wd2-video",
+      "blocks": {
+        "video_ECkP8D": {
+          "type": "video",
+          "settings": {
+            "video": "shopify://files/videos/Strongsize 2025_Us v Them_Final_No GFX (1).mp4"
+          }
+        }
+      },
+      "block_order": [
+        "video_ECkP8D"
+      ],
+      "name": "WD2 Video",
+      "settings": {
+        "title": "Big and Tall Clothing That Actually Fits.",
+        "subtitle": "<p>Most brands add a 2XL and call it inclusive. We call that an afterthought. Strongsize <a href=\"/collections/t-shirts\" title=\"T-Shirts\">t-shirts</a> and <a href=\"/collections/polos\" title=\"Polos\">polos</a> are size-exclusive, engineered from XL to 8XL for big men and no one else.</p>",
+        "link_text": "VIEW ALL TOPS",
+        "link_url": "shopify://collections/big-and-tall-tops"
+      }
+    },
+    "wd_testimonials_KFf6yT": {
+      "type": "wd-testimonials",
+      "blocks": {
+        "testimonial_Ng3wMF": {
+          "type": "testimonial",
+          "settings": {
+            "round_avatar": false,
+            "show_rating": true,
+            "rating": 5,
+            "author": "Chase F.",
+            "title": "",
+            "content": "<p>I'm a big dude and this is by far the best fitting shirt I've ordered in a long time. I liked it so much the first time, I ordered 2 more for work. Breathable, long enough to cover my bum when I bend over, material is semi stretchy in all directions, and wicks sweat away pretty well.</p><p>(6’2”, 365 lbs, 5XL Longer)</p>"
+          }
+        },
+        "testimonial_bQfgQx": {
+          "type": "testimonial",
+          "settings": {
+            "round_avatar": true,
+            "show_rating": true,
+            "rating": 5,
+            "author": "Cameron C.",
+            "title": "",
+            "content": "<p>The fit of this tee is amazing. I like the longer length as it helps prevent showing my underwear when I’m bending over or lifting my arms. The quality of the fabric is excellent, nice stretch, cool, and little to no shrinking after wash. After this arrived and I tried it on, I immediately bought 3 more.</p><p>(6’0”, 215 lbs, XL Longer)</p>"
+          }
+        },
+        "testimonial_gXYfDC": {
+          "type": "testimonial",
+          "settings": {
+            "round_avatar": true,
+            "show_rating": true,
+            "rating": 5,
+            "author": "Leo B.",
+            "title": "",
+            "content": "<p>I’ve tried dozens of brands and wasted tons of money trying to find a fit that suited my build. Wish I would have found out about Strongsize years ago. Larger sizes in most brands have huge arms and chest, this brand fits nice in those areas without being huge. I’ll likely never try another brand again, it fits that nice and feels that good!</p><p>(6'1”, 390 lbs, 4XL Longer)</p>"
+          }
+        },
+        "testimonial_hgYNxh": {
+          "type": "testimonial",
+          "settings": {
+            "round_avatar": true,
+            "show_rating": true,
+            "rating": 5,
+            "author": "Amanda P.",
+            "title": "",
+            "content": "<p>Got this for my husband and he says the shirt fits amazing and feels great. I have to agree, I've never seen him look so good in a tee before! He loves it so much we are ordering more. Really great bang for your buck.</p><p>(5’9”, 400 lbs, 5XL Regular)</p>"
+          }
+        }
+      },
+      "block_order": [
+        "testimonial_Ng3wMF",
+        "testimonial_bQfgQx",
+        "testimonial_gXYfDC",
+        "testimonial_hgYNxh"
+      ],
+      "disabled": true,
+      "settings": {
+        "full_width": true,
+        "stack_testimonials": false,
+        "subheading": "",
+        "title": "What Customers Are Saying",
+        "content": "",
+        "link_url": "",
+        "link_text": "",
+        "background": "",
+        "background_gradient": "",
+        "text_color": "",
+        "heading_color": "",
+        "heading_gradient": "",
+        "testimonial_card_background": "#ffffff",
+        "testimonial_card_text_color": ""
+      }
+    },
+    "scrolling_text_jTUhGK": {
+      "type": "scrolling-text",
+      "name": "Scrolling text",
+      "settings": {
+        "full_width": true,
+        "text": "Join 100,000+ Big Dudes Who Finally Found Their Fit.",
+        "text_size": "xsmall",
+        "text_style": "fill",
+        "scrolling_mode": "auto",
+        "scrolling_speed": 13,
+        "background": "#052b1b",
+        "background_gradient": "",
+        "text_color": "#ffffff",
+        "text_gradient": ""
+      }
+    },
+    "wd_text_PCpq64": {
+      "type": "wd-text",
+      "name": "WD text",
+      "settings": {
+        "text": "Real Reviews from Real Guys",
+        "use_tag": "div"
+      }
+    },
+    "176220696213cdf262": {
+      "type": "apps",
+      "blocks": {
+        "okendo_reviews_carousel_JEgFEz": {
+          "type": "shopify://apps/okendo/blocks/reviews-carousel/bb689e69-ea70-4661-8fb7-ad24a2e23c29",
+          "settings": {
+            "show_heading": false,
+            "heading": "",
+            "badge_link": "",
+            "product": ""
+          }
+        }
+      },
+      "block_order": [
+        "okendo_reviews_carousel_JEgFEz"
+      ],
+      "settings": {
+        "full_width": true,
+        "remove_vertical_spacing": false,
+        "remove_horizontal_spacing": false,
+        "background": "",
+        "background_gradient": "",
+        "text_color": ""
+      }
+    },
+    "wd_title_button_yqeGc7": {
+      "type": "wd-title-button",
+      "settings": {
+        "title": "Join The Movement",
+        "link_text": "Follow Us",
+        "link_url": "https://www.instagram.com/thestrongsize/"
+      }
+    },
+    "1706809050ef8597ef": {
+      "type": "apps",
+      "blocks": {
+        "instafeed_app_block_Wyh8mQ": {
+          "type": "shopify://apps/instafeed/blocks/app-block/c447db20-095d-4a10-9725-b5977662c9d5",
+          "settings": {
+            "title": "",
+            "title_color": "",
+            "title_size_v2": 0,
+            "alignment": "center",
+            "instafeed_margin_top": 0,
+            "instafeed_margin_bottom": 0,
+            "instafeed_margin_sides": 0,
+            "show_instagram_link": false,
+            "link_alignment": "left",
+            "link_color": "#000000",
+            "background_color": "",
+            "feed_id": "",
+            "html_area": ""
+          }
+        }
+      },
+      "block_order": [
+        "instafeed_app_block_Wyh8mQ"
+      ],
+      "custom_css": [
+        ".section-blends {padding-bottom: 2rem;}"
+      ],
+      "settings": {
+        "full_width": true,
+        "remove_vertical_spacing": true,
+        "remove_horizontal_spacing": false,
+        "background": "",
+        "background_gradient": "",
+        "text_color": ""
+      }
+    }
+  },
+  "order": [
+    "wd_slideshow_paiwtn",
+    "wd_hero_video_b3RyYh",
+    "wd2_feature_collection_fxFFFK",
+    "wd_featured_collection_ECRDUx",
+    "wd2_feature_collection_yLHyaF",
+    "wd_featured_collection_8ppWL7",
+    "rich_text_h9Mnt4",
+    "media_with_text_78qRwD",
+    "wd_text_with_icons_7VxdbC",
+    "wd_video_ERrKtq",
+    "wd2_video_9dXQjj",
+    "wd_testimonials_KFf6yT",
+    "scrolling_text_jTUhGK",
+    "wd_text_PCpq64",
+    "176220696213cdf262",
+    "wd_title_button_yqeGc7",
+    "1706809050ef8597ef"
+  ]
+}

@@ -1,0 +1,42 @@
+{%- comment -%}
+  BlogPosting JSON-LD — rendered on article pages (request.page_type == 'article').
+  Source of truth: Schema Optimizations - Strongsize - Q2 2026 / Final Markup / Blog Post.
+{%- endcomment -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "@id": "{{ shop.url }}{{ article.url }}#BlogPosting",
+  "name": {{ article.title | json }},
+  "url": "{{ shop.url }}{{ article.url }}",
+  {%- if article.image -%}
+    {%- assign _img_article_raw = article.image | image_url: width: 1000 -%}
+    {%- assign _img_article_prefix = _img_article_raw | slice: 0, 2 -%}
+    {%- if _img_article_raw contains '://' -%}
+      {%- assign _img_article_abs = _img_article_raw -%}
+    {%- elsif _img_article_prefix == '//' -%}
+      {%- assign _img_article_abs = _img_article_raw | prepend: 'https:' -%}
+    {%- else -%}
+      {%- assign _img_article_abs = _img_article_raw | prepend: shop.url -%}
+    {%- endif -%}
+  "image": "{{ _img_article_abs }}",
+  {%- endif -%}
+  "headline": {{ article.title | json }},
+  {%- assign article_description = article.excerpt | default: article.content | strip_html | truncate: 160 -%}
+  {%- if article_description != blank -%}
+  "description": {{ article_description | json }},
+  {%- endif -%}
+  "author": {
+    "@type": "Organization",
+    "name": "Strongsize",
+    "url": "{{ shop.url }}/"
+  },
+  "datePublished": "{{ article.published_at | date: '%Y-%m-%d' }}",
+  "publisher": {
+    "@type": "Organization",
+    "@id": "{{ shop.url }}/#Organization",
+    "name": "Strongsize",
+    "url": "{{ shop.url }}/"
+  }
+}
+</script>

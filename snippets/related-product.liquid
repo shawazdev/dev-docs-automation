@@ -1,0 +1,1391 @@
+{% comment %}
+  Related Products Display Component
+  Displays related pack products as clickable boxes with title and price
+
+  Parameters:
+  - product: The current product object
+  - pack_metafield_namespace: Namespace for pack products metafield (default: 'custom')
+  - pack_metafield_key: Key for pack products metafield (default: 'related_pack_products')
+{% endcomment %}
+
+{% liquid
+  assign pack_metafield = product.metafields.custom.related_pack_products
+  assign single_metafield = product.metafields.custom.single_product_related_to_pack.value
+  assign pack_products = pack_metafield.value
+
+  assign has_packs = false
+  if pack_products != blank and pack_products.size > 0
+    assign has_packs = true
+  endif
+%}
+
+{%- comment -%} PACK QUANTITY {%- endcomment -%}
+<div style="margin-bottom: 5px;">
+  <strong class="pack-quantity" style="color:#000;">Pack Quantity: </strong>
+
+  {% assign title_words = product.title | split: ' ' %}
+  {% assign last_word = title_words | last %}
+  {% assign pack_quantity = last_word | remove: '-Pack' %}
+
+  {% if pack_quantity == last_word or pack_quantity == blank %}
+    {% assign pack_quantity = 1 %}
+  {% endif %}
+
+  {{ pack_quantity }}
+</div>
+
+{%- comment -%} RELATED PACK PRODUCTS {%- endcomment -%}
+{% if has_packs %}
+  <div id="related-products" class="related-products-container">
+    <div id="pack-products-loader" class="pack-products-loader" style="display: none;">
+      <div class="loader-spinner"></div>
+    </div>
+    <div class="related-products-grid">
+      {% if single_metafield %}
+        <a
+          href="{{ single_metafield.url }}"
+          class="related-product-item {% if single_metafield.id == product.id %}active-product{% endif %}"
+          data-product-handle="{{ single_metafield.handle }}"
+          data-product-title="{{ single_metafield.title}}"
+          data-product-price="{{ single_metafield.price | money}}"
+          data-product-compare-price="{{ single_metafield.compare_at_price | money}}"
+        >
+          <div class="related-product-content">
+            <div class="related-product-title">Single</div>
+            <div class="related-product-price">
+              {{ single_metafield.price | money }}
+            </div>
+          </div>
+        </a>
+      {% else %}
+        <a
+          href="{{ product.url }}"
+          class="related-product-item active-product"
+          data-product-handle="{{ product.handle }}"
+          data-product-title="{{ product.title }}"
+          data-product-price="{{ product.price | money}}"
+          data-product-compare-price="{{ product.compare_at_price | money }}"
+        >
+          <div class="related-product-content">
+            <div class="related-product-title">Single</div>
+            <div class="related-product-price">
+              {{ product.price | money }}
+            </div>
+          </div>
+        </a>
+      {% endif %}
+      {% for related_product in pack_products %}
+        <a
+          href="{{ related_product.url }}"
+          class="related-product-item {% if related_product.id == product.id %}active-product{% endif %}"
+          data-product-handle="{{ related_product.handle }}"
+          data-product-title="{{ related_product.title }}"
+          data-product-price="{{ related_product.price | money}}"
+          data-product-compare-price="{{ related_product.compare_at_price | money}}"
+        >
+          <div class="related-product-content">
+            <div class="related-product-title">
+              {% assign words = related_product.title | split: ' ' %}
+              {{ words | last }}
+            </div>
+            {% assign pack_quantity = related_product.title | split: ' ' | last | remove: '-Pack' | plus: 0 %}
+            {% if pack_quantity == 0 %}{% assign pack_quantity = 1 %}{% endif %}
+            {% assign price_per_item = related_product.price | divided_by: pack_quantity %}
+
+            <div
+              class="related-product-price"
+              {% if forloop.last and related_product.id != product.id %}
+                style="color: #971b1b;"
+              {% endif %}
+            >
+              {{ price_per_item | money }}/item
+            </div>
+            {% if forloop.last %}
+              <div class="best-deal-badge">Best Deal</div>
+            {% endif %}
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+{% endif %}
+
+{% comment %}
+  <script>
+    window.productHandle = '{{ product.handle | escape }}';
+    window.product = {{ product | json }};
+    (function () {
+      if (!window.product || !window.product.variants) return;
+
+      const url = new URL(window.location.href);
+      const params = url.searchParams;
+      const hasSize = params.has('size');
+      const hasColor = params.has('color');
+
+      // If both are already present, do nothing
+      if (hasSize && hasColor) {
+        if (!params.has('variant')) {
+          const matchedVariant = window.product.variants.find(
+            (v) => v.option1 === params.get('size') && v.option2 === params.get('color')
+          );
+          if (matchedVariant) {
+            params.set('variant', matchedVariant.id);
+            url.search = params.toString();
+            window.location.replace(url.toString());
+          }
+        }
+        return;
+      }
+
+      // Get all unique colors in original order
+      const colorsInOrder = [...new Set(window.product.variants.map((v) => v.option2))];
+
+      // Pick the first color (ignoring availability)
+      const firstColor = colorsInOrder[0];
+
+      // Pick the first variant of that color (ignoring availability)
+      const firstVariant = window.product.variants.find((v) => v.option2 === firstColor);
+      if (!firstVariant) return;
+
+      const sizeValue = firstVariant.option1;
+      const colorValue = firstVariant.option2;
+
+      if (!params.has('variant')) {
+        const matchedVariant = window.product.variants.find((v) => v.option1 === sizeValue && v.option2 === colorValue);
+        if (matchedVariant) {
+          params.set('variant', matchedVariant.id);
+        }
+      }
+      if (!hasSize) params.set('size', sizeValue);
+      if (!hasColor) params.set('color', colorValue);
+
+      // Redirect only if something changed
+      if (!hasSize || !hasColor) {
+        url.search = params.toString();
+        window.location.replace(url.toString());
+      }
+    })();
+  </script>
+{% endcomment %}
+<script>
+  window.productHandle = '{{ product.handle | escape }}';
+  window.product = {{ product | json }};
+  (function () {
+    if (!window.product || !window.product.variants) return;
+
+    const url = new URL(window.location.href);
+    const params = url.searchParams;
+
+    const hasVariant = params.has('variant');
+    const hasSize    = params.has('size');
+    const hasColor   = params.has('color');
+
+    // If variant already exists AND size was explicitly in the URL, trust Shopify and exit
+    if (hasVariant && hasSize) return;
+
+    // Pick first AVAILABLE variant (not just first variant)
+    const firstAvailableVariant =
+      window.product.variants.find(v => v.option1 && v.option2 && v.available) ||
+      window.product.variants.find(v => v.option1 && v.option2);
+    if (!firstAvailableVariant) return;
+
+    const productColors = window.product.variants.map(v => v.option2).filter(Boolean);
+    const productSizes  = window.product.variants.map(v => v.option1).filter(Boolean);
+
+    const rawColor = hasColor ? params.get('color') : null;
+    const color = (rawColor && productColors.includes(rawColor)) ? rawColor : firstAvailableVariant.option2;
+
+    // FIX: Only set color in URL on page load — do NOT set size or variant
+    // This prevents auto-selecting a size on fresh page load
+    params.set('color', color);
+    params.delete('size');
+    params.delete('variant');
+
+    history.replaceState({}, '', `${url.pathname}?${params.toString()}`);
+
+    // Expose selected color for theme scripts
+    window.selectedColor = color;
+
+    // Trigger color-specific listeners if needed
+    document.dispatchEvent(
+      new CustomEvent('color:change', { detail: { color } })
+    );
+  })();
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+
+    // ─── SIZE STATE ───────────────────────────────────────────────────
+    let userSelectedSize = null;
+
+    // ─── BUTTON HELPERS ──────────────────────────────────────────────
+    function setButtonNoSize() {
+      document.querySelectorAll('form[action="/cart/add"] button[type="submit"]').forEach((btn) => {
+        btn.disabled = true;
+        btn.className = 'button button--xl button--subdued';
+        btn.innerHTML = '';
+const div = document.createElement('div');
+div.textContent = 'Select A Size';
+btn.appendChild(div);
+      });
+    }
+
+    function setButtonState(variantAvailable) {
+      document.querySelectorAll('form[action="/cart/add"] button[type="submit"]').forEach((btn) => {
+        if (!variantAvailable) {
+          btn.disabled = true;
+          btn.className = 'button button--xl button--subdued';
+          const div = btn.querySelector('div');
+          if (div) div.textContent = 'Sold Out';
+                    document.querySelectorAll('sold-out-badge').forEach(el => el.removeAttribute('hidden'));
+        } else {
+          btn.disabled = false;
+          btn.className = 'button button--xl';
+          const div = btn.querySelector('div');
+          if (div) div.textContent = 'Add to cart';
+          document.querySelectorAll('sold-out-badge').forEach(el => el.setAttribute('hidden', true));
+        }
+      });
+    }
+
+    // ─── RESET SIZE TO UNSELECTED ─────────────────────────────────────
+    function resetSizeDisplay() {
+      document.querySelectorAll('variant-option-value[for="option1"]').forEach((el) => {
+        el.textContent = 'Choose a size.';
+      });
+      document.querySelectorAll('input[name="option1"]').forEach((input) => {
+        input.checked = false;
+      });
+    }
+
+    // ─── UPDATE COLOR SWATCH AVAILABILITY FOR SELECTED SIZE ───────────
+    function updateColorAvailabilityForSize(selectedSize) {
+      const variants = window.product?.variants;
+      if (!variants) return;
+
+      const colorFieldset = findOptionFieldset('color');
+      if (!colorFieldset) return;
+
+      colorFieldset.querySelectorAll('input[name="option2"]').forEach((input) => {
+        const colorValue = input.value;
+        if (!colorValue) return;
+
+        const hasAvailable = variants.some(
+          (v) => v.option1 === selectedSize && v.option2 === colorValue && v.available
+        );
+        const hasVariant = variants.some((v) => v.option1 === selectedSize && v.option2 === colorValue);
+
+        const label = colorFieldset.querySelector(`label[for="${input.id}"]`);
+        if (!label) return;
+
+        label.classList.remove('is-disabled', 'sold-out');
+
+        if (!hasVariant || !hasAvailable) {
+          label.classList.add('is-disabled', 'sold-out');
+        }
+      });
+
+      const colorFieldsetEl = findOptionFieldset('color');
+      if (colorFieldsetEl) {
+        colorFieldsetEl.querySelectorAll('.block-swatch').forEach((el) => {
+          const forAttr = el.getAttribute('for');
+          const input = forAttr ? document.getElementById(forAttr) : null;
+          if (input && !input.disabled) {
+            el.classList.remove('is-disabled', 'sold-out');
+          }
+        });
+      }
+    }
+
+    // ─── RESET COLOR AVAILABILITY (all enabled) ───────────────────────
+    function resetColorAvailability() {
+      const colorFieldset = findOptionFieldset('color');
+      if (!colorFieldset) return;
+
+      colorFieldset.querySelectorAll('input[name="option2"]').forEach((input) => {
+        input.disabled = false;
+      });
+      colorFieldset.querySelectorAll('label.color-swatch, label.block-swatch').forEach((label) => {
+        label.classList.remove('is-disabled', 'sold-out');
+      });
+    }
+
+    // ─── INIT PAGE LOAD ───────────────────────────────────────────────
+    function initPageLoad() {
+      const variants = window.product?.variants || [];
+
+      const firstAvailableVariant = variants.find((v) => v.available) || variants[0];
+      const firstColor = firstAvailableVariant?.option2 || null;
+
+      // Resolve color from URL (set by first script block) or fallback
+      const urlColor = new URLSearchParams(window.location.search).get('color');
+      const resolvedColor = urlColor || firstColor;
+
+      if (resolvedColor) {
+        const colorFieldset = findOptionFieldset('color');
+        {% comment %} if (colorFieldset) {
+          selectOptionByValue(colorFieldset, resolvedColor, () =>
+            updateVariantAvailability(resolvedColor, 'color')
+          );
+        } {% endcomment %}
+        updateSelectedColorDisplay(resolvedColor);
+
+        // Keep only color in URL — no size, no variant
+        const url = new URL(window.location.href);
+        url.searchParams.set('color', resolvedColor);
+        url.searchParams.delete('size');
+        url.searchParams.delete('variant');
+        window.history.replaceState({}, '', url.toString());
+      }
+
+      // No size selected on load — reset everything
+      resetColorAvailability();
+      resetSizeDisplay();
+      userSelectedSize = null;
+      setButtonNoSize();
+      setupSizeClickHandler();
+    }
+
+    // ─── SIZE CLICK HANDLER ───────────────────────────────────────────
+    function setupSizeClickHandler() {
+      const sizeFieldset = findOptionFieldset('size');
+      if (!sizeFieldset) return;
+
+      // Remove old listeners by cloning inputs
+      sizeFieldset.querySelectorAll('input[name="option1"]').forEach((input) => {
+        const newInput = input.cloneNode(true);
+        input.parentNode.replaceChild(newInput, input);
+      });
+
+      sizeFieldset.querySelectorAll('input[name="option1"]').forEach((input) => {
+        input.addEventListener('change', function () {
+          const val = this.value;
+          if (!val) return;
+
+          userSelectedSize = val;
+          updateSelectedSizeDisplay(val);
+          updateUrlWithParameter('size', val);
+
+          updateColorAvailabilityForSize(val);
+
+          const currentColor = new URLSearchParams(window.location.search).get('color');
+          const variants = window.product?.variants || [];
+
+          let colorToUse = currentColor;
+
+          if (currentColor) {
+            const currentColorStillValid = variants.some(
+              (v) => v.option1 === val && v.option2 === currentColor
+            );
+          }
+
+          updateVariantIdInCartForm(val, colorToUse);
+
+          const matchedVariant = variants.find((v) => v.option1 === val && v.option2 === colorToUse);
+          if (matchedVariant) {
+            const url = new URL(window.location.href);
+            url.searchParams.set('variant', matchedVariant.id);
+            url.searchParams.set('size', val);
+            url.searchParams.set('color', colorToUse);
+            window.history.replaceState({}, '', url.toString());
+          }
+        });
+      });
+    }
+
+    // ─── ON PACK PRODUCT LOADED ───────────────────────────────────────
+    function onPackProductLoaded() {
+      const variants = window.product?.variants || [];
+
+      const urlParams = new URLSearchParams(window.location.search);
+      let colorParam = urlParams.get('color');
+      const validColors = variants.map((v) => v.option2).filter(Boolean);
+
+      if (!colorParam || !validColors.includes(colorParam)) {
+        const firstAvailable = variants.find((v) => v.available) || variants[0];
+        colorParam = firstAvailable?.option2 || null;
+      }
+
+      if (colorParam) {
+        const colorFieldset = findOptionFieldset('color');
+        if (colorFieldset) {
+          selectOptionByValue(colorFieldset, colorParam, () =>
+            updateVariantAvailability(colorParam, 'color')
+          );
+        }
+        updateSelectedColorDisplay(colorParam);
+
+        // Keep only color — no size/variant on pack reload
+        const url = new URL(window.location.href);
+        url.searchParams.set('color', colorParam);
+        url.searchParams.delete('size');
+        url.searchParams.delete('variant');
+        window.history.replaceState({}, '', url.toString());
+      }
+
+      if (typeof window.__setupColorSwatchListener === 'function') {
+        window.__setupColorSwatchListener();
+      }
+      if (typeof window.__setupColorLabelListener === 'function') {
+        window.__setupColorLabelListener();
+      }
+
+      if (typeof window.triggerGalleryForColor === 'function') {
+        window.triggerGalleryForColor(colorParam, userSelectedSize || null);
+      }
+
+      // Re-apply previously selected size if still valid
+      if (userSelectedSize) {
+        const sizeExists = variants.some((v) => v.option1 === userSelectedSize);
+        if (sizeExists) {
+          const sizeFieldset = findOptionFieldset('size');
+          if (sizeFieldset) {
+            selectOptionByValue(sizeFieldset, userSelectedSize, () =>
+              updateVariantAvailability(userSelectedSize, 'size')
+            );
+          }
+          updateSelectedSizeDisplay(userSelectedSize);
+          updateUrlWithParameter('size', userSelectedSize);
+          updateColorAvailabilityForSize(userSelectedSize);
+          updateVariantIdInCartForm(userSelectedSize, colorParam);
+          setupSizeClickHandler();
+          return;
+        }
+      }
+
+      // No valid previous size — reset to unselected state
+      resetColorAvailability();
+      resetSizeDisplay();
+      userSelectedSize = null;
+      setButtonNoSize();
+      setupSizeClickHandler();
+    }
+
+    window.__onPackProductLoaded = onPackProductLoaded;
+
+    // ─── CALL ORDER FIX: initPageLoad FIRST, then handleIncomingParameters ───
+    // initPageLoad sets color only and resets size to unselected.
+    // handleIncomingParameters only processes size if it was EXPLICITLY in the
+    // original incoming URL (e.g. a shared link), not from a fresh page load.
+    initPageLoad();
+    handleIncomingParameters();
+    setupSelectionHandlers();
+
+    const CONFIG = {
+      packMetafieldNamespace: '{{ pack_metafield_namespace }}' || 'custom',
+      packMetafieldKey: '{{ pack_metafield_key }}' || 'related_pack_products',
+      storefrontAccessToken: 'aa717e8f5bafa05ae0a6d7067f7619c8',
+      singleProductMetafieldKey: 'single_product_related_to_pack',
+    };
+
+    const UTILS = {
+      getProductHandle() {
+        return window.productHandle || null;
+      },
+      getMainContainer() {
+        return document.querySelector('.product') || document.querySelector('.main-content');
+      },
+      async fetchFromStorefront(query, variables) {
+        try {
+          const response = await fetch('/api/2023-01/graphql.json', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-Shopify-Storefront-Access-Token': CONFIG.storefrontAccessToken,
+            },
+            body: JSON.stringify({ query, variables }),
+          });
+          if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+          const data = await response.json();
+          if (data.errors) {
+            console.error('GraphQL errors:', data.errors);
+            return null;
+          }
+          return data.data;
+        } catch (error) {
+          console.error('Storefront API error:', error);
+          return null;
+        }
+      },
+      async fetchProductData(handle) {
+        try {
+          const response = await fetch(`/products/${handle}?view=ajax`);
+          if (!response.ok) throw new Error('Network response was not ok');
+          return await response.text();
+        } catch (error) {
+          console.error('Error fetching product:', error);
+          return null;
+        }
+      },
+      updateUrl(handle, targetColor) {
+        const newUrl = new URL(`${window.location.protocol}//${window.location.host}/products/${handle}`);
+        // FIX: Only carry over size if user explicitly selected it in this session
+        if (userSelectedSize) newUrl.searchParams.set('size', userSelectedSize);
+        if (targetColor) newUrl.searchParams.set('color', targetColor);
+        window.history.pushState({ path: newUrl.toString() }, '', newUrl.toString());
+      },
+      updateUrlWithSize(size) {
+        if (!size) return;
+        const url = new URL(window.location.href);
+        url.searchParams.set('size', size);
+        window.history.replaceState({}, '', url.toString());
+        sessionStorage.setItem('lastSelectedSize', size);
+      },
+      async fetchHandleFromProductId(productId) {
+        const query = `
+          query GetProductById($id: ID!) {
+            node(id: $id) {
+              ... on Product { handle }
+            }
+          }
+        `;
+        const data = await this.fetchFromStorefront(query, { id: `gid://shopify/Product/${productId}` });
+        return data?.node?.handle || null;
+      },
+      parseGidOrHandle(value) {
+        if (!value) return null;
+        if (value.startsWith('gid://')) return value.split('/').pop();
+        return value;
+      },
+      findSizeFieldset() {
+        const possibleSelectors = [
+          '.variant-picker__option',
+          '.product-form__input--dropdown',
+          '.selector-wrapper',
+          'fieldset[data-option-index="0"]',
+          '.product-options',
+          '[data-product-options]',
+        ];
+        for (const selector of possibleSelectors) {
+          const fieldsets = document.querySelectorAll(selector);
+          for (const fieldset of fieldsets) {
+            const label = fieldset.querySelector('label, legend, .option-name');
+            if (label && /size|taille|größe/i.test(label.textContent)) return fieldset;
+          }
+        }
+        return document.querySelector('.variant-picker__option, .product-form__input, .selector-wrapper');
+      },
+      getCurrentSelectedSize(sizeFieldset) {
+        if (!sizeFieldset) return null;
+        const methods = [
+          () => {
+            const el = sizeFieldset.querySelector('variant-option-value');
+            return el?.textContent.trim() || null;
+          },
+          () => {
+            const el = sizeFieldset.querySelector(
+              '[aria-selected="true"], .selected, [selected], [data-selected="true"]'
+            );
+            return el ? el.getAttribute('value') || el.textContent.trim() : null;
+          },
+          () => {
+            const el = sizeFieldset.querySelector('.active, .current, .is-active');
+            return el ? el.getAttribute('value') || el.textContent.trim() : null;
+          },
+          () => sessionStorage.getItem('lastSelectedSize'),
+          () => new URLSearchParams(window.location.search).get('size'),
+        ];
+        for (const method of methods) {
+          const result = method();
+          if (result) return result;
+        }
+        return null;
+      },
+    };
+
+    const TabHandler = {
+      async loadProductContent(handle, targetColor) {
+        const mainContainer = UTILS.getMainContainer();
+        if (!mainContainer) return;
+        const scrollPosition = window.scrollY;
+        mainContainer.style.pointerEvents = 'none';
+        try {
+          const productJson = await fetch(`/products/${handle}.js`).then((r) => r.json());
+          window.product = productJson;
+          const validColors = productJson.variants.map((v) => v.option2).filter(Boolean);
+
+          let resolvedColor;
+          if (targetColor && validColors.includes(targetColor)) {
+            resolvedColor = targetColor;
+          } else {
+            // FIX: use userSelectedSize (session state) not URL size param
+            const sizeVariants = userSelectedSize
+              ? productJson.variants.filter((v) => v.option1 === userSelectedSize)
+              : [];
+            const fallback =
+              sizeVariants.find((v) => v.available) ||
+              sizeVariants[0] ||
+              productJson.variants.find((v) => v.available) ||
+              productJson.variants[0];
+            resolvedColor = fallback?.option2 || null;
+          }
+
+          const productHtml = await UTILS.fetchProductData(handle);
+          if (!productHtml) return;
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(productHtml, 'text/html');
+          const newContent = doc.querySelector('.product') || doc.querySelector('.main-content');
+          if (newContent) {
+            mainContainer.innerHTML = newContent.innerHTML;
+            window.scrollTo(0, scrollPosition);
+            UTILS.updateUrl(handle, resolvedColor);
+            if (typeof initProductPage === 'function') initProductPage();
+            this.reinitializeSizeSelection(resolvedColor);
+            setTimeout(() => {
+              const newGallery = mainContainer.querySelector('.product-gallery, .product-gallery__ar-wrapper');
+              if (newGallery) {
+                newGallery.style.width = '';
+                newGallery.style.height = '';
+                newGallery.style.overflow = '';
+                newGallery.style.position = '';
+              }
+            }, 50);
+          }
+        } catch (error) {
+          console.error('Error loading product content:', error);
+        } finally {
+          mainContainer.style.opacity = '';
+          mainContainer.style.pointerEvents = '';
+        }
+      },
+
+      reinitializeSizeSelection(resolvedColor) {
+        if (resolvedColor) {
+          const url = new URL(window.location.href);
+          url.searchParams.set('color', resolvedColor);
+          // FIX: Do not carry size into URL unless user selected it this session
+          if (!userSelectedSize) {
+            url.searchParams.delete('size');
+            url.searchParams.delete('variant');
+          }
+          window.history.replaceState({}, '', url.toString());
+        }
+        if (typeof Shopify !== 'undefined' && typeof Shopify.OptionSelectors !== 'undefined') {
+          const productForm = document.querySelector('form[action="/cart/add"]');
+          const productJsonElement = document.getElementById('ProductJson');
+          if (productForm && productJsonElement) {
+            try {
+              new Shopify.OptionSelectors('product-select', {
+                product: JSON.parse(productJsonElement.innerHTML),
+                onVariantSelected: typeof selectCallback === 'function' ? selectCallback : null,
+              });
+            } catch (e) {
+              console.warn('Error initializing variant selectors:', e);
+            }
+          }
+        }
+        if (typeof window.__onPackProductLoaded === 'function') {
+          window.__onPackProductLoaded();
+        }
+        setupSelectionHandlers();
+      },
+    };
+
+    // ─── HANDLE INCOMING PARAMETERS ───────────────────────────────────
+    // FIX: Only processes size if it was explicitly present in the incoming URL
+    // (e.g. user followed a shared link). On a fresh page load the first script
+    // block has already stripped size/variant from the URL, so sizeParam will
+    // be null here and no size will be auto-selected.
+    function handleIncomingParameters() {
+      const urlParams = new URLSearchParams(window.location.search);
+      let sizeParam  = urlParams.get('size');    // null on fresh load (first script stripped it)
+      let colorParam = urlParams.get('color');
+      let variantParam = urlParams.get('variant'); // null on fresh load
+
+      const variants = window.product.variants;
+
+      // Only resolve size from variant if variant was explicitly in the ORIGINAL url
+      // (i.e. user followed a direct variant link), not from a fresh page load.
+      if (variantParam && sizeParam) {
+        const variantFromId = variants.find((v) => String(v.id) === variantParam);
+        if (variantFromId) {
+          sizeParam  = variantFromId.option1;
+          colorParam = variantFromId.option2;
+        }
+      }
+
+      const validSizes  = variants.map((v) => v.option1).filter(Boolean);
+      const validColors = variants.map((v) => v.option2).filter(Boolean);
+      if (sizeParam  && !validSizes.includes(sizeParam))   sizeParam  = null;
+      if (colorParam && !validColors.includes(colorParam)) colorParam = null;
+
+      if (!colorParam) {
+        const firstAvailable = variants.find((v) => v.available) || variants[0];
+        colorParam = firstAvailable?.option2 || null;
+      }
+
+      const newParams = new URLSearchParams(window.location.search);
+
+      // Only set variant param if size was explicitly provided (not a fresh load)
+      const matchedVariant = sizeParam
+        ? variants.find((v) => v.option1 === sizeParam && v.option2 === colorParam)
+        : null;
+
+      if (matchedVariant) {
+        newParams.set('variant', matchedVariant.id);
+      }
+
+      if (colorParam) newParams.set('color', colorParam);
+      if (sizeParam)  newParams.set('size', sizeParam);
+
+      if (sizeParam || colorParam) {
+        window.history.replaceState({}, '', `${window.location.pathname}?${newParams.toString()}`);
+      }
+
+      if (colorParam) {
+        const colorFieldset = findOptionFieldset('color');
+        if (colorFieldset) {
+          selectOptionByValue(colorFieldset, colorParam, () =>
+            updateVariantAvailability(colorParam, 'color')
+          );
+        }
+        updateSelectedColorDisplay(colorParam);
+      }
+
+      // Only select size if it was explicitly in the URL (shared/direct link)
+      if (sizeParam) {
+        userSelectedSize = sizeParam;
+        const sizeFieldset = findOptionFieldset('size');
+        if (sizeFieldset) {
+          selectOptionByValue(sizeFieldset, sizeParam, () =>
+            updateVariantAvailability(sizeParam, 'size')
+          );
+        }
+        updateSelectedSizeDisplay(sizeParam);
+        updateColorAvailabilityForSize(sizeParam);
+        updateVariantIdInCartForm(sizeParam, colorParam);
+      } else {
+        // No explicit size — keep button in "Select A Size" state
+        updateVariantIdInCartForm(null, colorParam);
+      }
+    }
+
+    function updateVariantIdInCartForm(selectedSize, selectedColor) {
+      const product = window.product;
+      updateMetaTags(product);
+      if (!product || !product.variants || product.variants.length === 0) return;
+
+      const sizePosition  = getSizeOptionPosition();
+      const colorPosition = getColorOptionPosition();
+      if (!sizePosition && !colorPosition) return;
+
+      if (!selectedSize) {
+        setButtonNoSize();
+        return;
+      }
+
+      let matchingVariants = product.variants;
+      if (selectedSize && sizePosition) {
+        matchingVariants = matchingVariants.filter((v) => v[`option${sizePosition}`] === selectedSize);
+      }
+      if (selectedColor && colorPosition) {
+        matchingVariants = matchingVariants.filter((v) => v[`option${colorPosition}`] === selectedColor);
+      }
+
+      if (matchingVariants.length === 0) {
+        if (selectedSize && sizePosition) {
+          matchingVariants = product.variants.filter((v) => v[`option${sizePosition}`] === selectedSize);
+          if (matchingVariants.length > 0) matchingVariants = [matchingVariants[0]];
+        } else if (selectedColor && colorPosition) {
+          matchingVariants = product.variants.filter((v) => v[`option${colorPosition}`] === selectedColor);
+          if (matchingVariants.length > 0) matchingVariants = [matchingVariants[0]];
+        }
+      }
+
+      if (matchingVariants.length === 0) matchingVariants = [product.variants[0]];
+
+      const variantId        = matchingVariants[0].id;
+      const variantAvailable = matchingVariants[0].available;
+  setButtonState(variantAvailable);
+
+      const cartForms = document.querySelectorAll('form[action="/cart/add"]');
+      cartForms.forEach((form) => {
+        let idInput = form.querySelector('input[name="id"]');
+        if (idInput) {
+          idInput.value = variantId;
+        } else {
+          idInput = document.createElement('input');
+          idInput.type  = 'hidden';
+          idInput.name  = 'id';
+          idInput.value = variantId;
+          form.appendChild(idInput);
+        }
+      });
+    }
+
+    function getSizeOptionPosition() {
+      const sizeFieldset = findSizeFieldset();
+      if (!sizeFieldset) return null;
+      return getOptionPosition(sizeFieldset);
+    }
+
+    function getColorOptionPosition() {
+      const colorFieldset = findColorFieldset();
+      if (!colorFieldset) return null;
+      return getOptionPosition(colorFieldset);
+    }
+
+    function findColorFieldset() {
+      const possibleSelectors = [
+        '.variant-picker__option',
+        '.product-form__input--dropdown',
+        '.selector-wrapper',
+        'fieldset[data-option-index="0"]',
+        '.product-options',
+        '[data-product-options]',
+      ];
+      for (const selector of possibleSelectors) {
+        const fieldsets = document.querySelectorAll(selector);
+        for (const fieldset of fieldsets) {
+          const label = fieldset.querySelector('label, legend, .option-name');
+          if (label && /color|couleur|farbe/i.test(label.textContent.trim())) return fieldset;
+        }
+      }
+      return document.querySelector('[data-index="option2"], [name="options[option2]"]')?.closest('fieldset') || null;
+    }
+
+    function findSizeFieldset() {
+      const possibleSelectors = [
+        '.variant-picker__option',
+        '.product-form__input--dropdown',
+        '.selector-wrapper',
+        'fieldset[data-option-index="0"]',
+        '.product-options',
+        '[data-product-options]',
+      ];
+      for (const selector of possibleSelectors) {
+        const fieldsets = document.querySelectorAll(selector);
+        for (const fieldset of fieldsets) {
+          const label = fieldset.querySelector('label, legend, .option-name');
+          if (label && /size|taille|größe/i.test(label.textContent)) return fieldset;
+        }
+      }
+      return document.querySelector('.variant-picker__option, .product-form__input, .selector-wrapper');
+    }
+
+    function updateSelectedSizeDisplay(selectedSize) {
+      document.querySelectorAll('variant-option-value[for="option1"]').forEach((el) => {
+        el.textContent = selectedSize;
+      });
+      document.querySelectorAll('select[name="size"]').forEach((select) => {
+        for (let i = 0; i < select.options.length; i++) {
+          if (select.options[i].value === selectedSize || select.options[i].textContent.trim() === selectedSize) {
+            select.selectedIndex = i;
+            break;
+          }
+        }
+      });
+    }
+
+    function updateSelectedColorDisplay(selectedColor) {
+      document.querySelectorAll('variant-option-value[for="option2"]').forEach((el) => {
+        el.textContent = selectedColor;
+      });
+      document.querySelectorAll('select[name="color"]').forEach((select) => {
+        for (let i = 0; i < select.options.length; i++) {
+          if (
+            select.options[i].value === selectedColor ||
+            select.options[i].textContent.trim() === selectedColor
+          ) {
+            select.selectedIndex = i;
+            break;
+          }
+        }
+      });
+    }
+
+    function selectOptionByValue(fieldset, value, callback) {
+      const options = fieldset.querySelectorAll('[data-option-value]');
+      let foundMatch = false;
+      for (const option of options) {
+        const optionValue = option.getAttribute('value') || option.textContent.trim();
+        if (optionValue === value) {
+          foundMatch = true;
+          if (option.tagName === 'BUTTON' || option.tagName === 'INPUT') {
+            option.click();
+          } else if (option.tagName === 'OPTION') {
+            option.selected = true;
+            option.closest('select').dispatchEvent(new Event('change', { bubbles: true }));
+          } else {
+            option.click();
+          }
+          setTimeout(callback, 500);
+          break;
+        }
+      }
+      if (!foundMatch) console.warn('Could not find option matching:', value);
+    }
+
+    function updateVariantAvailability(selectedValue, optionType) {
+      const product = window.product;
+      if (!product) return;
+      const allFieldsets   = document.querySelectorAll('.variant-picker__option');
+      const targetFieldset = findOptionFieldset(optionType);
+      allFieldsets.forEach((fieldset) => {
+        if (fieldset === targetFieldset) return;
+        const optionPosition = getOptionPosition(fieldset);
+        if (!optionPosition) return;
+        const targetPosition = getOptionPosition(targetFieldset);
+        if (!targetPosition) return;
+        const optionSelector = `option${optionPosition}`;
+        const targetSelector = `option${targetPosition}`;
+        fieldset.querySelectorAll('[data-option-value]').forEach((option) => {
+          const optionValue = option.getAttribute('value') || option.textContent.trim();
+          let isAvailable = false;
+          for (const variant of product.variants) {
+            if (variant[targetSelector] === selectedValue && variant[optionSelector] === optionValue) {
+              isAvailable = variant.available;
+              break;
+            }
+          }
+          const bundleProducts = product.metafields?.prts?.complex_bundle?.value;
+          if (bundleProducts) {
+            isAvailable = checkBundleAvailability(bundleProducts, selectedValue, optionValue, optionType);
+          }
+          if (optionType === 'color') {
+            setTimeout(() => {
+              document
+                .querySelectorAll('.block-swatch.is-disabled')
+                .forEach((el) => el.classList.remove('is-disabled'));
+              updateOptionAvailability(option, isAvailable);
+              document
+                .querySelectorAll('.block-swatch.is-disabled')
+                .forEach((el) => el.classList.remove('is-disabled'));
+            }, 300);
+          }
+        });
+      });
+    }
+
+    function checkBundleAvailability(bundleProducts, selectedValue, variantValue, optionType) {
+      if (!bundleProducts || !Array.isArray(bundleProducts)) return true;
+      for (const bundleProduct of bundleProducts) {
+        const product = bundleProduct.product?.value;
+        const count   = bundleProduct.count?.value || 1;
+        if (!product) continue;
+        const targetPosition = getOptionPositionForProduct(product, optionType);
+        if (!targetPosition) continue;
+        const targetSelector = `option${targetPosition}`;
+        let hasAvailableVariant = false;
+        for (const variant of product.variants) {
+          if (variant[targetSelector] === selectedValue && variant.inventory_quantity >= count) {
+            hasAvailableVariant = true;
+            break;
+          }
+        }
+        if (!hasAvailableVariant) return false;
+      }
+      return true;
+    }
+
+    function updateOptionAvailability(optionElement, isAvailable) {
+      document.querySelectorAll('.block-swatch.is-disabled').forEach((el) => el.classList.remove('is-disabled'));
+      if (!isAvailable) {
+        optionElement.classList.add('is-disabled', 'sold-out');
+        const parentSwatch = optionElement.closest(
+          '.wd-swatch, .swatch, .swatch-element, .variant-swatch, .color-swatch, .thumbnail-swatch'
+        );
+        document.querySelectorAll('.block-swatch.is-disabled').forEach((el) => el.classList.remove('is-disabled'));
+        if (parentSwatch) parentSwatch.classList.add('is-disabled', 'sold-out');
+        document.querySelectorAll('.block-swatch.is-disabled').forEach((el) => el.classList.remove('is-disabled'));
+      }
+      document.querySelectorAll('.block-swatch.is-disabled').forEach((el) => el.classList.remove('is-disabled'));
+    }
+
+    function findOptionFieldset(optionName) {
+      return Array.from(document.querySelectorAll('.variant-picker__option')).find((fieldset) => {
+        const legend = fieldset.querySelector('legend');
+        return legend && legend.textContent.toLowerCase().includes(optionName.toLowerCase());
+      });
+    }
+
+    function getOptionPosition(fieldset) {
+      const classMatch = fieldset.className.match(/option(\d+)/);
+      return classMatch ? classMatch[1] : null;
+    }
+
+    function getOptionPositionForProduct(product, optionName) {
+      if (!product || !product.options_by_name) return null;
+      const option = product.options_by_name[optionName.toLowerCase()];
+      return option ? option.position : null;
+    }
+
+    function setupSelectionHandlers() {
+      const sizeFieldset = findOptionFieldset('size');
+      if (sizeFieldset) setupOptionHandlers(sizeFieldset, 'size');
+      const colorFieldset = findOptionFieldset('color');
+      if (colorFieldset) setupOptionHandlers(colorFieldset, 'color');
+    }
+
+    function setupOptionHandlers(fieldset, optionType) {
+      fieldset.querySelectorAll('[data-option-value]').forEach((option) => {
+        option.addEventListener('click', () => {
+          const selectedValue = option.getAttribute('value') || option.textContent.trim();
+          updateUrlWithParameter(optionType, selectedValue);
+          updateAllProductLinks();
+        });
+      });
+    }
+
+    function setupProductLinkModification() {
+      updateAllProductLinks();
+      const observer = new MutationObserver(() => updateAllProductLinks());
+      observer.observe(document.body, { childList: true, subtree: true });
+      document.body.addEventListener('click', (e) => {
+        const clickedLink = e.target.closest('a[href*="/products/"]');
+        if (!clickedLink || !clickedLink.href.includes(window.location.hostname)) return;
+        const currentOptions = getCurrentSelectedOptions();
+        const linkUrl = new URL(clickedLink.href);
+        let shouldModify = false;
+        for (const [key, value] of Object.entries(currentOptions)) {
+          if (value && !linkUrl.searchParams.has(key)) {
+            linkUrl.searchParams.set(key, value);
+            shouldModify = true;
+          }
+        }
+        if (shouldModify) {
+          e.preventDefault();
+          const form = document.createElement('form');
+          form.method  = 'GET';
+          form.action  = linkUrl.pathname;
+          form.style.display = 'none';
+          for (const [key, value] of Object.entries(currentOptions)) {
+            if (value) {
+              const input   = document.createElement('input');
+              input.type    = 'hidden';
+              input.name    = key;
+              input.value   = value;
+              form.appendChild(input);
+            }
+          }
+          document.body.appendChild(form);
+          form.submit();
+        }
+      });
+    }
+
+    function getCurrentSelectedOptions() {
+      const options = {};
+      const sizeFieldset = findOptionFieldset('size');
+      if (sizeFieldset) options.size = getCurrentSelectedValue(sizeFieldset);
+      const colorFieldset = findOptionFieldset('color');
+      if (colorFieldset) options.color = getCurrentSelectedValue(colorFieldset);
+      return options;
+    }
+
+    function getCurrentSelectedValue(fieldset) {
+      const selectedOption = fieldset.querySelector(
+        '[aria-selected="true"], .selected, [selected], [data-selected="true"]'
+      );
+      if (selectedOption) return selectedOption.getAttribute('value') || selectedOption.textContent.trim();
+      const activeOption = fieldset.querySelector('.active, .current, .is-active');
+      if (activeOption) return activeOption.getAttribute('value') || activeOption.textContent.trim();
+      const urlParams  = new URLSearchParams(window.location.search);
+      const optionName = fieldset.querySelector('legend')?.textContent.toLowerCase() || '';
+      return urlParams.get(optionName.includes('size') ? 'size' : 'color') || null;
+    }
+
+    function updateUrlWithParameter(optionType, value) {
+      if (!value) return;
+      const url = new URL(window.location.href);
+      url.searchParams.set(optionType, value);
+      window.history.replaceState({}, '', url.toString());
+      sessionStorage.setItem(`lastSelected${optionType.charAt(0).toUpperCase() + optionType.slice(1)}`, value);
+    }
+
+    function updateAllProductLinks() {
+      const currentOptions = getCurrentSelectedOptions();
+      document.querySelectorAll('a[href*="/products/"]').forEach((link) => {
+        try {
+          if (!link.href.includes(window.location.hostname)) return;
+          const url = new URL(link.href);
+          if (!url.pathname.includes('/products/')) return;
+          for (const [key, value] of Object.entries(currentOptions)) {
+            if (value) url.searchParams.set(key, value);
+          }
+          link.href = url.toString();
+        } catch (error) {
+          console.warn('Error updating link:', link.href, error);
+        }
+      });
+    }
+
+    async function init() {
+      setTimeout(() => {
+        document.querySelectorAll('.block-swatch.is-disabled').forEach((el) => el.classList.remove('is-disabled'));
+      }, 1000);
+
+      setupSelectionHandlers();
+      setupProductLinkModification();
+    }
+
+    window.addEventListener('popstate', async function () {
+      const pathParts = window.location.pathname.split('/');
+      const handle    = pathParts[pathParts.length - 1];
+      try {
+        const productJson = await fetch(`/products/${handle}.js`).then((r) => r.json());
+        window.product = productJson;
+        const productHtml    = await UTILS.fetchProductData(handle);
+        const mainContainer  = UTILS.getMainContainer();
+        if (productHtml && mainContainer) {
+          const parser     = new DOMParser();
+          const doc        = parser.parseFromString(productHtml, 'text/html');
+          const newContent = doc.querySelector('.product') || doc.querySelector('.main-content');
+          if (newContent) {
+            const scrollPosition = window.scrollY;
+            mainContainer.innerHTML = newContent.innerHTML;
+            window.scrollTo(0, scrollPosition);
+            if (typeof initProductPage === 'function') initProductPage();
+            const restoredColor = new URLSearchParams(window.location.search).get('color');
+            TabHandler.reinitializeSizeSelection(restoredColor);
+            setTimeout(() => {
+              const newGallery = mainContainer.querySelector('.product-gallery, .product-gallery__ar-wrapper');
+              if (newGallery) {
+                newGallery.style.width    = '';
+                newGallery.style.height   = '';
+                newGallery.style.overflow = '';
+                newGallery.style.position = '';
+              }
+            }, 50);
+          }
+        }
+      } catch (error) {
+        console.error('Error handling popstate:', error);
+      }
+    });
+
+    async function navigateToProduct(handle) {
+      const mainContainer = UTILS.getMainContainer();
+      if (!mainContainer) return;
+      const scrollPosition = window.scrollY;
+      const productJson    = await fetch(`/products/${handle}.js`).then((r) => r.json());
+      window.product = productJson;
+      const productHtml = await UTILS.fetchProductData(handle);
+      if (!productHtml) return;
+      const parser     = new DOMParser();
+      const doc        = parser.parseFromString(productHtml, 'text/html');
+      const newContent = doc.querySelector('.product') || doc.querySelector('.main-content');
+      if (newContent) {
+        mainContainer.innerHTML = newContent.innerHTML;
+        window.scrollTo(0, scrollPosition);
+        UTILS.updateUrl(handle, null);
+        TabHandler.reinitializeSizeSelection(null);
+        const relatedItems = document.querySelectorAll('.related-product-item');
+        relatedItems.forEach((item) => {
+          item.classList.toggle('active-product', item.getAttribute('data-product-handle') === handle);
+        });
+        if (typeof initProductPage === 'function') initProductPage();
+        setTimeout(() => {
+          const newGallery = mainContainer.querySelector('.product-gallery, .product-gallery__ar-wrapper');
+          if (newGallery) {
+            newGallery.style.width    = '';
+            newGallery.style.height   = '';
+            newGallery.style.overflow = '';
+            newGallery.style.position = '';
+          }
+        }, 50);
+      }
+      initProductPage();
+    }
+
+    function initProductGallery() {
+      const mediaCarousel = document.querySelector('media-carousel');
+      if (mediaCarousel) {
+        const thumbnails = document.querySelectorAll('.product-gallery__thumbnail');
+        if (thumbnails.length > 0) {
+          thumbnails.forEach((thumb, index) => {
+            thumb.addEventListener('click', (e) => {
+              e.preventDefault();
+              mediaCarousel.dispatchEvent(new CustomEvent('thumbnail-click', { detail: { index } }));
+            });
+          });
+        }
+      }
+      const mobileSlider = document.querySelector('.product-image-slider');
+      if (mobileSlider && typeof jQuery !== 'undefined' && jQuery.fn.slick) {
+        jQuery(mobileSlider).slick({
+          slidesToShow: 2,
+          slidesToScroll: 1,
+          arrows: true,
+          dots: false,
+          infinite: true,
+          autoplay: false,
+          prevArrow:
+            '<button class="custom-prev-arrow"><i class="fa fa-chevron-left" aria-hidden="true"></i></button>',
+          nextArrow:
+            '<button class="custom-next-arrow"><i class="fa fa-chevron-right" aria-hidden="true"></i></button>',
+        });
+        jQuery('.slider-image').on('click', function () {
+          const slideIndex = jQuery(this).closest('.slick-slide').data('slick-index');
+          if (jQuery('.zoom-close:visible').length > 0) {
+            jQuery(mobileSlider).slick('slickSetOption', 'slidesToShow', 2, true);
+            jQuery('.zoom-close').fadeOut();
+          } else {
+            jQuery(mobileSlider).slick('slickSetOption', 'slidesToShow', 1, true);
+            jQuery('.zoom-close').fadeIn();
+            jQuery(mobileSlider).slick('slickGoTo', slideIndex);
+          }
+        });
+        jQuery('.zoom-close').on('click', function (e) {
+          e.stopPropagation();
+          jQuery(mobileSlider).slick('slickSetOption', 'slidesToShow', 2, true);
+          jQuery('.zoom-close').fadeOut();
+        });
+        jQuery('.zoom-close').hide();
+      }
+    }
+
+    function initProductPage() {
+      initProductGallery();
+    }
+
+    function positionRelatedProducts() {
+      const relatedProductsElement = document.getElementById('related-products');
+      const colorSelectorElement   = document.querySelector(
+        '.product-form__input.product-form__input--color-selector'
+      );
+      if (relatedProductsElement && colorSelectorElement) {
+        colorSelectorElement.parentNode.insertBefore(relatedProductsElement, colorSelectorElement);
+      }
+    }
+
+    function updateMetaTags(product) {
+      if (!product) return;
+      document.title = product.title || 'Default Title';
+      let metaDescription = document.querySelector('meta[name="description"]');
+      if (!metaDescription) {
+        metaDescription      = document.createElement('meta');
+        metaDescription.name = 'description';
+        document.head.appendChild(metaDescription);
+      }
+      metaDescription.content = product.description || '';
+      let ogTitle = document.querySelector('meta[property="og:title"]');
+      if (!ogTitle) {
+        ogTitle = document.createElement('meta');
+        ogTitle.setAttribute('property', 'og:title');
+        document.head.appendChild(ogTitle);
+      }
+      ogTitle.content = product.title || '';
+      let ogDescription = document.querySelector('meta[property="og:description"]');
+      if (!ogDescription) {
+        ogDescription = document.createElement('meta');
+        ogDescription.setAttribute('property', 'og:description');
+        document.head.appendChild(ogDescription);
+      }
+      ogDescription.content = product.description || '';
+      if (product.featured_image) {
+        let ogImage = document.querySelector('meta[property="og:image"]');
+        if (!ogImage) {
+          ogImage = document.createElement('meta');
+          ogImage.setAttribute('property', 'og:image');
+          document.head.appendChild(ogImage);
+        }
+        ogImage.content = product.featured_image;
+      }
+    }
+
+    document.querySelectorAll('.block-swatch.is-disabled').forEach((el) => el.classList.remove('is-disabled'));
+    init();
+    setTimeout(() => {
+      document.querySelectorAll('.block-swatch.is-disabled').forEach((el) => el.classList.remove('is-disabled'));
+    }, 500);
+    setTimeout(positionRelatedProducts, 50);
+
+    document.addEventListener(
+      'click',
+      function (e) {
+        const loader       = document.getElementById('pack-products-loader');
+        const gridproducts = document.querySelector('.related-products-grid');
+        const mediaWrapper = document.getElementById('variant-images');
+        const galleryloader = document.getElementById('loader');
+        const relatedProduct = e.target.closest('.related-product-item');
+
+        if (relatedProduct) {
+          e.preventDefault();
+          const handle = relatedProduct.getAttribute('data-product-handle');
+          if (handle) {
+            const relatedProducts  = document.querySelectorAll('.related-product-item');
+            const lastProduct      = relatedProducts[relatedProducts.length - 1];
+            const previouslyActive = document.querySelector('.related-product-item.active-product');
+            if (previouslyActive === lastProduct) {
+              const lastPrice = lastProduct.querySelector('.related-product-price');
+              if (lastPrice) lastPrice.style.color = '#971b1b';
+            }
+            relatedProducts.forEach((i) => i.classList.remove('active-product'));
+            relatedProduct.classList.add('active-product');
+            const clickedPrice = relatedProduct.querySelector('.related-product-price');
+            if (clickedPrice && relatedProduct === lastProduct) clickedPrice.style.color = '#ffffff';
+            const packQuantityEl = document.querySelector('.pack-quantity')?.parentElement;
+            if (packQuantityEl) {
+              const title = relatedProduct.getAttribute('data-product-title') || '';
+              let quantity = 1;
+              if (title.toLowerCase() !== 'single') {
+                const match = title.match(/\d+/);
+                if (match) quantity = match[0];
+              }
+              packQuantityEl.innerHTML = `<strong class="pack-quantity" style="color:#000;">Pack Quantity: </strong>${quantity}`;
+            }
+            const title        = relatedProduct.getAttribute('data-product-title');
+            const price        = relatedProduct.getAttribute('data-product-price');
+            const comparePrice = relatedProduct.getAttribute('data-product-compare-price');
+            const titleEl         = document.querySelector('.strong-pdp .product-info__title');
+            const priceListEl     = document.querySelector('.strong-pdp price-list');
+            const comparePriceEl  = priceListEl?.querySelector('compare-at-price');
+            const salePriceEl     = priceListEl?.querySelector('sale-price');
+            const badgeContainer  = document.querySelector('.strong-pdp .product-info__badge-list');
+            const onSaleBadge     = badgeContainer?.querySelector('on-sale-badge');
+            if (titleEl && title) titleEl.textContent = title;
+            if (priceListEl) {
+              if (comparePrice && comparePriceEl) {
+                comparePriceEl.textContent   = comparePrice;
+                comparePriceEl.style.display = '';
+              } else if (comparePriceEl) {
+                comparePriceEl.style.display = 'none';
+              }
+              if (price && salePriceEl) salePriceEl.textContent = price;
+            }
+            if (onSaleBadge) {
+              const priceNum        = price ? parseFloat(price.replace(/[^0-9.]/g, '')) : 0;
+              const comparePriceNum = comparePrice ? parseFloat(comparePrice.replace(/[^0-9.]/g, '')) : 0;
+              if (comparePriceNum && comparePriceNum > priceNum) {
+                const discountPercent = Math.round(((comparePriceNum - priceNum) / comparePriceNum) * 100);
+                onSaleBadge.textContent = `${discountPercent}% Off`;
+                onSaleBadge.hidden      = false;
+              } else {
+                onSaleBadge.hidden = true;
+              }
+            }
+            if (mediaWrapper) mediaWrapper.style.display = 'none';
+            galleryloader.style.display = 'block';
+            TabHandler.loadProductContent(handle, null);
+          }
+          return;
+        }
+
+        const blockSwatch = e.target.closest('a.block-swatch');
+        if (!blockSwatch) return;
+        const href = blockSwatch.getAttribute('href');
+        if (!href || !href.includes('/products/')) return;
+        e.preventDefault();
+        e.stopPropagation();
+        const match = href.match(/\/products\/([^\/?#]+)/);
+        if (!match) return;
+        const handle     = match[1];
+        const swatchUrl  = new URL(href, window.location.origin);
+        const swatchColor = swatchUrl.searchParams.get('color') || null;
+        if (gridproducts) gridproducts.style.display = 'none';
+        if (loader) loader.style.display = 'flex';
+        if (mediaWrapper) mediaWrapper.style.display = 'none';
+        galleryloader.style.display = 'block';
+        try {
+          TabHandler.loadProductContent(handle, swatchColor);
+        } catch (err) {
+          console.error('Failed to navigate to product', handle, err);
+        }
+        return false;
+      },
+      true
+    );
+  });
+</script>

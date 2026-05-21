@@ -1,0 +1,17 @@
+{%- comment -%}
+  Generic WebPage JSON-LD — fallback for pages that aren't about/contact/returns/faq.
+  Source of truth: Schema Optimizations - Strongsize - Q2 2026 / Final Markup / Default Page (no MerchantReturnPolicy).
+{%- endcomment -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "@id": "{{ shop.url }}{{ page.url }}#WebPage",
+  "name": {{ page.title | json }},
+  "url": "{{ shop.url }}{{ page.url }}"
+  {%- assign webpage_description = page.metafields.global.description_tag | default: page.content | strip_html | truncate: 200 -%}
+  {%- if webpage_description != blank -%}
+  ,"description": {{ webpage_description | json }}
+  {%- endif -%}
+}
+</script>

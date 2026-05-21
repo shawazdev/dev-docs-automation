@@ -1,0 +1,78 @@
+{%- assign ss = section.settings -%}
+
+<div {% render 'section-properties', narrow: section.settings.reduce_width %}>
+  <div class="wd-wrapper" style="display: flex; flex-direction: column; gap: 20px;">
+    <div class="content" style="text-align: center;">
+      {%- if ss.image_above -%}
+        <div class="image-above" style="margin-bottom: 10px;">
+          {{ ss.image_above | image_url: width: 200 | image_tag: loading: 'lazy' }}
+        </div>
+      {%- endif -%}
+
+      {%- if ss.title -%}
+        <h2 class="title" style="margin-bottom: 10px;">{{ ss.title }}</h2>
+      {%- endif -%}
+
+      {%- if ss.subtitle -%}
+        <div class="subtitle">{{ ss.subtitle }}</div>
+      {%- endif -%}
+    </div>
+  </div>
+   {%- if ss.image -%}
+  <div class="image" style="display: flex; justify-content: center;">
+    {{ ss.image | image_url: width: 550 | image_tag: loading: 'lazy' }}
+  </div>
+{%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "WD Image & Text",
+  "tag": "section",
+  "class": "wd-image-text",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_above",
+      "label": "Image above text"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title"
+    },
+    {
+      "type": "richtext",
+      "id": "subtitle",
+      "label": "Subtitle"
+    },
+    {
+      "type": "select",
+      "id": "position",
+      "label": "Image position",
+      "options": [
+        {
+          "value": "row",
+          "label": "Left"
+        },
+        {
+          "value": "row-reverse",
+          "label": "Right"
+        }
+      ],
+      "default": "row"
+    }
+  ],
+  "presets": [
+    {
+      "name": "WD Image & Text",
+      "settings": {}
+    }
+  ]
+}
+{% endschema %}

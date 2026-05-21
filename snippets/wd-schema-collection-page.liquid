@@ -1,0 +1,69 @@
+{%- comment -%}
+  CollectionPage JSON-LD — rendered on collection pages (request.page_type == 'collection').
+  Source of truth: Schema Optimizations - Strongsize - Q2 2026 / Final Markup / Category.
+  Loops ALL products visible on the page (collection.products), not just the spec's 5 examples.
+{%- endcomment -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "@id": "{{ shop.url }}{{ collection.url }}#CollectionPage",
+  "name": {{ collection.title | json }},
+  "url": "{{ shop.url }}{{ collection.url }}",
+  {%- assign collection_description = collection.metafields.global.description_tag | default: collection.description | strip_html | truncate: 250 -%}
+  {%- if collection_description != blank -%}
+  "description": {{ collection_description | json }},
+  {%- endif -%}
+  "mainEntity": {
+    "@type": "ItemList",
+    "itemListElement": [
+      {%- for product in collection.products -%}
+        {%- assign _img_p_raw = product.featured_image | image_url: width: 1000 -%}
+        {%- assign _img_p_prefix = _img_p_raw | slice: 0, 2 -%}
+        {%- if _img_p_raw contains '://' -%}
+          {%- assign p_image = _img_p_raw -%}
+        {%- elsif _img_p_prefix == '//' -%}
+          {%- assign p_image = _img_p_raw | prepend: 'https:' -%}
+        {%- else -%}
+          {%- assign p_image = _img_p_raw | prepend: shop.url -%}
+        {%- endif -%}
+        {%- assign p_variant = product.selected_or_first_available_variant -%}
+        {
+          "@type": "ListItem",
+          "position": {{ forloop.index }},
+          "item": {
+            "@type": "Product",
+            "name": {{ product.title | json }},
+            "url": "{{ shop.url }}{{ product.url }}",
+            {%- if p_image != blank -%}
+            "image": "{{ p_image }}",
+            {%- endif -%}
+            "offers": {
+              "@type": "Offer",
+              "price": "{{ p_variant.price | money_without_currency | strip_html | replace: ',', '' }}",
+              "priceCurrency": "{{ cart.currency.iso_code }}",
+              "availability": "{% if product.available %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}"
+              {%- if p_variant.compare_at_price != blank and p_variant.compare_at_price > p_variant.price -%}
+              ,"priceSpecification": {
+                "@type": "PriceSpecification",
+                "price": "{{ p_variant.compare_at_price | money_without_currency | strip_html | replace: ',', '' }}",
+                "priceCurrency": "{{ cart.currency.iso_code }}"
+              }
+              {%- endif -%}
+            }
+            {%- if product.metafields.reviews.rating.value != blank and product.metafields.reviews.rating_count.value > 0 -%}
+              {%- assign p_rating = product.metafields.reviews.rating.value.rating | round: 1 -%}
+              {%- assign p_count = product.metafields.reviews.rating_count.value -%}
+            ,"aggregateRating": {
+              "@type": "AggregateRating",
+              "ratingValue": "{{ p_rating }}",
+              "reviewCount": "{{ p_count }}"
+            }
+            {%- endif -%}
+          }
+        }{%- unless forloop.last -%},{%- endunless -%}
+      {%- endfor -%}
+    ]
+  }
+}
+</script>

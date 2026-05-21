@@ -1,0 +1,77 @@
+{%- assign ss = section.settings -%}
+
+<div {% render 'section-properties', narrow: section.settings.reduce_width %}>
+  <div class="wd-wrapper">
+    <div class="titles">
+      {%- if ss.title -%}
+        <h2 class="title">{{ ss.title }}</h2>
+      {%- endif -%}
+      {%- if ss.subtitle -%}
+        <div class="subtitle">
+          {{ ss.subtitle }}
+        </div>
+      {%- endif -%}
+      {%- if section.blocks.size > 0 -%}
+        <div class="images">
+          {% for block in section.blocks %}
+            <div class="image" style="flex-basis: {{ block.settings.width }}%">
+              {%- if block.settings.image -%}
+                {{ block.settings.image | image_url: width: 600 | image_tag: loading: 'lazy' }}
+              {%- endif -%}
+            </div>
+          {% endfor %}
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+  {
+    "name": "WD Images Flex",
+    "tag": "section",
+    "class": "wd-images-flex",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title"
+      },
+      {
+        "type": "richtext",
+        "id": "subtitle",
+        "label": "Subtitle"
+      }
+    ],
+    "blocks": [
+      {
+        "name": "image",
+        "type": "image",
+        "settings": [
+           {
+             "type": "image_picker",
+             "id": "image",
+             "label": "Image"
+           },
+           {
+             "type": "range",
+             "id": "width",
+             "min": 25,
+             "max": 50,
+             "step": 1,
+             "unit": "%",
+             "label": "Width",
+             "default": 33
+           }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "WD Images Flex",
+        "settings": {
+        }
+      }
+    ]
+  }
+{% endschema %}

@@ -1,0 +1,1082 @@
+{%- comment -%}
+  ----------------------------------------------------------------------------------------------------------------------
+  VARIANT PICKER
+  ----------------------------------------------------------------------------------------------------------------------
+
+  Render the variant picker option selectors.
+
+  ********************************************
+  Supported variables
+  ********************************************
+
+  * product: the product for which to render the selector (required)
+  * update_url: if set to true, the URL is updated when the variant changes (usually used for product page)
+  * hide_sold_out_variants: if set to true, the sold out or unavailable variants are hidden
+  * hide_size_chart: if set to true, size chart is always hidden
+  * force_dropdown_as_block: if set to true, the dropdown selectors are replaced by blocks, which is useful for quick buy where dropdown are not convenient to use
+  * form_id: the ID of the form that is listening
+  * block: the block itself, for theme-specific options (such as selector types)
+{%- endcomment -%}
+
+{%- liquid
+  assign custom_colors = product.metafields.prts.color_array.value
+  assign custom_length = product.metafields.prts.length.value
+  assign color_products = product.metafields.prts.variable_colors.value
+  assign length_products = product.metafields.prts.variable_length.value
+  assign is_bundle = product.metafields.prts.simple_bundle.value
+  assign bundle_products = product.metafields.prts.bundle_products.value
+  assign bundle_same_color = product.metafields.prts.bundle_same_color.value
+  assign bundle_size = product.metafields.prts.packs.value.title | split: ' ' | first | times: 1
+-%}
+
+{% comment %}
+  {{ custom_colors }}
+  {{ custom_length }}
+  {{ color_products }}
+  {{ length_products }}
+{% endcomment %}
+
+{%- assign color_label_list = 'general.label.color' | t | replace: ', ', ',' | downcase | split: ',' -%}
+{%- assign size_label_list = 'general.label.size' | t | replace: ', ', ',' | downcase | split: ',' -%}
+
+{%- if is_bundle -%}
+  <div class="wd-bundle-colors">
+    <span class="text-subdued">Bundle items:</span>
+    <div class="bundle-product-images">
+      {%- for bundle_product in bundle_products -%}
+        {%- assign color = bundle_product.metafields.prts.color_array.value | first -%}
+        <div class="bundle-product-item">
+          {%- if bundle_product.featured_media -%}
+            <img
+              src="{{ bundle_product.featured_media | img_url: '100x100', crop: 'center' }}"
+              alt="{{ bundle_product.title }}"
+              class="bundle-product-thumbnail"
+              width="50"
+              height="50"
+            >
+            <div class="bundle-product-name">{{ bundle_product.title }}</div>
+          {%- else -%}
+            {%- render 'wd-swatch',
+              type: 'colors',
+              value: color.title,
+              selected: selected,
+              name: name,
+              show_tooltip: true
+            -%}
+            <div class="bundle-product-name">{{ bundle_product.title }}</div>
+          {%- endif -%}
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+{%- else -%}
+  {%- if length_products -%}
+    <span class="text-subdued">Length:</span>
+    <div class="wd-fake-colors">
+      {% for length_product in length_products %}
+        {%- if length_product.metafields.prts.length.value == product.metafields.prts.length.value -%}
+          {%- assign selected_length = true -%}
+        {%- else -%}
+          {%- assign selected_length = false -%}
+        {%- endif -%}
+        {%- render 'wd-swatch',
+          type: 'block',
+          value: length_product.metafields.prts.length.value.title,
+          href: length_product.url,
+          selected: selected_length
+        -%}
+      {% endfor %}
+    </div>
+  {%- endif -%}
+  <!--
+    {%- if color_products -%}
+      {%- assign product_color = product.metafields.prts.color_array.value | first -%}
+      <div><span class="text-subdued">Color:</span> {{ product_color.title }}</div>
+      <div class="wd-fake-colors">
+        {%- for color_product in color_products -%}
+          {%- assign color = color_product.metafields.prts.color_array.value | first -%}
+          {%- if color.title == product_color.title -%}
+            {%- assign selected_color = true -%}
+          {%- else -%}
+            {%- assign selected_color = false -%}
+          {%- endif -%}
+          {%- render 'wd-swatch', type: 'colors', value: color.title, href: color_product.url, selected: selected_color, show_tooltip: true -%}
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  -->
+{%- endif -%}
+{% render 'related-product',
+  product: product,
+  pack_metafield_namespace: custom,
+  pack_metafield_key: related_pack_products,
+  max_packs: 3
+%}
+
+{%- unless product.has_only_default_variant or hide_sold_out_variants and product.available == false -%}
+  <variant-picker
+    class="variant-picker wd-variant-picker"
+    handle="{{ product.handle }}"
+    form="{{ form_id }}"
+    {% if update_url %}
+      update-url
+    {% endif %}
+    {% if hide_sold_out_variants %}
+      hide-sold-out-variants
+    {% endif %}
+  >
+    {%- for option in product.options_with_values -%}
+      {%- assign option_downcase = option.name | downcase -%}
+      {%- assign selector_type = block.settings.selector_mode -%}
+
+      {% if color_label_list contains option_downcase %}
+        {%- assign selector_type = block.settings.color_mode -%}
+
+        {%- if selector_type == 'variant_image' -%}
+          {%- comment -%}To use this mode every variant must have an attached media{%- endcomment -%}
+
+          {%- for variant in product.variants -%}
+            {%- unless variant.featured_media -%}
+              {%- assign selector_type = 'color' -%}
+              {%- break -%}
+            {%- endunless -%}
+          {%- endfor -%}
+        {%- endif -%}
+      {%- endif -%}
+
+      {%- if selector_type == 'dropdown' and force_dropdown_as_block -%}
+        {%- assign selector_type = 'block' -%}
+      {%- endif -%}
+
+      <fieldset class="variant-picker__option no-js:hidden option{{ option.position }}">
+        <div class="variant-picker__option-info">
+          <div class="h-stack gap-2">
+            <legend class="text-subdued">
+              {%- if option.name == 'Bundle' -%}Colors: {%- else -%}{{ option.name }}:{%- endif -%}
+            </legend>
+            <variant-option-value form="{{ form_id }}" for="option{{ option.position }}">
+              {{- option.selected_value -}}
+            </variant-option-value>
+          </div>
+          {%- assign size_chart = section.blocks | where: 'type', 'size_chart' | first -%}
+          {%- assign mf = product.metafields.prts.size_chart -%}
+          {%- assign find_your_size_mf = product.metafields.custom.find_your_size -%}
+
+          {%- if hide_size_chart != true
+            and size_chart
+            and size_label_list contains option_downcase
+            and mf
+            or find_your_size_mf
+          -%}
+            {%- assign bs = size_chart.settings -%}
+            {%- assign chart = mf.value.table | split: ' | ' -%}
+            {%- capture drawer_id -%}size-chart-{{ section.id }}-{{ block.id }}{%- endcapture -%}
+            {% if mf %}
+              {%- capture chart_html -%}
+               <div class="">
+      <input type="radio" class="tab-toggle" name="tab-toggle" id="tab1" checked>
+      <input type="radio" class="tab-toggle" name="tab-toggle" id="tab2">
+      <ul class="tab-list">
+        <li class="tab-item">
+          <label class="tab-trigger" for="tab1">Inches</label>
+        </li>
+        <li class="tab-item">
+          <label class="tab-trigger" for="tab2">Centimeters</label>
+        </li>
+      </ul>
+      <div class="tab-container">
+        <div class="tab-content">
+          <table border="0" class="size-chart-table" style="--table-spacing: 16px; width: 100%;">
+          {%- for content in chart -%}
+            {%- assign cells = content | split: "," -%}
+            {%- if forloop.first -%}
+                <thead>
+                  <tr>
+                    {%- for cell in cells -%}
+                      <th>{{ cell }}</th>
+                    {%- endfor -%}
+                  </tr>
+                </thead>
+                <tbody>
+            {%- elsif forloop.last -%}
+                <tr>
+                  {%- for cell in cells -%}
+                    {%- if forloop.first -%}
+                    <td>{{ cell }}</td>
+                    {%- else -%}
+                    <td>{{ cell | rstrip }}"</td>
+                    {%- endif -%}
+                  {%- endfor -%}
+                </tr>
+                </tbody>
+            {%- else -%}
+                <tr>
+                  {%- for cell in cells -%}
+                    {%- if forloop.first -%}
+                      <td>{{ cell }}</td>
+                      {%- else -%}
+                      <td>{{ cell | rstrip }}"</td>
+                    {%- endif -%}
+                  {%- endfor -%} 
+                </tr>
+            {%- endif -%}
+          {%- endfor -%}
+          </table>
+        </div>
+        <div class="tab-content">
+          <table border="0" class="size-chart-table" style="--table-spacing: 16px; width: 100%;">
+          {%- for content in chart -%}
+            {%- assign cells = content | split: "," -%}
+            {%- if forloop.first -%}
+                <thead>
+                  <tr>
+                    {%- for cell in cells -%}
+                      <th>{{ cell }}</th>
+                    {%- endfor -%}
+                  </tr>
+                </thead>
+                <tbody>
+            {%- elsif forloop.last -%}
+                <tr>
+                  {%- for cell in cells -%}
+                    {%- if forloop.first -%}
+                    <td>{{ cell }}</td>
+                    {%- else -%}
+                    <td>{{ cell | times: 2.54 | round: 0 }} cm</td>
+                    {%- endif -%}
+                  {%- endfor -%}
+                </tr>
+                </tbody>
+            {%- else -%}
+                <tr>
+                  {%- for cell in cells -%}
+                    {%- if forloop.first -%}
+                      <td>{{ cell }}</td>
+                      {%- else -%}
+                      <td>{{ cell | times: 2.54 | round: 0 }} cm</td>
+                    {%- endif -%}
+                  {%- endfor -%} 
+                </tr>
+            {%- endif -%}
+          {%- endfor -%}
+          </table>
+        </div>
+      </div>
+    </div>
+            {%- endcapture -%}
+            {% endif %}
+            <button
+              type="button"
+              class="text-sm text-subdued"
+              aria-controls="{{ drawer_id | escape }}"
+              aria-expanded="false"
+            >
+              <span class="link">{{ 'product.general.size_chart' | t }}</span>
+            </button>
+
+            <x-drawer id="{{ drawer_id }}" class="drawer drawer--lg wd-chart-drawer">
+              <span class="h5" slot="header">What's My Size?</span>
+
+              <div class="wd-size-content">
+                {%- if mf -%}
+                  <div class="wd-top">
+                    {{ bs.top_text }}
+                  </div>
+                {% endif %}
+                {%- if chart_html -%}
+                  <div class="wd-chart">
+                    {{ chart_html }}
+                  </div>
+                {% endif %}
+
+                {%- if find_your_size_mf -%}
+                  {%- assign fys = find_your_size_mf.value -%}
+                  <div class="wd-middle">
+                    {%- if fys.title != blank -%}
+                      <h3>{{ fys.title }}</h3>
+                    {%- endif -%}
+                    {%- if fys.description != blank -%}
+                      {{ fys.description | metafield_tag }}
+                    {%- endif -%}
+
+                    {%- if fys.table_data != blank -%}
+                      {%- assign fys_chart = fys.table_data | split: '|' -%}
+                      {%- capture fys_chart_html -%}
+              <div class="">
+                <input type="radio" class="tab-toggle" name="tab-toggle1" id="tab3" checked>
+                <input type="radio" class="tab-toggle" name="tab-toggle1" id="tab4">
+                <ul class="tab-list">
+                  <li class="tab-item">
+                    <label class="tab-trigger" for="tab3">Inches</label>
+                  </li>
+                  <li class="tab-item">
+                    <label class="tab-trigger" for="tab4">Centimeters</label>
+                  </li>
+                </ul>
+                <div class="tab-container">
+                  <div class="tab-content">
+                    <table border="0" class="size-chart-table" style="--table-spacing: 16px; width: 100%;">
+                    {%- for content in fys_chart -%}
+                      {%- assign cells = content | split: "," -%}
+                      {%- if forloop.first -%}
+                          <thead>
+                            <tr>
+                              {%- for cell in cells -%}
+                                <th>{{ cell }}</th>
+                              {%- endfor -%}
+                            </tr>
+                          </thead>
+                          <tbody>
+                      {%- elsif forloop.last -%}
+                          <tr>
+                            {%- for cell in cells -%}
+                              {%- if forloop.first -%}
+                              <td>{{ cell }}</td>
+                              {%- else -%}
+                              <td>{{ cell | rstrip }}"</td>
+                              {%- endif -%}
+                            {%- endfor -%}
+                          </tr>
+                          </tbody>
+                      {%- else -%}
+                          <tr>
+                            {%- for cell in cells -%}
+                              {%- if forloop.first -%}
+                                <td>{{ cell }}</td>
+                                {%- else -%}
+                                <td>{{ cell | rstrip }}"</td>
+                              {%- endif -%}
+                            {%- endfor -%} 
+                          </tr>
+                      {%- endif -%}
+                    {%- endfor -%}
+                    </table>
+                  </div>
+                  <div class="tab-content">
+                    <table border="0" class="size-chart-table" style="--table-spacing: 16px; width: 100%;">
+                    {%- for content in fys_chart -%}
+                      {%- assign cells = content | split: "," -%}
+                      {%- if forloop.first -%}
+                          <thead>
+                            <tr>
+                              {%- for cell in cells -%}
+                                <th>{{ cell }}</th>
+                              {%- endfor -%}
+                            </tr>
+                          </thead>
+                          <tbody>
+                      {%- elsif forloop.last -%}
+                          <tr>
+                            {%- for cell in cells -%}
+                              {%- if forloop.first -%}
+                              <td>{{ cell }}</td>
+                              {%- else -%}
+                              <td>{{ cell | times: 2.54 | round: 0 }} cm</td>
+                              {%- endif -%}
+                            {%- endfor -%}
+                          </tr>
+                          </tbody>
+                      {%- else -%}
+                          <tr>
+                            {%- for cell in cells -%}
+                              {%- if forloop.first -%}
+                                <td>{{ cell }}</td>
+                                {%- else -%}
+                                <td>{{ cell | times: 2.54 | round: 0 }} cm</td>
+                              {%- endif -%}
+                            {%- endfor -%} 
+                          </tr>
+                      {%- endif -%}
+                    {%- endfor -%}
+                    </table>
+                  </div>
+                </div>
+              </div>
+            {%- endcapture -%}
+                      {{ fys_chart_html }}
+                    {%- endif -%}
+                  </div>
+
+                  {%- if fys.how_to_measure != blank -%}
+                    <div class="wd-bottom">
+                      <h3>HOW TO MEASURE</h3>
+                      {{ fys.how_to_measure | metafield_tag }}
+                    </div>
+                  {%- endif -%}
+                {%- endif -%}
+              </div>
+            </x-drawer>
+          {%- endif -%}
+        </div>
+
+        {%- if selector_type == 'dropdown' -%}
+          {%- capture popover_id -%}popover-variant-picker-{{ section.id }}-{{ product.id }}-{{ option.position }}{%- endcapture -%}
+
+          <div class="relative">
+            <button type="button" class="select" aria-controls="{{ popover_id }}" aria-expanded="false">
+              <span id="{{ popover_id }}-selected-value">{{- option.selected_value -}}</span>
+              {%- render 'icon' with 'chevron-bottom', class: 'select-chevron' -%}
+            </button>
+
+            <x-popover
+              id="{{ popover_id }}"
+              class="popover"
+              initial-focus="[aria-selected='true']"
+              close-on-listbox-select
+              anchor-horizontal="start"
+              anchor-vertical="end"
+            >
+              <p class="h5" slot="title">{{ option.name }}</p>
+
+              <x-listbox data-option-selector class="popover-listbox" aria-owns="{{ popover_id }}-selected-value">
+                <input
+                  type="hidden"
+                  name="option{{ option.position }}"
+                  form="{{ form_id }}"
+                  value="{{ option.selected_value | escape }}"
+                >
+
+                {%- for value in option.values -%}
+                  <button
+                    type="button"
+                    class="popover-listbox__option"
+                    role="option"
+                    value="{{ value | escape }}"
+                    {% if value == option.selected_value %}
+                      aria-selected="true"
+                    {% endif %}
+                    data-option-value
+                  >
+                    {{ value }}
+                  </button>
+                {%- endfor -%}
+              </x-listbox>
+            </x-popover>
+          </div>
+        {%- else -%}
+          <div
+            {% unless block.settings.stack_blocks %}
+              class="scroll-area bleed sm:unbleed"
+            {% endunless %}
+          >
+            <div
+              data-option-selector
+              class="variant-picker__option-values {% if block.settings.stack_blocks %}wrap{% else %}scroll-area bleed sm:unbleed{% endif %} {% if selector_type == 'color' and settings.color_swatch_style == 'rectangle' %}variant-picker__option-values--color gap-4{% else %}gap-2{% endif %}"
+            >
+              {%- assign name = 'option' | append: option.position -%}
+              {%- assign disabled_variants = '' -%}
+
+              {%- for value in option.values -%}
+                {%- assign disabled_var = false -%}
+                {%- assign bundle_products = product.metafields.prts.complex_bundle.value -%}
+                {%- liquid
+                  for bundle_product in bundle_products
+                    assign product_instance = bundle_product.product.value
+                    assign product_count = bundle_product.count.value
+                    assign size_position = 'option' | append: product_instance.options_by_name.size.position
+                    for variant in product_instance.variants
+                      if variant[size_position] == value
+                        if variant.inventory_quantity < product_count
+                          assign disabled_variants = disabled_variants | append: value | append: ','
+                          assign disabled_var = true
+                          break
+                        endif
+                      endif
+                    endfor
+                    if disabled_var
+                      break
+                    endif
+                  endfor
+                -%}
+
+                {%- assign selected = false -%}
+                {%- if value == option.selected_value -%}
+                  {%- assign selected = true -%}
+                {%- endif -%}
+
+                {%- if option.name == 'Bundle' -%}
+                  {%- comment -%} Always use thumbnail/image display for Bundle options {%- endcomment -%}
+                  {%- assign variant_for_value = product.variants | where: name, value | first -%}
+                  {%- render 'wd-swatch',
+                    type: 'thumbnail',
+                    value: value,
+                    image: variant_for_value.featured_media,
+                    selected: selected,
+                    name: name,
+                    form: form_id,
+                    bordered: true,
+                    disabled: disabled_var
+                  -%}
+                {%- else -%}
+                  {%- case selector_type -%}
+                    {%- when 'variant' -%}
+                      {%- assign variant_for_value = product.variants | where: name, value | first -%}
+                      {%- render 'wd-swatch',
+                        type: 'thumbnail',
+                        value: value,
+                        image: variant_for_value.featured_media,
+                        selected: selected,
+                        name: name,
+                        form: form_id,
+                        bordered: true,
+                        disabled: disabled_var
+                      -%}
+                    {%- when 'color' -%}
+                      {%- assign color_image = null -%}
+                      {%- comment -%} Look for a matching color image in your metafields {%- endcomment -%}
+                      {%- if color_label_list contains option_downcase -%}
+                        {%- assign color_handle = value | handle -%}
+                        {%- assign color_image = product.metafields.colors[color_handle].image -%}
+                      {%- endif -%}
+
+                      {%- if color_image -%}
+                        {%- render 'wd-swatch',
+                          type: 'image',
+                          value: value,
+                          image: color_image,
+                          selected: selected,
+                          name: name,
+                          form: form_id
+                        -%}
+                      {%- else -%}
+                        {%- render 'wd-swatch',
+                          type: 'colors',
+                          value: value,
+                          selected: selected,
+                          name: name,
+                          form: form_id,
+                          show_tooltip: true
+                        -%}
+                      {%- endif -%}
+                    {%- when 'block' -%}
+                      {%- render 'wd-swatch',
+                        type: 'block',
+                        value: value,
+                        selected: selected,
+                        name: name,
+                        form: form_id,
+                        disabled_label: disabled_var
+                      -%}
+                    {%- when 'block_swatch' -%}
+                      {%- render 'wd-swatch',
+                        type: 'block',
+                        value: value,
+                        selected: selected,
+                        name: name,
+                        form: form_id,
+                        show_colors: true,
+                        disabled: disabled_var
+                      -%}
+                  {%- endcase -%}
+                {%- endif -%}
+              {%- endfor -%}
+            </div>
+          </div>
+        {%- endif -%}
+      </fieldset>
+    {%- endfor -%}
+
+    {% comment %} {{ disabled_variants }} {% endcomment %}
+    {%- assign var_arr = disabled_variants | split: ',' -%}
+    <noscript>
+      {%- capture input_label -%}{{ 'product.general.variant' | t }}{%- endcapture -%}
+      {%- capture select_options -%}
+      {%- for variant in product.variants -%}
+        {%- if var_arr contains variant[size_position] -%}
+          <option disabled="disabled" value="{{ variant.id }}">{{ variant.title }} - {{ variant.price | money }}</option> 
+        {%- else -%}
+          <option {% if variant == product.selected_or_first_available_variant %}selected="selected"{% endif %} {% unless variant.available %}disabled="disabled"{% endunless %} value="{{ variant.id }}">{{ variant.title }} - {{ variant.price | money }}</option> 
+        {%- endif -%}
+      {%- endfor -%}
+    {%- endcapture -%}
+
+      {%- render 'select', label: input_label, form: form_id, name: 'id', options: select_options -%}
+    </noscript>
+  </variant-picker>
+{%- else -%}
+  <noscript>
+    <input type="hidden" name="id" form="{{ form_id }}" value="{{ product.selected_or_first_available_variant.id }}">
+  </noscript>
+{%- endunless -%}
+<script>
+  const variantImagesCache = new Map();
+  window.product = {{ product | json }};
+</script>
+
+<script>
+  window.wdVideoSettings = {
+    autoplay: {{ section.settings.enable_video_autoplay | default: false | json }},
+    loop: {{ section.settings.enable_video_looping | default: false | json }}
+  };
+</script>
+
+<script>
+  document.querySelectorAll('.block-swatch.is-disabled').forEach((el) => {
+    el.classList.remove('is-disabled');
+  });
+
+  let previousParams = new URLSearchParams(window.location.search);
+
+  // ─── GLOBAL: resolve variant by color + optional size ────────────────
+  window.resolveFallbackVariantId = function (colorOverride, sizeOverride) {
+    const variants = window.product?.variants;
+    if (!variants || variants.length === 0) return null;
+
+    const colorParam = colorOverride || new URLSearchParams(window.location.search).get('color');
+    const sizeParam = sizeOverride || new URLSearchParams(window.location.search).get('size');
+
+    // Best match: size + color + available
+    if (sizeParam && colorParam) {
+      const exact =
+        variants.find((v) => v.option1 === sizeParam && v.option2 === colorParam && v.available) ||
+        variants.find((v) => v.option1 === sizeParam && v.option2 === colorParam);
+      if (exact) return exact.id;
+    }
+
+    // Color only
+    if (colorParam) {
+      const colorMatch =
+        variants.find((v) => v.option2 === colorParam && v.available) || variants.find((v) => v.option2 === colorParam);
+      if (colorMatch) return colorMatch.id;
+    }
+
+    // Absolute fallback
+    const fallback = variants.find((v) => v.available) || variants[0];
+    return fallback?.id || null;
+  };
+
+  // ─── GLOBAL: trigger gallery by color (called from pack loader) ───────
+  window.triggerGalleryForColor = async function (colorOverride, sizeOverride) {
+    const variantId = window.resolveFallbackVariantId(colorOverride, sizeOverride);
+    if (variantId && typeof window.__handleVariantChange === 'function') {
+      await window.__handleVariantChange(variantId);
+    }
+  };
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const variantImagesCache = new Map();
+
+    // ─── PAGE LOAD ────────────────────────────────────────────────────────
+    const prams = new URLSearchParams(window.location.search);
+    const VariantId = prams.get('variant');
+
+    if (VariantId) {
+      fetchAndCacheVariantMedia(VariantId);
+      handleVariantChange(VariantId);
+    } else {
+      const fallbackId = window.resolveFallbackVariantId();
+      if (fallbackId) {
+        fetchAndCacheVariantMedia(fallbackId);
+        handleVariantChange(fallbackId);
+      }
+    }
+
+    jQuery('.product-image-slider:not(#variant-images) .zoom-close').hide();
+    jQuery('#variant-images .zoom-close').hide();
+
+    setTimeout(() => {
+      jQuery('.product-image-slider:not(#variant-images) .zoom-close').hide();
+      jQuery('#variant-images .zoom-close').hide();
+
+      const currentPrams = new URLSearchParams(window.location.search);
+      const currentVariantId = currentPrams.get('variant');
+
+      if (currentVariantId) {
+        handleVariantChange(currentVariantId);
+      } else {
+        const fallbackId = window.resolveFallbackVariantId();
+        if (fallbackId) handleVariantChange(fallbackId);
+      }
+    }, 1);
+
+    preloadAllVariantMedia();
+
+    // ─── DIRECT COLOR SWATCH LISTENER ─────────────────────────────────────
+    function setupColorSwatchListener() {
+      // Clone to remove old listeners
+      document.querySelectorAll('input[name="option2"]').forEach((input) => {
+        const newInput = input.cloneNode(true);
+        input.parentNode.replaceChild(newInput, input);
+      });
+
+      document.querySelectorAll('input[name="option2"]').forEach((input) => {
+        input.addEventListener('change', async function () {
+          const selectedColor = this.value;
+          if (!selectedColor) return;
+
+          // ─── Update URL color param ───────────────────────────────
+          const url = new URL(window.location.href);
+          url.searchParams.set('color', selectedColor);
+          window.history.replaceState({}, '', url.toString());
+
+          // ─── Update variant-option-value text display ─────────────
+          document.querySelectorAll('variant-option-value[for="option2"]').forEach((el) => {
+            el.textContent = selectedColor;
+          });
+
+          // Load images
+          const currentSize = new URLSearchParams(window.location.search).get('size') || null;
+          const variantId = window.resolveFallbackVariantId(selectedColor, currentSize);
+          if (variantId) await handleVariantChange(variantId);
+        });
+      });
+    }
+
+    function setupColorLabelListener() {
+      document.querySelectorAll('label.color-swatch').forEach((label) => {
+        const newLabel = label.cloneNode(true);
+        label.parentNode.replaceChild(newLabel, label);
+      });
+
+      document.querySelectorAll('label.color-swatch').forEach((label) => {
+        label.addEventListener('click', async function () {
+          const forAttr = this.getAttribute('for');
+          const input = forAttr ? document.getElementById(forAttr) : null;
+          if (!input || input.disabled) return;
+
+          const selectedColor = input.value;
+          if (!selectedColor) return;
+
+          // ─── Update URL color param ───────────────────────────────
+          const url = new URL(window.location.href);
+          url.searchParams.set('color', selectedColor);
+          window.history.replaceState({}, '', url.toString());
+
+          // ─── Update variant-option-value text display ─────────────
+          document.querySelectorAll('variant-option-value[for="option2"]').forEach((el) => {
+            el.textContent = selectedColor;
+          });
+
+          // Load images
+          const currentSize = new URLSearchParams(window.location.search).get('size') || null;
+          const variantId = window.resolveFallbackVariantId(selectedColor, currentSize);
+          if (variantId) await handleVariantChange(variantId);
+        });
+      });
+    }
+
+    setupColorSwatchListener();
+    setupColorLabelListener();
+
+    // Expose so pack loader re-attaches after DOM reload
+    window.__setupColorSwatchListener = setupColorSwatchListener;
+    window.__setupColorLabelListener = setupColorLabelListener;
+
+    // ─── VARIANT:CHANGE — only for non-color-non-size (initial/pack) ──────
+    document.addEventListener('variant:change', async (event) => {
+      document.querySelectorAll('.block-swatch.is-disabled').forEach((el) => {
+        el.classList.remove('is-disabled');
+      });
+
+      const currentParams = new URLSearchParams(window.location.search);
+      const previousColor = previousParams.get('color');
+      const currentColor = currentParams.get('color');
+      const previousSize = previousParams.get('size');
+      const currentSize = currentParams.get('size');
+      const colorChanged = previousColor !== currentColor;
+      const sizeChanged = previousSize !== currentSize;
+
+      // Color is handled by direct swatch listener — skip here
+      // Only handle if neither changed (pack load / initial fire)
+      if (!colorChanged && !sizeChanged) {
+        const variantId = event.detail?.variant?.id || window.resolveFallbackVariantId(currentColor, currentSize);
+        if (variantId) await handleVariantChange(variantId);
+      }
+
+      previousParams = currentParams;
+    });
+
+    // Expose globally
+    window.__handleVariantChange = handleVariantChange;
+
+    // ─── FUNCTIONS ────────────────────────────────────────────────────────
+
+    async function preloadAllVariantMedia() {
+      try {
+        let variantIds = [];
+        if (window.product && Array.isArray(window.product.variants)) {
+          variantIds = window.product.variants.map((v) => v.id);
+        } else {
+          const variantElements = document.querySelectorAll('[name="id"], [data-variant-id]');
+          variantIds = Array.from(variantElements)
+            .map((el) => el.value || el.getAttribute('data-variant-id'))
+            .filter(Boolean);
+        }
+        const uniqueVariantIds = [...new Set(variantIds)];
+        await Promise.all(uniqueVariantIds.map((id) => fetchAndCacheVariantMedia(id)));
+      } catch (error) {
+        console.error('Error preloading variant media:', error);
+      }
+    }
+
+    async function fetchAndCacheVariantMedia(variantId) {
+      if (variantImagesCache.has(variantId)) return variantImagesCache.get(variantId);
+      try {
+        const media = await fetchVariantMetafields(variantId);
+        // Cache under both string and int keys
+        variantImagesCache.set(parseInt(variantId), media);
+        variantImagesCache.set(variantId, media);
+        if (media && media.length > 0) {
+          media.forEach((m) => {
+            const preloadLink = document.createElement('link');
+            preloadLink.rel = 'preload';
+            preloadLink.as = m.type === 'video' ? 'video' : 'image';
+            preloadLink.href = m.url;
+            document.head.appendChild(preloadLink);
+          });
+        }
+        return media;
+      } catch (error) {
+        console.error(`Error fetching media for variant ${variantId}:`, error);
+        return null;
+      }
+    }
+
+    async function handleVariantChange(variantId) {
+      if (!variantId) return;
+
+      const loader = document.getElementById('loader');
+      jQuery('.product-image-slider:not(#variant-images) .zoom-close').hide();
+      jQuery('#variant-images .zoom-close').hide();
+
+      try {
+        const defaultImagesContainer = document.querySelector('.product-image-slider:not(#variant-images)');
+        const variantImagesContainer = document.getElementById('variant-images');
+
+        let media = variantImagesCache.get(variantId) || variantImagesCache.get(parseInt(variantId));
+
+        if (!media) {
+          await preloadAllVariantMedia();
+          media = variantImagesCache.get(variantId) || variantImagesCache.get(parseInt(variantId));
+        }
+
+        if (!media) media = await fetchAndCacheVariantMedia(variantId);
+
+        if (media && media.length > 0) {
+          defaultImagesContainer.style.display = 'none';
+          variantImagesContainer.style.display = 'block';
+          destroySlider(defaultImagesContainer);
+          destroySlider(variantImagesContainer);
+          variantImagesContainer.innerHTML = '';
+          renderMedia(media, variantImagesContainer);
+          initializeSlider('#variant-images');
+        } else {
+          defaultImagesContainer.style.display = 'block';
+          variantImagesContainer.style.display = 'none';
+          destroySlider(defaultImagesContainer);
+          destroySlider(variantImagesContainer);
+          initializeSlider('.product-image-slider:not(#variant-images)');
+        }
+
+        if (loader) loader.style.display = 'none';
+      } catch (error) {
+        console.error('Error handling variant change:', error);
+      }
+    }
+
+    function renderMedia(mediaList, container) {
+      mediaList.forEach((m) => {
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'my-prd-image-item';
+
+        const sliderCard = document.createElement('div');
+        sliderCard.className = 'slider-card';
+
+        const zoomIcon = document.createElement('div');
+        zoomIcon.className = 'zoom-icon';
+        zoomIcon.innerHTML = `<span class="zoom-close">&times;</span>`;
+
+        const mediaEl = document.createElement(m.type === 'video' ? 'video' : 'img');
+
+        if (m.type === 'video') {
+          const autoplayEnabled = window.wdVideoSettings?.autoplay || false;
+          const loopEnabled = window.wdVideoSettings?.loop || false;
+          mediaEl.autoplay = autoplayEnabled;
+          mediaEl.muted = true;
+          mediaEl.loop = loopEnabled;
+          mediaEl.playsInline = true;
+          mediaEl.src = m.url;
+          mediaEl.controls = false;
+          mediaEl.setAttribute('data-media-type', 'video');
+        } else {
+          mediaEl.src = m.url;
+          mediaEl.alt = m.alt;
+          mediaEl.loading = 'eager';
+          mediaEl.setAttribute('data-media-type', 'image');
+        }
+
+        const mediaWrapper = document.createElement('div');
+        mediaWrapper.className = 'slider-image zoomable-image';
+        mediaWrapper.setAttribute('data-media-id', m.id);
+        mediaWrapper.appendChild(mediaEl);
+
+        sliderCard.appendChild(zoomIcon);
+        sliderCard.appendChild(mediaWrapper);
+        itemDiv.appendChild(sliderCard);
+        container.appendChild(itemDiv);
+      });
+    }
+
+    async function fetchVariantMetafields(variantId) {
+      const query = `
+        query GetVariantMetaobjectMedia($id: ID!) {
+          node(id: $id) {
+            ... on ProductVariant {
+              metafield(namespace: "custom", key: "product_images_variants") {
+                reference {
+                  ... on Metaobject {
+                    id
+                    fields {
+                      key
+                      type
+                      value
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      `;
+
+      const response = await fetch('{{ shop.url }}/api/2023-07/graphql.json', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Shopify-Storefront-Access-Token': 'aa717e8f5bafa05ae0a6d7067f7619c8',
+        },
+        body: JSON.stringify({
+          query,
+          variables: { id: `gid://shopify/ProductVariant/${variantId}` },
+        }),
+      });
+
+      const { data, errors } = await response.json();
+      if (errors) return null;
+
+      const fields = data?.node?.metafield?.reference?.fields;
+      if (!fields) return null;
+
+      const imageField = fields.find((f) => f.key === 'image' && f.type === 'list.file_reference');
+      if (!imageField) return null;
+
+      const gids = JSON.parse(imageField.value);
+      return await fetchMediaFromGIDs(gids);
+    }
+
+    async function fetchMediaFromGIDs(gids) {
+      const query = `
+        query getMedia($ids: [ID!]!) {
+          nodes(ids: $ids) {
+            ... on MediaImage {
+              id
+              image {
+                url
+                altText
+              }
+            }
+            ... on Video {
+              id
+              sources {
+                mimeType
+                url
+              }
+            }
+          }
+        }
+      `;
+
+      const response = await fetch('{{ shop.url }}/api/2023-07/graphql.json', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Shopify-Storefront-Access-Token': 'aa717e8f5bafa05ae0a6d7067f7619c8',
+        },
+        body: JSON.stringify({
+          query,
+          variables: { ids: gids },
+        }),
+      });
+
+      const { data, errors } = await response.json();
+      if (errors) return [];
+
+      return data.nodes
+        .map((node) => {
+          if (node?.image) {
+            return { type: 'image', url: node.image.url, alt: node.image.altText || '', id: node.id };
+          } else if (node?.sources?.[0]) {
+            return { type: 'video', url: node.sources[0].url, id: node.id };
+          }
+          return null;
+        })
+        .filter(Boolean);
+    }
+
+    function destroySlider(element) {
+      if (typeof jQuery !== 'undefined' && jQuery(element).hasClass('slick-initialized')) {
+        jQuery(element).slick('unslick');
+      }
+    }
+
+    function initializeSlider(selector) {
+      jQuery(`${selector} .zoom-close`).hide();
+      if (typeof jQuery === 'undefined' || typeof jQuery.fn.slick === 'undefined') return;
+      const sliderElement = jQuery(selector);
+      if (sliderElement.find('.my-prd-image-item').length === 0) return;
+
+      sliderElement.slick({
+        slidesToShow: 2,
+        slidesToScroll: 1,
+        arrows: true,
+        dots: false,
+        infinite: true,
+        autoplay: false,
+        prevArrow: '<button class="custom-prev-arrow"><i class="fa fa-chevron-left"></i></button>',
+        nextArrow: '<button class="custom-next-arrow"><i class="fa fa-chevron-right"></i></button>',
+        // MOBILE PEEK UX: 1 full image + ~20% peek of the next (Rhone-style). Desktop unchanged.
+        // Matches init in product-gallery.liquid so variant-image slider behaves consistently.
+        responsive: [
+          {
+            breakpoint: 768,
+            settings: {
+              slidesToShow: 1,
+              slidesToScroll: 1,
+              variableWidth: true,
+            },
+          },
+        ],
+      });
+
+      jQuery(`${selector} .zoom-close`).hide();
+      setupZoomHandlers(selector);
+    }
+
+    function setupZoomHandlers(selector) {
+      const slider = jQuery(selector);
+      jQuery(`${selector} .slider-image`).off('click');
+      jQuery(`${selector} .zoom-close`).off('click');
+
+      jQuery(`${selector} .slider-image`).on('click', function () {
+        const slideIndex = jQuery(this).closest('.slick-slide').data('slick-index');
+        if (jQuery(`${selector} .zoom-close:visible`).length > 0) {
+          slider.removeClass('is-zoomed');
+          slider.slick('slickSetOption', 'slidesToShow', 2, true);
+          jQuery(`${selector} .zoom-close`).fadeOut();
+        } else {
+          slider.addClass('is-zoomed');
+          slider.slick('slickSetOption', 'slidesToShow', 1, true);
+          jQuery(`${selector} .zoom-close`).fadeIn();
+          slider.slick('slickGoTo', slideIndex);
+        }
+      });
+
+      jQuery(`${selector} .zoom-close`).on('click', function (e) {
+        e.stopPropagation();
+        slider.removeClass('is-zoomed');
+        slider.slick('slickSetOption', 'slidesToShow', 2, true);
+        jQuery(`${selector} .zoom-close`).fadeOut();
+      });
+    }
+  });
+</script>

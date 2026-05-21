@@ -1,0 +1,232 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "wd_banner_Fbf3Hi": {
+      "type": "wd-banner",
+      "settings": {
+        "empty_mobile": false,
+        "full_width": true,
+        "enable_parallax": false,
+        "title": "",
+        "bolder_title": false,
+        "title_tag": "h1",
+        "subtitle": "",
+        "uptitle": "",
+        "uptitle_tag": "div",
+        "title_size": "h0",
+        "image_size": "auto",
+        "image": "shopify://shop_images/Small-Banner-01.jpg",
+        "mobile_image": "shopify://shop_images/Rich_Text.jpg",
+        "mobile_smaller_text": false,
+        "mobile_full_height": true,
+        "mobile_text_position": "place-self-center text-center",
+        "desktop_text_position": "sm:place-self-center sm:text-center",
+        "featured_product": "",
+        "featured_product_heading": "Featured product",
+        "text_color": "#ffffff",
+        "overlay_color": "#000000",
+        "overlay_opacity": 0
+      }
+    },
+    "slideshow_Lp3WnY": {
+      "type": "slideshow",
+      "blocks": {
+        "image_J78DGa": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/Small-Banner-01.jpg",
+            "content_max_width": 780,
+            "mobile_text_position": "place-self-center text-center",
+            "desktop_text_position": "sm:place-self-center sm:text-center",
+            "subheading": "",
+            "title": "",
+            "heading_tag": "h0",
+            "button_text": "",
+            "button_link": "",
+            "text_color": "#ffffff",
+            "button_background": "#ffffff",
+            "button_text_color": "#000000",
+            "overlay_color": "#000000",
+            "overlay_opacity": 30,
+            "background": "",
+            "background_gradient": ""
+          }
+        }
+      },
+      "block_order": [
+        "image_J78DGa"
+      ],
+      "disabled": true,
+      "settings": {
+        "full_width": true,
+        "allow_transparent_header": true,
+        "image_size": "auto",
+        "controls_type": "dots",
+        "transition_type": "fade_with_text",
+        "autoplay": false,
+        "cycle_speed": 6,
+        "background": "#f2f2f2",
+        "background_gradient": ""
+      }
+    },
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+        "content_width": "80ch"
+      }
+    },
+    "wd_faq_PRAYtr": {
+      "type": "wd-faq",
+      "blocks": {
+        "item_epCxEe": {
+          "type": "item",
+          "settings": {
+            "title": "Can I return my order?",
+            "content": "<p>We want you to love your Strongsize gear. If you are having second thoughts, we are happy to offer returns within 30 days after delivery.</p><ul><li><strong>U.S. orders</strong>: Eligible for returns within 30 days of delivery, as long as items are unworn (except for trying on), unwashed, unaltered, and in their original packaging.<br/></li><li><strong>International orders</strong>: All international sales are <strong>final sale</strong> and are not eligible for return or exchange.<br/></li></ul><p>Please note that items marked <em>Final Sale</em> cannot be returned.<strong><br/></strong></p><p>For full details, visit our <a href=\"https://strongsize.com/pages/returns-policy\" title=\"Return Policy\">Returns Policy</a>.</p><h5><a href=\"https://strongsize.loopreturns.com\" target=\"_blank\" title=\"https://strongsize.loopreturns.com\"><strong>START A RETURN</strong></a></h5>"
+          }
+        },
+        "item_7kdEjM": {
+          "type": "item",
+          "settings": {
+            "title": "What is your shipping policy?",
+            "content": "<p>Enjoy FREE STANDARD SHIPPING on all U.S. orders.</p><p>Please note: All orders take 1-2 business days to process prior to shipping from our warehouse.</p><p>Check out our full <a href=\"/pages/shipping-policy\" title=\"Shipping Policy\"><strong>Shipping Policy</strong></a>.</p>"
+          }
+        },
+        "item_AJVEjU": {
+          "type": "item",
+          "settings": {
+            "title": "How can I track my order?",
+            "content": "<p>A confirmation email will be sent to you with your order summary and <strong>order number</strong> as soon as you place your order.</p><p>Once the order is placed, it can take up to 1-3 days for your order to be processed.</p><p>Once the order is processed and shipped out, you will receive a follow up email with <strong>shipment tracking </strong>and a link to track your package.</p><p>If you have any issues regarding your order or if it is taking longer than expected to ship, don’t hesitate to <a href=\"/pages/contact-us\" title=\"Contact\"><strong>Contact Us</strong></a> or hit us up in the chat with your order number. We will respond as fast as we can, usually within 24 hours!</p>"
+          }
+        },
+        "item_HLwQqN": {
+          "type": "item",
+          "settings": {
+            "title": "What sizes does Strongsize offer?",
+            "content": "<p>Strongsize offers big and tall clothing from sizes XL through 8XL. We don’t offer traditional tall sizes under the XLT naming convention as most of our styles come in our default Longer Length. However, we offer our t-shirts in Regular Length as well.</p><p>Our Signature Longer Length suits both big and tall men, with a deeper curved hem. If you are used to buying XLT (big and tall) we recommend this length. But even if you aren’t traditionally buying XLT sizes, but you are looking for extra length for added coverage over your belly and backside, we also recommend this length.</p><p>Our Regular Length is often preferred by guys under 6’2”, and boasts a classic traditional cut. If you don’t like your tees too long and are used to buying XL (big) sizes, we recommend this length.</p><p>Check out the product detail page for size availability in the style you're eyeing and our dedicated <a href=\"/pages/fit-guide\" title=\"Fit Guide\"><strong>Fit Guide</strong></a> for a full breakdown on sizing and fit. If you’re still unsure, <a href=\"/pages/contact-us\" title=\"Contact\"><strong>Contact Us</strong></a> or hit us up in the chat. We will respond as fast as we can, usually within 24 hours!</p>"
+          }
+        },
+        "item_cyizDK": {
+          "type": "item",
+          "settings": {
+            "title": "How do I find my correct size?",
+            "content": "<p>Refer to our length and size guide featured on every product detail page, where we've got all the measurements laid out for you. Also check out our dedicated <a href=\"/pages/fit-guide\" title=\"Fit Guide\"><strong>Fit Guide</strong></a> for more information.</p><p>If you’re still unsure, <a href=\"/pages/contact-us\" title=\"Contact\"><strong>Contact Us</strong></a> or hit us up in the chat. We will respond as fast as we can, usually within 24 hours!</p>"
+          }
+        },
+        "item_LNbCVN": {
+          "type": "item",
+          "settings": {
+            "title": "What payment methods are accepted?",
+            "content": "<p>We accept Visa, Mastercard, AMEX, Diners Club and Discover credit and debit cards. We also accept payment through digital wallets like Shopify Pay, Apple Pay, Google Pay and Paypal.</p>"
+          }
+        },
+        "item_tXcePm": {
+          "type": "item",
+          "settings": {
+            "title": "What countries do you ship to?",
+            "content": "<p>We currently ship to addresses within the US and Canada! We’re excited to have expanded our reach and can now serve customers across both countries. Stay tuned for updates as we continue working on adding more international shipping options.</p>"
+          }
+        },
+        "item_pmNwnh": {
+          "type": "item",
+          "settings": {
+            "title": "How do I contact customer service?",
+            "content": "<p>If you need any assistance, <a href=\"/pages/contact-us\" title=\"Contact\"><strong>Contact Us</strong></a> or hit us up in the chat. We will respond as fast as we can, usually within 24 hours!</p>"
+          }
+        },
+        "item_TUBBwC": {
+          "type": "item",
+          "settings": {
+            "title": "Where are your products made?",
+            "content": "<p>Many of our products are made in Asia, which allows us to offer excellent quality clothing at reasonable prices. We regularly visit our factory partners to ensure that they are maintaining the quality standards we demand and also to witness the working conditions and environment in the factories. By working in major manufacturing hubs we ensure that the factories are compliant with all the municipal and state laws governing employment minimum wage, age and insurance.</p>"
+          }
+        },
+        "item_tpzKBC": {
+          "type": "item",
+          "settings": {
+            "title": "Do your products shrink in the wash?",
+            "content": "<p>Our fabric isn't pre-shrunk, so you can realistically expect a 3-5% shrinkage at most. To keep it to a minimum, we recommend washing in cold water and hang drying or use the lowest heat setting possible.</p>"
+          }
+        },
+        "item_QMmmU9": {
+          "type": "item",
+          "settings": {
+            "title": "Can I sign up for a newsletter to get information on new products and promotions?",
+            "content": "<p>Yes! And if you’re a new customer who’s never tried Strongsize before, you are eligible for 10% off your first order when you sign up for our newsletters. Enter your email in the footer of the page and you’re all set.</p>"
+          }
+        },
+        "item_BUX7Xz": {
+          "type": "item",
+          "settings": {
+            "title": "How do you ensure the quality of your products?",
+            "content": "<p>Offering quality and value are our top priorities. We meticulously source premium materials and rigorously test our products to ensure durability, comfort, and style. From the stitching to the fabric, every detail is scrutinized to meet our high standards. Plus, we're constantly listening to feedback from our customers to continually improve and refine our offerings. When you choose Strongsize, you're choosing quality you can trust.</p>"
+          }
+        },
+        "item_EyX38E": {
+          "type": "item",
+          "settings": {
+            "title": "The item I want is out of stock. Can I still purchase it at a later time?",
+            "content": "<p>We re-stock most of our products ASAP. You can drop your email on the product page to be notified when we receive more stock. If you have a specific question about product availability, just <a href=\"/pages/contact-us\" title=\"Contact\"><strong>Contact Us</strong></a> or hit us up in the chat. We will respond as fast as we can, usually within 24 hours!</p>"
+          }
+        },
+        "item_beNDNK": {
+          "type": "item",
+          "disabled": true,
+          "settings": {
+            "title": "Do you offer a Buy Now, Pay Later option?",
+            "content": "<p>We don’t currently offer this service, but we are actively working on launching this payment option. We don’t have a timeline for when this will be rolled out. Sorry for the inconvenience!</p>"
+          }
+        }
+      },
+      "block_order": [
+        "item_epCxEe",
+        "item_7kdEjM",
+        "item_AJVEjU",
+        "item_HLwQqN",
+        "item_cyizDK",
+        "item_LNbCVN",
+        "item_tXcePm",
+        "item_pmNwnh",
+        "item_TUBBwC",
+        "item_tpzKBC",
+        "item_QMmmU9",
+        "item_BUX7Xz",
+        "item_EyX38E",
+        "item_beNDNK"
+      ],
+      "settings": {
+        "full_width": true,
+        "subheading": "",
+        "title": "FAQ",
+        "use_tag": "h1",
+        "content": "",
+        "team_avatar_width": 160,
+        "text_position": "center",
+        "background": "",
+        "background_gradient": "",
+        "text_color": "",
+        "heading_color": "",
+        "heading_gradient": "",
+        "button_background": "",
+        "button_text_color": "",
+        "accordion_background": "#ffffff",
+        "accordion_text_color": ""
+      }
+    }
+  },
+  "order": [
+    "wd_banner_Fbf3Hi",
+    "slideshow_Lp3WnY",
+    "main",
+    "wd_faq_PRAYtr"
+  ]
+}

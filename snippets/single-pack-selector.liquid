@@ -1,0 +1,68 @@
+{% comment %}
+  Single/Pack Tab Selector Snippet
+  Redirects to the first pack product when Pack tab is clicked
+{% endcomment %}
+
+{% liquid
+  assign single_tab_label = single_tab_label | default: section.settings.single_tab_label | default: 'Singles'
+  assign pack_tab_label = pack_tab_label | default: section.settings.pack_tab_label | default: 'Packs'
+  assign show_inventory = show_inventory | default: section.settings.show_inventory | default: true
+  assign max_packs = max_packs | default: section.settings.max_packs | default: 10
+
+  assign pack_metafield_namespace = pack_metafield_namespace | default: section.settings.pack_metafield_namespace | default: 'custom'
+  assign pack_metafield_key = pack_metafield_key | default: section.settings.pack_metafield_key | default: 'related_pack_products'
+
+  if pack_metafield_namespace != blank and pack_metafield_key != blank
+    assign pack_handles = product.metafields[pack_metafield_namespace][pack_metafield_key] | split: ',' | slice: 0, max_packs
+  endif
+
+  assign has_packs = false
+  assign first_pack_url = null
+
+  if pack_handles.size > 0
+    assign has_packs = true
+    assign first_pack_handle = pack_handles | first
+    assign first_pack_product = all_products[first_pack_handle]
+    if first_pack_product.id != blank
+      assign first_pack_url = first_pack_product.url
+    endif
+  endif
+%}
+{% assign is_pack_product = false %}
+{% if product.tags contains 'packs' %}
+  {% assign is_pack_product = true %}
+{% endif %}
+
+{% comment %}
+  <div class="wd-product-tabs-custom">
+    <div class="wd-tab-container-custom">
+      {% if has_packs %}
+        <a
+          href="{{ first_pack_url }}"
+          class="wd-tab-button {% if is_pack_product %}active{% endif %}"
+          data-is-pack-link="true"
+          data-pack-url="{{ first_pack_url }}"
+          aria-pressed="{% if is_pack_product %}true{% else %}false{% endif %}"
+        >
+          {{- pack_tab_label -}}
+        </a>
+      {% else %}
+        <button class="wd-tab-button disabled" disabled aria-pressed="false">{{ pack_tab_label }}</button>
+      {% endif %}
+      <a
+        href="#"
+        class="wd-tab-button {% unless is_pack_product %}active{% endunless %}"
+        data-is-single-link="true"
+        data-single-url="#"
+        aria-pressed="{% unless is_pack_product %}true{% else %}false{% endunless %}"
+      >
+        {{- single_tab_label -}}
+      </a>
+    </div>
+
+    <div id="single-tab-{{ section.id }}" class="wd-tab-content {% unless is_pack_product %}active{% endunless %}">
+      <!-- Current product details are already displayed on the product page -->
+    </div>
+  </div>
+{% endcomment %}
+

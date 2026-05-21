@@ -1,0 +1,452 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+        "content_width": "80ch"
+      }
+    },
+    "wd_banner_q4nzpc": {
+      "type": "wd-banner",
+      "settings": {
+        "empty_mobile": false,
+        "full_width": true,
+        "enable_parallax": false,
+        "title": "Choosing the right Fit",
+        "bolder_title": false,
+        "title_tag": "h2",
+        "subtitle": "Strongsize delivers consistent sizing for big and tall men’s clothing, ensuring that once you discover your ideal fit, every future order will fit exactly the same—no guesswork, just confidence.",
+        "uptitle": "Big & Tall Shirt Fit Guide",
+        "uptitle_tag": "h1",
+        "title_size": "h0",
+        "image_size": "auto",
+        "image": "shopify://shop_images/strongsize-big-and-tall-shirts-fit-guide-01_3f2e8fa2-3599-4d9f-aaf6-d320cb021d62.jpg",
+        "mobile_image": "shopify://shop_images/strongsize-big-and-tall-shirts-fit-guide-02.jpg",
+        "mobile_smaller_text": false,
+        "mobile_full_height": true,
+        "mobile_text_position": "place-self-center text-center",
+        "desktop_text_position": "sm:place-self-center sm:text-center",
+        "featured_product": "",
+        "featured_product_heading": "Featured product",
+        "text_color": "#ffffff",
+        "overlay_color": "#000000",
+        "overlay_opacity": 20
+      }
+    },
+    "wd_benefits_JV6UNW": {
+      "type": "wd-benefits",
+      "blocks": {
+        "benefit_VcRqmQ": {
+          "type": "benefit",
+          "settings": {
+            "title": "Broader Shoulders"
+          }
+        },
+        "benefit_UjxpLy": {
+          "type": "benefit",
+          "settings": {
+            "title": "Relaxed in the Stomach"
+          }
+        },
+        "benefit_RYPrbn": {
+          "type": "benefit",
+          "settings": {
+            "title": "Fitted Sleeves"
+          }
+        },
+        "benefit_6CzTKA": {
+          "type": "benefit",
+          "settings": {
+            "title": "Length Options"
+          }
+        }
+      },
+      "block_order": [
+        "benefit_VcRqmQ",
+        "benefit_UjxpLy",
+        "benefit_RYPrbn",
+        "benefit_6CzTKA"
+      ],
+      "settings": {
+        "title": "RE-ENGINEERED FIT",
+        "subtitle": "XL t-shirts traditionally suck. So we made them better. And we got laser focused on fit and function:",
+        "image": "shopify://shop_images/Engineered-Fit_Image.jpg",
+        "position": "row-reverse"
+      }
+    },
+    "wd_length_meter_bazAEe": {
+      "type": "wd-length-meter",
+      "blocks": {
+        "size_Hj7bNp": {
+          "type": "size",
+          "settings": {
+            "size": "XL",
+            "reg_size": "32.5”",
+            "lon_size": "35.5”"
+          }
+        },
+        "size_CYzyHf": {
+          "type": "size",
+          "settings": {
+            "size": "2XL",
+            "reg_size": "33",
+            "lon_size": "36"
+          }
+        },
+        "size_zxCG39": {
+          "type": "size",
+          "settings": {
+            "size": "3XL",
+            "reg_size": "33.75”",
+            "lon_size": "36.75”"
+          }
+        },
+        "size_hFpR38": {
+          "type": "size",
+          "settings": {
+            "size": "4XL",
+            "reg_size": "34.5”",
+            "lon_size": "37.5”"
+          }
+        },
+        "size_mMR8iR": {
+          "type": "size",
+          "settings": {
+            "size": "5XL",
+            "reg_size": "35.25”",
+            "lon_size": "38.25”"
+          }
+        },
+        "size_h4WhEL": {
+          "type": "size",
+          "settings": {
+            "size": "6XL",
+            "reg_size": "36”",
+            "lon_size": "39”"
+          }
+        },
+        "size_rhXhAX": {
+          "type": "size",
+          "settings": {
+            "size": "7XL",
+            "reg_size": "36.75”",
+            "lon_size": "39.5”"
+          }
+        },
+        "size_VQbjDU": {
+          "type": "size",
+          "settings": {
+            "size": "8XL",
+            "reg_size": "37.5”",
+            "lon_size": "39.5”"
+          }
+        }
+      },
+      "block_order": [
+        "size_Hj7bNp",
+        "size_CYzyHf",
+        "size_zxCG39",
+        "size_hFpR38",
+        "size_mMR8iR",
+        "size_h4WhEL",
+        "size_rhXhAX",
+        "size_VQbjDU"
+      ],
+      "settings": {
+        "title": "CHOOSE YOUR IDEAL LENGTH",
+        "subtitle": "We know how frustrating it could be to find a t-shirt that fits perfectly in every direction. That’s why we created two length options for maximum flexibility. <strong>Choose according to the guide below.</strong>",
+        "reg_image": "shopify://shop_images/another-one.png",
+        "reg_title": "Regular Length",
+        "reg_subtitle": "Often preferred by guys under 6’2”, our Regular Length boasts a subtle curved hem and a classic traditional cut.",
+        "lon_image": "shopify://shop_images/Length-Guide-Long.png",
+        "lon_title": "Longer Length",
+        "lon_subtitle": "Our Signature Longer Length suits both big and tall men, with a deeper curved hem for added coverage and comfort, regardless of height.",
+        "mobile_image": "shopify://shop_images/Length-Guide-Mobile_9c4c2ab7-2d93-4ca9-b1f3-bce2ef442c31.png"
+      }
+    },
+    "wd_find_size_6HRETh": {
+      "type": "wd-find-size",
+      "blocks": {
+        "sizes_ff43R8": {
+          "type": "sizes",
+          "settings": {
+            "size": "XL",
+            "size_value": "45-48”"
+          }
+        },
+        "sizes_n3gywA": {
+          "type": "sizes",
+          "settings": {
+            "size": "2XL",
+            "size_value": "49-52”"
+          }
+        },
+        "sizes_Wm77LR": {
+          "type": "sizes",
+          "settings": {
+            "size": "3XL",
+            "size_value": "53-56”"
+          }
+        },
+        "sizes_E6wjyG": {
+          "type": "sizes",
+          "settings": {
+            "size": "4XL",
+            "size_value": "57-60”"
+          }
+        },
+        "sizes_CYwQLf": {
+          "type": "sizes",
+          "settings": {
+            "size": "5XL",
+            "size_value": "61-64”"
+          }
+        },
+        "sizes_xJtGD4": {
+          "type": "sizes",
+          "settings": {
+            "size": "6XL",
+            "size_value": "65-68”"
+          }
+        },
+        "sizes_FHCbQp": {
+          "type": "sizes",
+          "settings": {
+            "size": "7XL",
+            "size_value": "69-72”"
+          }
+        },
+        "sizes_6rqj6N": {
+          "type": "sizes",
+          "settings": {
+            "size": "8XL",
+            "size_value": "73-76”"
+          }
+        }
+      },
+      "block_order": [
+        "sizes_ff43R8",
+        "sizes_n3gywA",
+        "sizes_Wm77LR",
+        "sizes_E6wjyG",
+        "sizes_CYwQLf",
+        "sizes_xJtGD4",
+        "sizes_FHCbQp",
+        "sizes_6rqj6N"
+      ],
+      "settings": {
+        "title": "Find your Size",
+        "subtitle": "<p>Our shirts are designed to comfortably contour your arms, shoulders, and chest—while providing extra room around the stomach for a perfect fit.<br/><br/><strong>How to Measure:</strong><br/>To find your size, wrap a measuring tape under your armpits and measure around the fullest part of your chest.</p>",
+        "button_text": "Shop Our Best Sellers Now",
+        "button_url": "shopify://collections/big-tall-shirts-best-sellers"
+      }
+    },
+    "wd_image_pX4Rdi": {
+      "type": "wd-image",
+      "settings": {
+        "image": "shopify://shop_images/Strongsize-fit-guide-comparison.jpg"
+      }
+    },
+    "wd_image_text_overlay_LWzre7": {
+      "type": "wd-image-text-overlay",
+      "blocks": {
+        "subheading_gKEQqk": {
+          "type": "subheading",
+          "disabled": true,
+          "settings": {
+            "text": "Subheading"
+          }
+        },
+        "heading_eLBWqb": {
+          "type": "heading",
+          "disabled": true,
+          "settings": {
+            "text": "Image with text overlay",
+            "heading_tag": "h1"
+          }
+        },
+        "richtext_dzXkKy": {
+          "type": "richtext",
+          "disabled": true,
+          "settings": {
+            "content": "<p>Use this text to share information about your brand with your customers. Describe a product, share announcements, or welcome customers to your store.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "subheading_gKEQqk",
+        "heading_eLBWqb",
+        "richtext_dzXkKy"
+      ],
+      "disabled": true,
+      "settings": {
+        "full_width": false,
+        "allow_transparent_header": false,
+        "enable_parallax": false,
+        "image_size": "auto",
+        "image": "shopify://shop_images/image_36.png",
+        "mobile_text_position": "place-self-center text-center",
+        "desktop_text_position": "sm:place-self-center sm:text-center",
+        "text_color": "#ffffff",
+        "overlay_color": "#000000",
+        "overlay_opacity": 0
+      }
+    },
+    "wd_banner_Qj7nYx": {
+      "type": "wd-banner",
+      "blocks": {
+        "button_KyGyMb": {
+          "type": "button",
+          "settings": {
+            "button_text": "Shop Longer Length",
+            "button_link": "https://strongsize.com/collections/shop-all-big-tall-shirts?filter.p.m.prts.length=gid%3A%2F%2Fshopify%2FMetaobject%2F16442884281",
+            "style": "solid",
+            "tx": "#000000",
+            "bg": "rgba(0,0,0,0)",
+            "brd": "#000000"
+          }
+        },
+        "button_r69Rib": {
+          "type": "button",
+          "settings": {
+            "button_text": "Shop Regular Length",
+            "button_link": "https://strongsize.com/collections/shop-all-big-tall-shirts?filter.p.m.prts.length=gid%3A%2F%2Fshopify%2FMetaobject%2F16448291001",
+            "style": "solid",
+            "tx": "#000000",
+            "bg": "rgba(0,0,0,0)",
+            "brd": "#000000"
+          }
+        }
+      },
+      "block_order": [
+        "button_KyGyMb",
+        "button_r69Rib"
+      ],
+      "settings": {
+        "empty_mobile": true,
+        "full_width": true,
+        "enable_parallax": false,
+        "title": "SHOP YOUR PERFECT FIT",
+        "bolder_title": true,
+        "title_tag": "h2",
+        "subtitle": "",
+        "uptitle": "",
+        "uptitle_tag": "div",
+        "title_size": "h0",
+        "image_size": "auto",
+        "image": "shopify://shop_images/strongsize-perfect-fit.jpg",
+        "mobile_smaller_text": false,
+        "mobile_full_height": false,
+        "mobile_text_position": "place-self-center text-center",
+        "desktop_text_position": "sm:place-self-center-start sm:text-start",
+        "featured_product": "",
+        "featured_product_heading": "Featured product",
+        "text_color": "#ffffff",
+        "overlay_color": "#000000",
+        "overlay_opacity": 0
+      }
+    },
+    "wd_faq_rrzW4M": {
+      "type": "wd-faq",
+      "blocks": {
+        "item_DrRbLe": {
+          "type": "item",
+          "settings": {
+            "title": "How come you don’t carry XLT (big and tall) sizes?",
+            "content": "<p>We know that you’ve seen both regular and longer length t-shirts before, offered in XL (big) and XLT (big and tall) sizing. Now, that’s a lot of options.</p><p>We wanted to simplify the buying experience so we decided to take a fresh approach, by condensing the options to Regular and Longer Length.</p><p>Our Regular Length is often preferred by guys under 6’2”, and boasts a classic traditional cut. If you don’t like your tees too long and are used to buying XL (big) sizes, we recommend this length.</p><p>Our Signature Longer Length suits both big and tall men, with a deeper curved hem. If you are used to buying XLT (big and tall) we recommend this length. But even if you aren’t traditionally buying XLT sizes, but you are looking for extra length for added coverage over your belly and backside, we also recommend this length.</p>"
+          }
+        },
+        "item_MxLErp": {
+          "type": "item",
+          "settings": {
+            "title": "How do I determine my correct size?",
+            "content": "<p>Refer to our length and size guide above, where we've got all the measurements laid out for you. Still unsure? Shoot us a message in the chat or fill out the <a href=\"/pages/contact\" title=\"Contact\"><strong>Contact Us</strong></a> form with your measurements, and we'll give you a hand in finding the perfect fit.</p>"
+          }
+        },
+        "item_6VheQ8": {
+          "type": "item",
+          "settings": {
+            "title": "What should I do if I’m in between sizes?",
+            "content": "<p>If you're stuck between sizes, we suggest sizing up for a bit more breathing room. It's a smart move - gives you some wiggle room, and if your gear shrinks slightly in the wash, you're still covered.</p>"
+          }
+        },
+        "item_GxhcTd": {
+          "type": "item",
+          "settings": {
+            "title": "Will the clothing shrink after washing?",
+            "content": "<p>Our fabric isn't pre-shrunk, so you can realistically expect a 3-5% shrinkage at most. To keep it to a minimum, we recommend washing in cold water and hang drying or using the lowest heat setting possible.</p>"
+          }
+        },
+        "item_fHBzy6": {
+          "type": "item",
+          "settings": {
+            "title": "What is your return policy for items that don’t fit?",
+            "content": "<p>We want you to love your Strongsize gear. If you are having second thoughts, we are happy to offer returns within 30 days after delivery.</p><p><strong>Returns</strong></p><p>We offer free returns for store credit. All cash refunds are subject to an $8 return fee. Items must be unworn, unwashed, and in their original packaging.</p><p><a href=\"https://strongsize.loopreturns.com/\" target=\"_blank\" title=\"https://strongsize.loopreturns.com\"><strong>Start a return</strong></a></p>"
+          }
+        },
+        "item_jqydgJ": {
+          "type": "item",
+          "settings": {
+            "title": "Can I get personalized fit advice before making a purchase?",
+            "content": "<p>Of course! <a href=\"/pages/contact\" title=\"Contact\"><strong>Contact Us</strong></a> or hit us up in the chat and we will respond as fast as we can, usually within 24 hours!</p>"
+          }
+        },
+        "item_LgHKFN": {
+          "type": "item",
+          "settings": {
+            "title": "Does the fabric stretch out throughout daily wear?",
+            "content": "<p>Our Everyday Collection is made from our Bounceback™ Stretch Cotton Jersey, which is crafted from a blend of 95% cotton and 5% spandex. </p><p>Here's the deal: cotton is cool because it's soft and breathes well, but it has a habit of stretching out a bit when you wear it. That's where the spandex comes into play - that 5% gives the fabric some stretchiness that snaps back into shape. This means our tops can keep up with you all day, every day.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "item_DrRbLe",
+        "item_MxLErp",
+        "item_6VheQ8",
+        "item_GxhcTd",
+        "item_fHBzy6",
+        "item_jqydgJ",
+        "item_LgHKFN"
+      ],
+      "settings": {
+        "full_width": true,
+        "subheading": "",
+        "title": "Frequently Asked Questions",
+        "use_tag": "h2",
+        "content": "",
+        "team_avatar_width": 160,
+        "text_position": "center",
+        "background": "",
+        "background_gradient": "",
+        "text_color": "",
+        "heading_color": "",
+        "heading_gradient": "",
+        "button_background": "",
+        "button_text_color": "",
+        "accordion_background": "#ffffff",
+        "accordion_text_color": ""
+      }
+    }
+  },
+  "order": [
+    "main",
+    "wd_banner_q4nzpc",
+    "wd_benefits_JV6UNW",
+    "wd_length_meter_bazAEe",
+    "wd_find_size_6HRETh",
+    "wd_image_pX4Rdi",
+    "wd_image_text_overlay_LWzre7",
+    "wd_banner_Qj7nYx",
+    "wd_faq_rrzW4M"
+  ]
+}

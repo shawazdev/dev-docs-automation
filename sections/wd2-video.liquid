@@ -1,0 +1,80 @@
+{%- assign ss = section.settings -%}
+<div {% render 'section-properties' %}>
+  <div class="video-wrapper">
+    <div class="title-wrapper">
+      {%- if ss.title != blank -%}
+        <h2 class="title">{{ ss.title }}</h2>
+      {%- endif -%}
+      {%- if ss.subtitle -%}
+        <div class="subtitle">{{ ss.subtitle }}</div>
+      {%- endif -%}
+      {%- if ss.link_text != blank -%}
+        <a class="link" href="{{ ss.link_url }}">{{ ss.link_text }}</a>
+      {%- endif -%}
+    </div>
+    <div class="videos">
+      {% for block in section.blocks %}
+        <div class="video">
+          {{ block.settings.video | video_tag: autoplay: true, loop: true, muted: true }}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+  {
+    "name": "WD2 Video",
+    "tag": "section",
+    "class": "wd-video",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title"
+      },
+      {
+        "type": "richtext",
+        "id": "subtitle",
+        "label": "Subtitle",
+        "default": "<p>Unlike generic brands that merely scale up sizes, Strongsize is solely dedicated to the big and tall community. Our approach is different: we functionally engineer our clothing from scratch, exclusively for big and tall body types.</p>"
+      },
+      {
+        "type": "text",
+        "id": "link_text",
+        "label": "Link text"
+      },
+      {
+        "type": "url",
+        "id": "link_url",
+        "label": "Link URL"
+      }
+    ],
+    "blocks": [
+      {
+        "name": "Video",
+        "type": "video",
+        "settings": [
+           {
+             "type": "video",
+             "id": "video",
+             "label": "Video"
+           },
+           {
+             "type": "image_picker",
+             "id": "thumbnail",
+             "label": "Video Thumbnail",
+             "info": "Custom thumbnail image. If not provided, video preview will be used."
+           }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "WD2 Video",
+        "settings": {
+        }
+      }
+    ]
+  }
+{% endschema %}

@@ -1,0 +1,98 @@
+<div class="responsive-banner">
+  {% if section.settings.banner_link != blank %}
+    <a href="{{ section.settings.banner_link }}" class="banner-link">
+  {% endif %}
+  {% if section.settings.desktop_image != blank %}
+    <img 
+      src="{{ section.settings.desktop_image | image_url }}" 
+      alt="{{ section.settings.desktop_alt_text }}" 
+      class="desktop-banner"
+    >
+  {% endif %}
+
+  {% if section.settings.mobile_image != blank %}
+    <img 
+      src="{{ section.settings.mobile_image | image_url }}" 
+      alt="{{ section.settings.mobile_alt_text }}" 
+      class="mobile-banner"
+    >
+  {% endif %}
+      {% if section.settings.banner_link != blank %}
+        </a>
+      {% endif %}
+</div>
+
+<style>
+.responsive-banner {
+  width: 100%;
+  text-align: center;
+}
+
+.desktop-banner {
+  display: block;
+  width: 100%;
+}
+
+.mobile-banner {
+  display: none;
+  width: 100%;
+}
+
+/* Show mobile image on smaller screens */
+@media (max-width: 768px) {
+  .desktop-banner {
+    display: none;
+  }
+  .mobile-banner {
+    display: block;
+  }
+}
+</style>
+
+{% schema %}
+{
+  "name": "WD Promo Banner",
+  "settings": [
+    {
+      "type": "url",
+      "id": "banner_link",
+      "label": "Banner Link",
+      "info": "Enter the URL to which the banner should link."
+    },
+    {
+      "type": "image_picker",
+      "id": "desktop_image",
+      "label": "Desktop Image",
+      "info": "Upload or select an image for desktop view."
+    },
+    {
+      "type": "text",
+      "id": "desktop_alt_text",
+      "label": "Desktop Image Alt Text",
+      "default": "Desktop Banner"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_image",
+      "label": "Mobile Image",
+      "info": "Upload or select an image for mobile view."
+    },
+    {
+      "type": "text",
+      "id": "mobile_alt_text",
+      "label": "Mobile Image Alt Text",
+      "default": "Mobile Banner"
+    }
+  ],
+  "presets": [
+    {
+      "name": "WD Promo Banner",
+      "settings": {
+        "desktop_alt_text": "Desktop Banner",
+        "mobile_alt_text": "Mobile Banner"
+      }
+    }
+  ]
+}
+{% endschema %}
+

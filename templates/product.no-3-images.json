@@ -1,0 +1,502 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "wd-product",
+      "blocks": {
+        "badges": {
+          "type": "badges",
+          "settings": {}
+        },
+        "title": {
+          "type": "title",
+          "settings": {
+            "heading_tag": "h2"
+          }
+        },
+        "price": {
+          "type": "price",
+          "settings": {
+            "show_taxes_notice": false
+          }
+        },
+        "okendo_star_rating_Vc3kXe": {
+          "type": "shopify://apps/okendo/blocks/star-rating/bb689e69-ea70-4661-8fb7-ad24a2e23c29",
+          "settings": {
+            "product": "{{product}}"
+          }
+        },
+        "separator": {
+          "type": "separator",
+          "settings": {}
+        },
+        "coupon_banner_789a3p": {
+          "type": "coupon_banner",
+          "disabled": true,
+          "settings": {
+            "icon": "shopify://shop_images/coupon-saving.png",
+            "coupon_text": "Extra 15% Off with code",
+            "coupon_code": "BFCM15",
+            "font_size": 14
+          }
+        },
+        "pack_selector_tT6GEM": {
+          "type": "pack_selector",
+          "settings": {
+            "single_tab_label": "Single",
+            "pack_tab_label": "Pack",
+            "pack_metafield_namespace": "custom",
+            "pack_metafield_key": "related_packs",
+            "max_packs": 10,
+            "show_inventory": true
+          }
+        },
+        "variant_picker": {
+          "type": "variant_picker",
+          "settings": {
+            "hide_sold_out_variants": false,
+            "stack_blocks": true,
+            "selector_mode": "block",
+            "color_mode": "color"
+          }
+        },
+        "buy_buttons": {
+          "type": "buy_buttons",
+          "settings": {
+            "show_payment_button": false,
+            "show_gift_card_recipient": true,
+            "atc_button_background": "",
+            "atc_button_text_color": "",
+            "payment_button_background": "",
+            "payment_button_text_color": ""
+          }
+        },
+        "payment_terms": {
+          "type": "payment_terms",
+          "settings": {}
+        },
+        "offer_tgJLt8": {
+          "type": "offer",
+          "disabled": true,
+          "settings": {
+            "text_alignment": "start",
+            "icon_position": "aligned",
+            "icon": "picto-box",
+            "icon_width": 24,
+            "title": "EASY FREE RETURNS",
+            "content": "<p>Satisfaction guaranteed or your money back!</p>",
+            "background": "#eaf2ed",
+            "text_color": "#00a341"
+          }
+        },
+        "offer_HzhRBC": {
+          "type": "offer",
+          "disabled": true,
+          "settings": {
+            "text_alignment": "start",
+            "icon_position": "aligned",
+            "icon": "picto-coupon",
+            "icon_width": 24,
+            "title": "FREE STANDARD SHIPPING",
+            "content": "<p>Automatically applied at checkout.</p>",
+            "background": "#eaf2ed",
+            "text_color": "#00a341"
+          }
+        },
+        "wd_stories_LwAKRL": {
+          "type": "wd_stories",
+          "settings": {}
+        },
+        "description": {
+          "type": "description",
+          "settings": {
+            "collapse_content": false
+          }
+        },
+        "collapsible_text_fp73Fm": {
+          "type": "collapsible_text",
+          "settings": {
+            "title": "Product Features",
+            "content": "{{ product.metafields.prts.features.value.features | metafield_tag }}"
+          }
+        },
+        "collapsible_text_KQRdE4": {
+          "type": "collapsible_text",
+          "settings": {
+            "title": "Fabric & Care",
+            "content": "{{ product.metafields.prts.features.value.fabric | metafield_tag }}"
+          }
+        },
+        "collapsible_text_wtnd8Y": {
+          "type": "collapsible_text",
+          "settings": {
+            "title": "Fit",
+            "content": "{{ product.metafields.prts.features.value.fit | metafield_tag }}"
+          }
+        },
+        "collapsible_text_NYjqNn": {
+          "type": "collapsible_text",
+          "settings": {
+            "title": "Free Shipping & Returns",
+            "content": "<p>{{ product.metafields.prts.features.value.free_shipping_returns | metafield_tag }}</p>"
+          }
+        },
+        "size_chart_6cLnnP": {
+          "type": "size_chart",
+          "settings": {
+            "top_text": "<h3>Garment Measurements </h3>",
+            "middle_text": "<h3>FIND YOUR SIZE </h3><p>Our shirts are made to fit around your chest with additional room around the stomach. To find your size, measure your chest by wrapping a measuring tape under your armpits, around the fullest part of your chest</p>",
+            "find_size": "Size,Chest | XL,45-48 | 2XL,49-52 | 3XL,53-56 | 4XL,57-60 | 5XL, 61-64 | 6XL, 65-68 | 7XL, 69-72 | 8XL, 73-76",
+            "bottom_text": "<h3>HOW TO MEASURE </h3><p>Measure your chest by wrapping a measuring tape under your armpits, around the fullest part of your chest.</p><p>Refer to this measurement when selecting your size from this size chart.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "badges",
+        "title",
+        "price",
+        "okendo_star_rating_Vc3kXe",
+        "separator",
+        "coupon_banner_789a3p",
+        "pack_selector_tT6GEM",
+        "variant_picker",
+        "buy_buttons",
+        "payment_terms",
+        "offer_tgJLt8",
+        "offer_HzhRBC",
+        "wd_stories_LwAKRL",
+        "description",
+        "collapsible_text_fp73Fm",
+        "collapsible_text_KQRdE4",
+        "collapsible_text_wtnd8Y",
+        "collapsible_text_NYjqNn",
+        "size_chart_6cLnnP"
+      ],
+      "settings": {
+        "full_width": true,
+        "show_fixed_add_to_cart": false,
+        "desktop_media_width": 50,
+        "desktop_media_layout": "carousel_thumbnails_bottom",
+        "mobile_media_size": "expanded",
+        "mobile_carousel_control": "free_scroll",
+        "enable_video_autoplay": true,
+        "enable_video_looping": true,
+        "enable_image_zoom": true,
+        "max_image_zoom_level": 3,
+        "background": "",
+        "background_gradient": "",
+        "text_color": "",
+        "input_background": "rgba(0,0,0,0)",
+        "input_text_color": ""
+      }
+    },
+    "wd_multi_columns_giMPyy": {
+      "type": "wd-multi-columns",
+      "blocks": {
+        "item_AwiW3x": {
+          "type": "item",
+          "settings": {
+            "image": "shopify://shop_images/Lifestyle-Image-06.jpg",
+            "column_size": "3",
+            "title": "Sleeves that Fit",
+            "heading_tag": "h2",
+            "content": "<p>Volutpat ornare pharetra congue purus. Lacus id cursus vulputate amet ultrices ornare amet.</p>",
+            "link_url": "",
+            "link_text": "",
+            "link_style": "link"
+          }
+        },
+        "item_eDkcXE": {
+          "type": "item",
+          "settings": {
+            "image": "shopify://shop_images/Lifestyle-Image-07.jpg",
+            "column_size": "3",
+            "title": "The perfect necline",
+            "heading_tag": "h2",
+            "content": "<p>Lacinia tellus amet at ipsum vestibulum sed quis sit commodo. Fermentum ipsum .</p>",
+            "link_url": "",
+            "link_text": "",
+            "link_style": "link"
+          }
+        },
+        "item_fXw7Vy": {
+          "type": "item",
+          "settings": {
+            "image": "shopify://shop_images/Lifestyle-Image-08.jpg",
+            "column_size": "3",
+            "title": "Length options",
+            "heading_tag": "h2",
+            "content": "<p>Lacinia tellus amet at ipsum vestibulum sed quis sit commodo. Fermentum ipsum .</p>",
+            "link_url": "",
+            "link_text": "",
+            "link_style": "link"
+          }
+        }
+      },
+      "block_order": [
+        "item_AwiW3x",
+        "item_eDkcXE",
+        "item_fXw7Vy"
+      ],
+      "disabled": true,
+      "settings": {
+        "full_width": true,
+        "stack_on_mobile": false,
+        "gap": "x-large",
+        "text_alignment": "start",
+        "subheading": "",
+        "title": "",
+        "content": "",
+        "background": "",
+        "background_gradient": "",
+        "text_color": ""
+      }
+    },
+    "wd_length_meter_jJeGd3": {
+      "type": "wd-length-meter",
+      "blocks": {
+        "size_jNJWtp": {
+          "type": "size",
+          "settings": {
+            "size": "XL",
+            "reg_size": "32.5”",
+            "lon_size": "35.5”"
+          }
+        },
+        "size_FHEwHa": {
+          "type": "size",
+          "settings": {
+            "size": "2XL",
+            "reg_size": "33",
+            "lon_size": "36"
+          }
+        },
+        "size_XkgNcX": {
+          "type": "size",
+          "settings": {
+            "size": "3XL",
+            "reg_size": "33.75”",
+            "lon_size": "36.75”"
+          }
+        },
+        "size_wDFWm8": {
+          "type": "size",
+          "settings": {
+            "size": "4XL",
+            "reg_size": "34.5”",
+            "lon_size": "37.5”"
+          }
+        },
+        "size_3mybLf": {
+          "type": "size",
+          "settings": {
+            "size": "5XL",
+            "reg_size": "35.25”",
+            "lon_size": "38.25”"
+          }
+        },
+        "size_ETaYCp": {
+          "type": "size",
+          "settings": {
+            "size": "6XL",
+            "reg_size": "36”",
+            "lon_size": "39”"
+          }
+        },
+        "size_7bG6gM": {
+          "type": "size",
+          "settings": {
+            "size": "7XL",
+            "reg_size": "36.75”",
+            "lon_size": "39.5”"
+          }
+        },
+        "size_MVb64C": {
+          "type": "size",
+          "settings": {
+            "size": "8XL",
+            "reg_size": "37.5”",
+            "lon_size": "39.5”"
+          }
+        }
+      },
+      "block_order": [
+        "size_jNJWtp",
+        "size_FHEwHa",
+        "size_XkgNcX",
+        "size_wDFWm8",
+        "size_3mybLf",
+        "size_ETaYCp",
+        "size_7bG6gM",
+        "size_MVb64C"
+      ],
+      "settings": {
+        "title": "CHOOSE YOUR IDEAL LENGTH",
+        "subtitle": "We know how frustrating it could be to find a t-shirt that fits perfectly in every direction. That’s why we created two length options for maximum flexibility.<strong> Choose according to the guide below.</strong>",
+        "reg_image": "shopify://shop_images/another-one.png",
+        "reg_title": "Regular length",
+        "reg_subtitle": "Often preferred by guys under 6’2”, our Regular Length boasts a subtle curved hem and a classic traditional cut.",
+        "lon_image": "shopify://shop_images/Length-Guide-Long.png",
+        "lon_title": "Longer length",
+        "lon_subtitle": "Our Signature Longer Length suits both big and tall men, with a deeper curved hem for added coverage and comfort, regardless of height."
+      }
+    },
+    "wd_find_size_4YzQHX": {
+      "type": "wd-find-size",
+      "blocks": {
+        "sizes_dNxWzj": {
+          "type": "sizes",
+          "settings": {
+            "size": "XL",
+            "size_value": "45-48”"
+          }
+        },
+        "sizes_XwinGY": {
+          "type": "sizes",
+          "settings": {
+            "size": "2XL",
+            "size_value": "49-52”"
+          }
+        },
+        "sizes_et8WBc": {
+          "type": "sizes",
+          "settings": {
+            "size": "3XL",
+            "size_value": "53-56”"
+          }
+        },
+        "sizes_wJ4zMr": {
+          "type": "sizes",
+          "settings": {
+            "size": "4XL",
+            "size_value": "57-60”"
+          }
+        },
+        "sizes_3aJQCd": {
+          "type": "sizes",
+          "settings": {
+            "size": "5XL",
+            "size_value": "61-64”"
+          }
+        },
+        "sizes_8LPjWa": {
+          "type": "sizes",
+          "settings": {
+            "size": "6XL",
+            "size_value": "65-68”"
+          }
+        },
+        "sizes_9jpP7H": {
+          "type": "sizes",
+          "settings": {
+            "size": "7XL",
+            "size_value": "69-72”"
+          }
+        },
+        "sizes_gfGVtc": {
+          "type": "sizes",
+          "settings": {
+            "size": "8XL",
+            "size_value": "73-76”"
+          }
+        }
+      },
+      "block_order": [
+        "sizes_dNxWzj",
+        "sizes_XwinGY",
+        "sizes_et8WBc",
+        "sizes_wJ4zMr",
+        "sizes_3aJQCd",
+        "sizes_8LPjWa",
+        "sizes_9jpP7H",
+        "sizes_gfGVtc"
+      ],
+      "disabled": true,
+      "settings": {
+        "title": "Find your Size",
+        "subtitle": "<p>Our tops are cut to contour around your arms, shoulders and chest with additional room in the stomach.<br/><br/><strong>How to Measure:</strong> <br/>To find your size, wrap a measuring tape under your armpits and measure around the fullest part of your chest.</p>",
+        "button_text": "Shop Best Sellers",
+        "button_url": "#"
+      }
+    },
+    "related-products": {
+      "type": "related-products",
+      "settings": {
+        "recommendations_count": 6,
+        "products": [],
+        "full_width": true,
+        "stack_products": false,
+        "show_progress_bar": false,
+        "products_per_row_mobile": "1",
+        "products_per_row_desktop": 4,
+        "subheading": "",
+        "title": "You may also like",
+        "content": "",
+        "background": "",
+        "background_gradient": "",
+        "text_color": "",
+        "heading_color": "",
+        "heading_gradient": "",
+        "product_card_background": "",
+        "product_card_text_color": ""
+      }
+    },
+    "170802072128fa33ea": {
+      "type": "apps",
+      "blocks": {
+        "aftersell_by_rokt_pdp_upsells_jyYBGt": {
+          "type": "shopify://apps/rokt-aftersell/blocks/pdp-upsells/509ec35d-0632-4dfc-a105-fa799cd9d149",
+          "disabled": true,
+          "settings": {}
+        },
+        "okendo_reviews_widget_jYcfrK": {
+          "type": "shopify://apps/okendo/blocks/reviews-widget/bb689e69-ea70-4661-8fb7-ad24a2e23c29",
+          "settings": {
+            "product": "{{product}}",
+            "widget_type": "reviews_widget"
+          }
+        }
+      },
+      "block_order": [
+        "aftersell_by_rokt_pdp_upsells_jyYBGt",
+        "okendo_reviews_widget_jYcfrK"
+      ],
+      "settings": {
+        "full_width": true,
+        "remove_vertical_spacing": false,
+        "remove_horizontal_spacing": false,
+        "background": "",
+        "background_gradient": "",
+        "text_color": ""
+      }
+    },
+    "1749062932a5d91604": {
+      "type": "apps",
+      "settings": {
+        "full_width": true,
+        "remove_vertical_spacing": false,
+        "remove_horizontal_spacing": false,
+        "background": "",
+        "background_gradient": "",
+        "text_color": ""
+      }
+    }
+  },
+  "order": [
+    "main",
+    "wd_multi_columns_giMPyy",
+    "wd_length_meter_jJeGd3",
+    "wd_find_size_4YzQHX",
+    "related-products",
+    "170802072128fa33ea",
+    "1749062932a5d91604"
+  ]
+}

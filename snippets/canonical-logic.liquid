@@ -1,0 +1,70 @@
+{%- comment -%}
+CUSTOM CANONICAL LOGIC – REPLACES SHOPIFY DEFAULT
+{%- endcomment -%}
+
+{% if request.page_type == 'product' and product %}
+
+  {% assign handle = product.handle %}
+  {% assign stop_canonical = false %}
+
+  {%- comment -%}
+  EXCLUSION: Skip canonical override for "motion-6-pack"
+  {%- endcomment -%}
+  {% if handle == 'motion-6-pack' %}
+    <link rel="canonical" href="{{ shop.url }}{{ product.url }}">
+    <meta property="og:url" content="{{ shop.url }}{{ product.url }}">
+    {% assign stop_canonical = true %}
+  {% endif %}
+
+  {%- comment -%} STOP SCRIPT FOR EXCLUDED PRODUCT {%- endcomment -%}
+  {% if stop_canonical == true %}
+    {% break %}
+  {% endif %}
+
+  {%- assign pack_suffixes = '2-pack,3-pack,4-pack,5-pack,6-pack,7-pack,8-pack,9-pack,10-pack' | split: ',' -%}
+  {% assign is_pack = false %}
+  {% assign base_handle = handle %}
+
+  {%- comment -%} STEP 1: REMOVE PACK SUFFIX {%- endcomment -%}
+  {% for suffix in pack_suffixes %}
+    {% if handle contains suffix %}
+      {% assign is_pack = true %}
+      {% assign base_handle = base_handle | remove: suffix %}
+    {% endif %}
+  {% endfor %}
+
+  {%- comment -%} STEP 2: FIX DOUBLE HYPHENS {%- endcomment -%}
+  {% assign base_handle = base_handle | replace: '--', '-' %}
+
+  {%- comment -%} STEP 3: REMOVE TRAILING HYPHEN {%- endcomment -%}
+  {% assign last_char = base_handle | slice: -1, 1 %}
+  {% if last_char == '-' %}
+    {% assign new_length = base_handle.size | minus: 1 %}
+    {% assign base_handle = base_handle | slice: 0, new_length %}
+  {% endif %}
+
+  {%- comment -%} STEP 4: OUTPUT CANONICAL {%- endcomment -%}
+  {% if is_pack %}
+    <link rel="canonical" href="{{ shop.url }}/products/{{ base_handle }}">
+  {% else %}
+    <link rel="canonical" href="{{ shop.url }}{{ product.url }}">
+  {% endif %}
+
+  {%- comment -%} STEP 5: OG URL MATCHING {%- endcomment -%}
+  {% if is_pack %}
+    <meta property="og:url" content="{{ shop.url }}/products/{{ base_handle }}">
+  {% else %}
+    <meta property="og:url" content="{{ shop.url }}{{ product.url }}">
+  {% endif %}
+
+  {%- comment -%} STEP 6: ROBOTS TAG FOR PACK PAGES ONLY {%- endcomment -%}
+  {% if is_pack %}
+    <meta name="robots" content="index,follow,noarchive">
+  {% endif %}
+
+{% else %}
+
+  <link rel="canonical" href="{{ canonical_url }}">
+  <meta property="og:url" content="{{ canonical_url }}">
+
+{% endif %}

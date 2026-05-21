@@ -1,0 +1,40 @@
+
+<style>
+  #coupon-bar-{{ block.id }} {
+    align-items: center;
+    padding: 8px 12px;
+    border-radius: 6px;
+    background: #e9e8e8;
+    width: auto;
+    margin: 10px 0 0;
+    display: inline-block;
+    vertical-align: middle;
+    font-size: {{ block.settings.font_size }}px;
+  }
+
+  #coupon-bar-{{ block.id }} img {
+    max-height: 24px;
+    width: auto;
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  #coupon-bar-{{ block.id }} .coupon-code {
+    font-weight: bold;
+    padding: 3px 8px;
+    border: 1px dashed #4caf50;
+    border-radius: 4px;
+    background: #fff;
+  }
+</style>
+
+<div id="coupon-bar-{{ block.id }}">
+  {% if block.settings.icon != blank %}
+    <img src="{{ block.settings.icon | image_url }}" width="" height="" alt="Coupon Icon" />
+  {% endif %}
+  <span>{{ block.settings.coupon_text }}</span>
+  {% if block.settings.coupon_code != blank %}
+    <span class="coupon-code">{{ block.settings.coupon_code }}</span>
+  {% endif %}
+</div>
+
