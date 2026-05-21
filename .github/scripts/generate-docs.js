@@ -160,6 +160,10 @@ const isDoc = f =>
 const isGithubMeta = f =>
   /^\.github\//i.test(f);
 
+// Core automation files that should always be documented even if they're the only change
+const isCoreAutomationFile = f =>
+  /\.github\/(scripts\/(generate-docs\.js|deploy\.js|test\.js)|ai-docs\.yml|workflows\/.+\.yml)$/i.test(f);
+
 const isTranslation = f =>
   /(^|\/)(locales?|lang|i18n|translations?)\//i.test(f) ||
   /\.(po|mo|pot)$/i.test(f);
@@ -241,9 +245,11 @@ function classify() {
   if (labels.includes('hotfix'))       return { action: 'full', reason: 'hotfix label', tag: 'HOTFIX' };
   if (/^revert/i.test(entryTitle))     return { action: 'full', reason: 'revert', tag: 'REVERT' };
 
-  // .github-only changes (workflow tweaks, this script, config) — never logged.
-  // Avoids the meta-noise of every workflow iteration spamming the dev log.
-  if (filesArr.length > 0 && filesArr.every(isGithubMeta))
+  // .github-only changes (workflow tweaks, config) — never logged.
+  // BUT: core automation scripts (generate-docs.js, ai-docs.yml, deploy scripts) should be documented.
+  // Avoids the meta-noise of every workflow iteration spamming the dev log, while still tracking
+  // changes to the tools that generate this log.
+  if (filesArr.length > 0 && filesArr.every(isGithubMeta) && !filesArr.some(isCoreAutomationFile))
     return { action: 'skip', reason: '.github-only change (workflow / scripts / metadata)' };
 
   // Upstream merges → one-liner. The real work was documented in the original PRs.
