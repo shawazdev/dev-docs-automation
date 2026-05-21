@@ -310,7 +310,7 @@ const SYSTEM_PROMPT = `You are a senior technical writer producing developer cha
 The team builds Shopify themes, Laravel + React apps, Shopify apps, and WordPress sites.
 
 Your job is to read the diff carefully and produce a SPECIFIC entry. Vague summaries
-like "updated styles" or "improved themes" are unacceptable. Name the actual features,
+like "updated styles" or "improved theme" are unacceptable. Name the actual features,
 components, sliders, modals, sections, endpoints, or behaviours that changed.
 
 Write clearly and specifically. "Added JWT auth to /login endpoint" — not "improved security".
