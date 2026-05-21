@@ -1,5 +1,5 @@
 {%- capture product_form_id -%}product-form-{{ product.id }}-{{ section.id }}{%- endcapture -%}
-
+{%- render 'wd-breadcrumb', current_product: product -%}
 <safe-sticky class="product-info strong-pdp">
   {%- for block in section.blocks -%}
     {%- assign previous_block_index = forloop.index0 | minus: 1 -%}
@@ -157,16 +157,16 @@
 
                     {%- case block.settings.color_mode -%}
                       {%- when 'color' -%}
-                        {%- render 'swatch', type: 'colors', href: product_variation.url, value: value, selected: selected -%}
+                        {%- render 'swatch', type: 'colors', href: product_variation.url, value: value, selected: selected,show_tooltip: true -%}
 
                       {%- when 'variant' -%}
-                        {%- render 'swatch', type: 'thumbnail', href: product_variation.url, value: value, image: product_variation.featured_media, selected: selected, bordered: true -%}
+                        {%- render 'swatch', type: 'thumbnail', href: product_variation.url, value: value, image: product_variation.featured_media, selected: selected, bordered: true,show_tooltip: true -%}
 
                       {%- when 'block' -%}
-                        {%- render 'swatch', type: 'block', href: product_variation.url, value: value, selected: selected -%}
+                        {%- render 'swatch', type: 'block', href: product_variation.url, value: value, selected: selected,show_tooltip: true -%}
 
                       {%- when 'block_swatch' -%}
-                        {%- render 'swatch', type: 'block', href: product_variation.url, value: value, selected: selected, show_colors: true -%}
+                        {%- render 'swatch', type: 'block', href: product_variation.url, value: value, selected: selected, show_colors: true, show_tooltip: true -%}
                     {%- endcase -%}
                   {%- endfor -%}
                 </div>

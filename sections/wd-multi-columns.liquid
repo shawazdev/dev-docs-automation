@@ -1,4 +1,6 @@
-{%- if section.blocks.size > 0 -%}
+{%- assign pdp_multi_col = product.metafields.custom.pdp_multi_column_show.value -%}
+{%- unless pdp_multi_col == false -%}
+  {%- if section.blocks.size > 0 -%}
   {%- render 'section-spacing-collapsing' -%}
 
   <style>
@@ -86,7 +88,7 @@
     </div>
   </div>
 {%- endif -%}
-
+{%- endunless -%}
 {% schema %}
 {
   "name": "WD Multi-column",

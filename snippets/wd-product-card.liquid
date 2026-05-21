@@ -1,25 +1,25 @@
 {%- comment -%}
-----------------------------------------------------------------------------------------------------------------------
-PRODUCT CARD COMPONENT
-----------------------------------------------------------------------------------------------------------------------
+  ----------------------------------------------------------------------------------------------------------------------
+  PRODUCT CARD COMPONENT
+  ----------------------------------------------------------------------------------------------------------------------
 
-This component is used in collection and featured collection to render a single product as a card
+  This component is used in collection and featured collection to render a single product as a card
 
-********************************************
-Supported variables
-********************************************
+  ********************************************
+  Supported variables
+  ********************************************
 
-* product: the product to render
-* show_rating: show or not the rating. If nothing is set, the theme uses the default product card setting
-* show_vendor: show or not the vendor. If nothing is set, the theme uses the default product card setting
-* show_quick_buy: show or not the quick buy. If nothing is set, the theme uses the default product card setting
-* show_secondary_image: show or not the secondary image. If nothing is set, the theme uses the default product card setting
-* show_swatches: allow to force hiding swatches. If nothing is set, it will default to the default card strategy
-* stacked: indicate if the product is in stack mode
-* reveal: if set to true the item will be revealed in a stacked mode
-* background: the background to use for the product card (if none is passed then the one from the global setting is used)
-* text_color: the text color to use for the product card (if none is passed then the one from the global setting is used)
-* text_alignment: can be "center". If nothing is set, the theme uses the default product card setting
+  * product: the product to render
+  * show_rating: show or not the rating. If nothing is set, the theme uses the default product card setting
+  * show_vendor: show or not the vendor. If nothing is set, the theme uses the default product card setting
+  * show_quick_buy: show or not the quick buy. If nothing is set, the theme uses the default product card setting
+  * show_secondary_image: show or not the secondary image. If nothing is set, the theme uses the default product card setting
+  * show_swatches: allow to force hiding swatches. If nothing is set, it will default to the default card strategy
+  * stacked: indicate if the product is in stack mode
+  * reveal: if set to true the item will be revealed in a stacked mode
+  * background: the background to use for the product card (if none is passed then the one from the global setting is used)
+  * text_color: the text color to use for the product card (if none is passed then the one from the global setting is used)
+  * text_alignment: can be "center". If nothing is set, the theme uses the default product card setting
 {%- endcomment -%}
 
 {%- assign show_rating = show_rating | default: settings.show_product_rating, allow_false: true -%}
@@ -32,11 +32,17 @@ Supported variables
   {%- assign mobile_reduced = true -%}
 {%- endif -%}
 
-{%- assign section_background = section.settings.background_gradient | default: section.settings.background | default: settings.background -%}
+{%- assign section_background = section.settings.background_gradient
+  | default: section.settings.background
+  | default: settings.background
+-%}
 {%- assign card_background = background | default: settings.product_card_background -%}
 {%- assign card_text_color = text_color | default: settings.product_card_text_color -%}
 
-{%- if section_background != 'rgba(0,0,0,0)' and card_background != 'rgba(0,0,0,0)' and section_background != card_background -%}
+{%- if section_background != 'rgba(0,0,0,0)'
+  and card_background != 'rgba(0,0,0,0)'
+  and section_background != card_background
+-%}
   {%- assign card_class = 'product-card ' -%}
 {%- else -%}
   {%- assign card_class = 'product-card product-card--blends ' -%}
@@ -46,11 +52,17 @@ Supported variables
   {%- assign card_class = card_class | append: 'product-card--show-secondary-media' -%}
 {%- endif -%}
 
-<product-card handle="{{ product.handle | escape }}" {% if reveal %}reveal-js{% endif %} {% render 'surface', class: card_class, background: card_background, text_color: card_text_color %}>
+<product-card
+  handle="{{ product.handle | escape }}"
+  {% if reveal %}
+    reveal-js
+  {% endif %}
+  {% render 'surface', class: card_class, background: card_background, text_color: card_text_color %}
+>
   {%- comment -%}
-  --------------------------------------------------------------------------------------------------------------------
-  PRODUCT BADGES
-  --------------------------------------------------------------------------------------------------------------------
+    --------------------------------------------------------------------------------------------------------------------
+    PRODUCT BADGES
+    --------------------------------------------------------------------------------------------------------------------
   {%- endcomment -%}
 
   {%- if show_badges and product.media.size > 0 -%}
@@ -58,14 +70,14 @@ Supported variables
   {%- endif -%}
 
   {%- comment -%}
-  --------------------------------------------------------------------------------------------------------------------
-  PRODUCT MEDIA
-  --------------------------------------------------------------------------------------------------------------------
+    --------------------------------------------------------------------------------------------------------------------
+    PRODUCT MEDIA
+    --------------------------------------------------------------------------------------------------------------------
   {%- endcomment -%}
 
   {%- if product.media.size > 0 -%}
     <div class="product-card__figure">
-      <a href="{{ product.url }}" data-instant>
+      <a href="{{ product.url | within: collection }}" data-instant>
         {%- capture sizes -%}
           {%- if stacked -%}
             (max-width: 699px) calc(100vw / {{ section.settings.products_per_row_mobile }} - 40px), (max-width: 1200px) calc(100vw / {{ 3 | at_most: section.settings.products_per_row_desktop }} - 64px), calc((100vw - 96px) / {{ section.settings.products_per_row_desktop }} - (24px / {{ section.settings.products_per_row_desktop }} * {{ section.settings.products_per_row_desktop | minus: 1 }}))
@@ -75,11 +87,28 @@ Supported variables
         {%- endcapture -%}
 
         {%- capture main_image_classes -%}product-card__image product-card__image--primary {% if settings.product_image_aspect_ratio contains 'crop' %}object-fill-safe{% endif %} aspect-{{ settings.product_image_aspect_ratio | split: '_' | first }}{%- endcapture -%}
-        {{- product.featured_media | image_url: width: product.featured_media.width | image_tag: loading: 'lazy', sizes: sizes, widths: '200,300,400,500,600,700,800,1000,1200,1400,1600,1800', class: main_image_classes -}}
+        {{-
+          product.featured_media
+          | image_url: width: product.featured_media.width
+          | image_tag:
+            loading: 'lazy',
+            sizes: sizes,
+            widths: '200,300,400,500,600,700,800,1000,1200,1400,1600,1800',
+            class: main_image_classes
+        -}}
 
         {%- if show_secondary_image and product.media.size > 1 -%}
           {%- assign next_media = product.media[product.featured_media.position] | default: product.media[1] -%}
-          {{- next_media | image_url: width: next_media.width | image_tag: class: 'product-card__image product-card__image--secondary object-fill', loading: 'lazy', fetchpriority: 'low', sizes: sizes, widths: '200,300,400,500,600,700,800,1000,1200,1400,1600,1800' -}}
+          {{-
+            next_media
+            | image_url: width: next_media.width
+            | image_tag:
+              class: 'product-card__image product-card__image--secondary object-fill',
+              loading: 'lazy',
+              fetchpriority: 'low',
+              sizes: sizes,
+              widths: '200,300,400,500,600,700,800,1000,1200,1400,1600,1800'
+          -}}
         {%- endif -%}
       </a>
 
@@ -92,7 +121,12 @@ Supported variables
               <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
 
               <div class="pointer-fine:hidden">
-                <button type="submit" is="custom-button" class="product-card__mobile-quick-buy-button" aria-label="{{ quick_add_label | escape }}">
+                <button
+                  type="submit"
+                  is="custom-button"
+                  class="product-card__mobile-quick-buy-button"
+                  aria-label="{{ quick_add_label | escape }}"
+                >
                   {%- render 'icon' with 'quick-buy-cart' -%}
                 </button>
               </div>
@@ -105,7 +139,14 @@ Supported variables
             {%- capture quick_buy_id -%}quick-buy-{{ section.id }}-{{ product.id }}{%- endcapture -%}
 
             <div class="pointer-fine:hidden">
-              <button type="button" aria-controls="{{ quick_buy_id }}" aria-expanded="false" aria-label="{{ quick_add_label | escape }}" is="custom-button" class="product-card__mobile-quick-buy-button">
+              <button
+                type="button"
+                aria-controls="{{ quick_buy_id }}"
+                aria-expanded="false"
+                aria-label="{{ quick_add_label | escape }}"
+                is="custom-button"
+                class="product-card__mobile-quick-buy-button"
+              >
                 {%- render 'icon' with 'quick-buy-cart' -%}
               </button>
             </div>
@@ -114,7 +155,15 @@ Supported variables
               {%- render 'button', content: quick_add_label, aria_controls: quick_buy_id -%}
             </div>
 
-            <quick-buy-drawer id="{{ quick_buy_id }}" header-bordered open-from="bottom" handle="{{ product.handle }}" role="region" aria-live="polite" class="quick-buy-drawer drawer">
+            <quick-buy-drawer
+              id="{{ quick_buy_id }}"
+              header-bordered
+              open-from="bottom"
+              handle="{{ product.handle }}"
+              role="region"
+              aria-live="polite"
+              class="quick-buy-drawer drawer"
+            >
               {%- comment -%}Quick buy content is filled on demand for performance reasons {%- endcomment -%}
             </quick-buy-drawer>
           {%- endif -%}
@@ -124,9 +173,9 @@ Supported variables
   {%- endif -%}
 
   {%- comment -%}
-  --------------------------------------------------------------------------------------------------------------------
-  PRODUCT INFO
-  --------------------------------------------------------------------------------------------------------------------
+    --------------------------------------------------------------------------------------------------------------------
+    PRODUCT INFO
+    --------------------------------------------------------------------------------------------------------------------
   {%- endcomment -%}
 
   <div class="product-card__info {% if text_alignment == 'center' %}product-card__info--center{% endif %}">
@@ -136,7 +185,11 @@ Supported variables
           {%- render 'vendor' with product.vendor, class: 'text-xs' -%}
 
           {%- capture rating_class -%}{% if mobile_reduced %}hidden sm:flex{% endif %}{%- endcapture -%}
-          {%- render 'product-rating', product: product, class: rating_class, display_mode: settings.product_rating_mode -%}
+          {%- render 'product-rating',
+            product: product,
+            class: rating_class,
+            display_mode: settings.product_rating_mode
+          -%}
         </div>
       {%- else -%}
         {%- render 'vendor' with product.vendor, class: 'text-xs' -%}
@@ -145,15 +198,23 @@ Supported variables
     <div class="v-stack gap-0.5 w-full {% if text_alignment == 'center' %}justify-items-center{% endif %}">
       {%- if show_rating and show_vendor == false or product.vendor == blank -%}
         <div class="rating-with-text">
-          <span class="product-card__title"><a href="{{ product.url }}" data-instant>{{ product.title }}</a></span>
+          <span class="product-card__title"
+            ><a href="{{ product.url | within: collection }}" data-instant>{{ product.title }}</a></span
+          >
 
           {%- if text_alignment != 'center' -%}
             {%- capture rating_class -%}{% if mobile_reduced %}hidden sm:flex{% endif %}{%- endcapture -%}
-            {%- render 'product-rating', product: product, class: rating_class, display_mode: settings.product_rating_mode -%}
+            {%- render 'product-rating',
+              product: product,
+              class: rating_class,
+              display_mode: settings.product_rating_mode
+            -%}
           {%- endif -%}
         </div>
       {%- else -%}
-        <span class="product-card__title"><a href="{{ product.url }}"  data-instant>{{ product.title }}</a></span>
+        <span class="product-card__title"
+          ><a href="{{ product.url | within: collection }}" data-instant>{{ product.title }}</a></span
+        >
       {%- endif -%}
 
       {%- render 'price-list', product: product, text_alignment: text_alignment -%}
@@ -166,9 +227,9 @@ Supported variables
 
     {% comment %} OKENDO custom {% endcomment %}
 
-    {% if product != blank %} 
-      {% capture product_data_attribute %}data-oke-reviews-product-id="shopify-{{ product.id }}"{% endcapture %} 
-    {% endif %} 
+    {% if product != blank %}
+      {% capture product_data_attribute %}data-oke-reviews-product-id="shopify-{{ product.id }}"{% endcapture %}
+    {% endif %}
     <div data-oke-star-rating {{ product_data_attribute }}>{{ product.metafields.okendo.StarRatingSnippet }}</div>
 
     {% comment %} end OKENDO custom {% endcomment %}
@@ -182,79 +243,139 @@ Supported variables
     {%- if is_bundle -%}
       <div class="colors bundle">
         {% for color in custom_colors %}
-          {%- render 'swatch', type: 'colors', value: color.title, size: 'sm', href: product.url -%}
+          {%- render 'swatch', type: 'colors', value: color.title, size: 'sm', href: product.url, show_tooltip: true -%}
         {% endfor %}
       </div>
     {%- else -%}
       <div class="colors">
         {% for color_product in color_products %}
           {%- assign color = color_product.metafields.prts.color_array.value | first -%}
-          {%- render 'swatch', type: 'colors', value: color.title, size: 'sm', href: color_product.url -%}
+          {%- render 'swatch', type: 'colors', value: color.title, size: 'sm', href: color_product.url, show_tooltip: true -%}
         {% endfor %}
       </div>
     {%- endif -%}
     {%- if settings.product_color_display != 'hide' and show_swatches != false -%}
-      
-     {%- assign color_label_list = 'general.label.color' | t | append: ',Bundle' | replace: ', ', ',' | downcase | split: ',' -%}
+      {%- assign color_label_list = 'general.label.color'
+        | t
+        | append: ',Bundle'
+        | replace: ', ', ','
+        | downcase
+        | split: ','
+      -%}
       {%- for color_label in color_label_list -%}
         {%- if product.options_by_name[color_label] != blank -%}
           {%- assign product_option = product.options_by_name[color_label] -%}
           {%- capture name -%}swatch-{{ section.id }}-{{ product.id }}-{{ product_option.position }}{%- endcapture -%}
 
           <div class="product-card__aside">
-            
+            {%- comment -%} Determine if this product is a bundle (tag-based check) {%- endcomment -%}
+            {%- assign is_bundle = false -%}
+            {%- assign bundle_tags = 'pack,packs,bundle,Bundle,bundle-product' | split: ',' -%}
+            {%- for tag in product.tags -%}
+              {%- if bundle_tags contains tag -%}
+                {%- assign is_bundle = true -%}
+                {%- break -%}
+              {%- endif -%}
+            {%- endfor -%}
+
             {%- case settings.product_color_display -%}
               {%- when 'count' -%}
-                <p class="product-card__color-count text-sm text-subdued">{{- 'product.general.available_colors_count' | t: count: product_option.values.size -}}</p>
+                <p class="product-card__color-count text-sm text-subdued">
+                  {{- 'product.general.available_colors_count' | t: count: product_option.values.size -}}
+                </p>
 
               {%- when 'swatch' -%}
-                <fieldset class="product-card__swatch-list h-stack {% if settings.color_swatch_style == 'rectangle' %}gap-2.5{% else %}gap-0.5{% endif %}" data-option-position="{{ product_option.position }}">
-                  {%- for option_value in product_option.values limit: 4 -%}
-                    {%- if forloop.first or product.selected_or_first_available_variant.matched and option_value == product_option.selected_value -%}
+                <fieldset
+                  class="product-card__swatch-list swatch-grid {% if settings.color_swatch_style == 'rectangle' %}gap-2.5{% else %}gap-0.5{% endif %}"
+                  data-option-position="{{ product_option.position }}"
+                >
+                  {%- for option_value in product_option.values limit: product_option.values.size -%}
+                    {%- if forloop.first
+                      or product.selected_or_first_available_variant.matched
+                      and option_value == product_option.selected_value
+                    -%}
                       {%- assign selected = true -%}
                     {%- else -%}
-                      {% assign selected = false %}
+                      {%- assign selected = false -%}
                     {%- endif -%}
-
-                    {%- render 'swatch', type: 'colors', value: option_value, name: name, size: 'sm', selected: selected -%}
+                    {%- render 'swatch',
+                      type: 'colors',
+                      value: option_value,
+                      name: name,
+                      size: 'sm',
+                      selected: selected,
+                      show_tooltip: true
+                    -%}
                   {%- endfor -%}
-
-                  {% if product_option.values.size > 4 %}
-                    <a href="{{ product.url }}" data-instant class="color-swatch__view-more {% if settings.color_swatch_style == 'round' %}rounded-full{% endif %} text-xxs text-subdued">+{{ product_option.values.size | minus: 4 }}</a>
-                  {% endif %}
                 </fieldset>
+
+              {%- when 'smart' -%}
+                {%- if is_bundle -%}
+                  {%- comment -%} Bundle product: fall back to text count {%- endcomment -%}
+                  <p class="product-card__color-count text-sm text-subdued">
+                    {{- 'product.general.available_colors_count' | t: count: product_option.values.size -}}
+                  </p>
+                {%- else -%}
+                  {%- comment -%} Regular product: show color swatches {%- endcomment -%}
+                  <fieldset
+                    class="product-card__swatch-list swatch-grid {% if settings.color_swatch_style == 'rectangle' %}gap-2.5{% else %}gap-0.5{% endif %}"
+                    data-option-position="{{ product_option.position }}"
+                  >
+                    {%- for option_value in product_option.values limit: product_option.values.size -%}
+                      {%- if forloop.first
+                        or product.selected_or_first_available_variant.matched
+                        and option_value == product_option.selected_value
+                      -%}
+                        {%- assign selected = true -%}
+                      {%- else -%}
+                        {%- assign selected = false -%}
+                      {%- endif -%}
+                      {%- render 'swatch',
+                        type: 'colors',
+                        value: option_value,
+                        name: name,
+                        size: 'sm',
+                        selected: selected,
+                        show_tooltip: true
+                      -%}
+                    {%- endfor -%}
+                  </fieldset>
+                {%- endif -%}
 
               {%- when 'variant' -%}
                 <fieldset class="product-card__variant-list" data-option-position="{{ product_option.position }}">
-                  {%- for option_value in product_option.values limit: 4 -%}
+                  {%- for option_value in product_option.values limit: product_option.values.size -%}
                     {%- assign variant_option = 'option' | append: product_option.position -%}
                     {%- assign variant_for_value = product.variants | where: variant_option, option_value | first -%}
-
-                    {%- if forloop.first or variant_for_value.matched and option_value == product_option.selected_value -%}
+                    {%- if forloop.first
+                      or variant_for_value.matched
+                      and option_value == product_option.selected_value
+                    -%}
                       {%- assign selected = true -%}
                     {%- else -%}
-                      {% assign selected = false %}
+                      {%- assign selected = false -%}
                     {%- endif -%}
-
-                    {%- render 'swatch', type: 'thumbnail', image: variant_for_value.featured_media, value: option_value, name: name, size: 'sm', selected: selected -%}
+                    {%- render 'swatch',
+                      type: 'thumbnail',
+                      image: variant_for_value.featured_media,
+                      value: option_value,
+                      name: name,
+                      size: 'sm',
+                      selected: selected
+                    -%}
                   {%- endfor -%}
-
-                  {%- if product_option.values.size > 4 -%}
-                    <a href="{{ product.url }}" data-instant class="thumbnail-swatch__view-more text-xs text-subdued">+{{ product_option.values.size | minus: 4 }}</a>
-                  {%- endif -%}
+                  
                 </fieldset>
-              {%- endcase -%}
+            {%- endcase -%}
           </div>
 
           {%- break -%}
         {%- endif -%}
       {%- endfor -%}
     {%- endif -%}
-    {%- if is_bundle -%}
+    {% comment %} {%- if is_bundle -%}
       {%- assign count = product.metafields.prts.packs.value.title | split: ' ' | first | times: 1 -%}
-      <div class="wd-save">
-        Only {{ product.price | divided_by: count | money }} per item!
-      </div>
-    {%- endif -%}
+      <div class="wd-save">Only {{ product.price | divided_by: count | money }} per item!</div>
+    {%- endif -%} {% endcomment %}
   </div>
 </product-card>

@@ -695,9 +695,13 @@
           {
             "value": "variant",
             "label": "Variant image"
+          },
+          {
+            "value": "smart",
+            "label": "Swatch + Text for Bundles"
           }
         ],
-        "default": "count"
+        "default": "smart"
       },
       {
         "type": "select",
