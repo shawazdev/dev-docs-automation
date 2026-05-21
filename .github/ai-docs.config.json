@@ -1,0 +1,13 @@
+{
+  "_comment": "Optional. Place at .github/ai-docs.config.json in each repo to override defaults.",
+  "smallRefactorLines": 50,
+  "themeTemplateLines": 40,
+  "reactComponentLines": 50,
+  "stylingLines": 30,
+  "configMinLines": 5,
+  "diffMaxChars": 10000,
+  "insertAtTop": true,
+  "model": "gpt-4o",
+  "temperature": 0.3,
+  "maxTokens": 1024
+}

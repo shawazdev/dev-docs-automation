@@ -1,0 +1,72 @@
+name: AI Documentation Generator
+
+# Triggers only on merged PRs into main/master.
+# Direct pushes to main are intentionally NOT logged — enforce PR-only
+# via branch protection if needed.
+on:
+  pull_request:
+    types: [closed]
+    branches: [main, master]
+
+jobs:
+  generate-docs:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      models: read           # required to call GitHub Models with built-in token
+      pull-requests: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0     # full history so we can diff base...head
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install @azure-rest/ai-inference @azure/core-auth @azure/core-sse googleapis
+
+      - name: Collect PR diff and line counts
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          git fetch origin "$BASE_SHA" "$HEAD_SHA" || true
+          git diff "$BASE_SHA" "$HEAD_SHA" --name-only > changed_files.txt
+          git diff "$BASE_SHA" "$HEAD_SHA" --unified=5 > code_diff.txt
+
+          STATS=$(git diff "$BASE_SHA" "$HEAD_SHA" --shortstat)
+          ADD=$(echo "$STATS" | grep -oE '[0-9]+ insertion' | grep -oE '[0-9]+' || echo 0)
+          DEL=$(echo "$STATS" | grep -oE '[0-9]+ deletion'  | grep -oE '[0-9]+' || echo 0)
+          echo "DIFF_ADDITIONS=$ADD" >> "$GITHUB_ENV"
+          echo "DIFF_DELETIONS=$DEL" >> "$GITHUB_ENV"
+
+      - name: Generate documentation entry
+        env:
+          GITHUB_TOKEN:       ${{ secrets.GITHUB_TOKEN }}
+          GDOCS_SERVICE_JSON: ${{ secrets.GDOCS_SERVICE_JSON }}
+          GDOC_ID:            ${{ secrets.GDOC_ID }}
+
+          REPO_NAME:    ${{ github.repository }}
+          PR_NUMBER:    ${{ github.event.pull_request.number }}
+          PR_TITLE:     ${{ github.event.pull_request.title }}
+          PR_BODY:      ${{ github.event.pull_request.body }}
+          PR_URL:       ${{ github.event.pull_request.html_url }}
+          PR_AUTHOR:    ${{ github.event.pull_request.user.login }}
+          PR_MERGED_AT: ${{ github.event.pull_request.merged_at }}
+          PR_LABELS:    ${{ toJSON(github.event.pull_request.labels) }}
+        run: node .github/scripts/generate-docs.js
+
+      - name: Upload failed entry on error
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: failed-doc-entry
+          path: failed-entry.txt
+          if-no-files-found: ignore
