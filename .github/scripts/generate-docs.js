@@ -37,7 +37,7 @@ const DEFAULTS = {
   insertAtTop:       true,
   model:           'gpt-4o',
   temperature:        0.3,
-  maxTokens:         3000,
+  maxTokens:         5000,
 };
 
 let CONFIG = { ...DEFAULTS };
