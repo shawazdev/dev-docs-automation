@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Social Media Marketing | Snowy Peak Films</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Barlow:wght@300;400;500;600&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --snow: #F5F2EE;
+    --cream: #EDE8E0;
+    --charcoal: #1A1A1A;
+    --deep: #0D0D0D;
+    --peak: #2C3E50;
+    --ice: #A8C5D6;
+    --gold: #C9A84C;
+    --rust: #B85C38;
+    --mist: rgba(245,242,238,0.07);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background-color: var(--deep);
+    color: var(--snow);
+    font-family: 'Barlow', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    padding: 1.4rem 4rem;
+    display: flex; align-items: center; justify-content: space-between;
+    background: linear-gradient(to bottom, rgba(13,13,13,0.95), transparent);
+  }
+  .nav-logo {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700; font-size: 1.1rem; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--snow); text-decoration: none;
+  }
+  .nav-logo span { color: var(--ice); }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a {
+    font-family: 'Barlow Condensed', sans-serif; font-size: 0.78rem;
+    letter-spacing: 0.14em; text-transform: uppercase; color: var(--cream);
+    text-decoration: none; opacity: 0.7; transition: opacity 0.2s;
+  }
+  .nav-links a:hover { opacity: 1; color: var(--ice); }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 0 4rem 6rem;
+    position: relative; overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 60% 40%, rgba(44,62,80,0.55) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 40% at 20% 80%, rgba(168,197,214,0.12) 0%, transparent 60%),
+      linear-gradient(160deg, #0D0D0D 0%, #1a2332 50%, #0D0D0D 100%);
+  }
+  .hero-grid {
+    position: absolute; inset: 0; opacity: 0.04;
+    background-image: linear-gradient(var(--snow) 1px, transparent 1px),
+                      linear-gradient(90deg, var(--snow) 1px, transparent 1px);
+    background-size: 80px 80px;
+  }
+  .hero-eyebrow {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.72rem; letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--ice); margin-bottom: 1.4rem; opacity: 0;
+    animation: fadeUp 0.9s 0.2s forwards;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3.2rem, 7vw, 6.5rem);
+    font-weight: 900; line-height: 0.95;
+    max-width: 820px; opacity: 0;
+    animation: fadeUp 0.9s 0.4s forwards;
+  }
+  .hero h1 em { font-style: italic; color: var(--ice); }
+  .hero-sub {
+    margin-top: 2rem; max-width: 520px;
+    font-size: 1.05rem; line-height: 1.75; opacity: 0;
+    color: rgba(245,242,238,0.65);
+    animation: fadeUp 0.9s 0.6s forwards;
+  }
+  .hero-cta {
+    margin-top: 2.8rem; opacity: 0;
+    animation: fadeUp 0.9s 0.8s forwards;
+  }
+  .btn-primary {
+    display: inline-block;
+    padding: 0.9rem 2.4rem;
+    background: var(--gold);
+    color: var(--deep);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700; font-size: 0.8rem; letter-spacing: 0.18em;
+    text-transform: uppercase; text-decoration: none;
+    transition: background 0.25s, transform 0.2s;
+  }
+  .btn-primary:hover { background: #d4b060; transform: translateY(-2px); }
+  .hero-scroll {
+    position: absolute; bottom: 2.5rem; right: 4rem;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.68rem; letter-spacing: 0.22em; text-transform: uppercase;
+    color: rgba(245,242,238,0.35); writing-mode: vertical-rl;
+    opacity: 0; animation: fadeIn 1.2s 1.4s forwards;
+  }
+  .hero-line {
+    position: absolute; bottom: 0; left: 4rem;
+    width: 1px; height: 5rem; background: var(--ice); opacity: 0.3;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; } to { opacity: 1; }
+  }
+
+  /* ── SECTION BASE ── */
+  section { padding: 7rem 4rem; }
+  .section-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.68rem; letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--ice); margin-bottom: 1.2rem;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    font-weight: 700; line-height: 1.15;
+    max-width: 680px;
+  }
+  .section-title em { font-style: italic; color: var(--ice); }
+  .divider {
+    width: 50px; height: 2px;
+    background: var(--gold); margin: 2rem 0;
+  }
+
+  /* ── CADENCE SECTION ── */
+  .cadence { background: var(--charcoal); }
+  .cadence-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 5rem; align-items: center; margin-top: 4rem;
+  }
+  .cadence-body p {
+    font-size: 1.0rem; line-height: 1.85;
+    color: rgba(245,242,238,0.72); margin-bottom: 1.3rem;
+  }
+  .cadence-body p strong {
+    color: var(--snow); font-weight: 500;
+  }
+  .cadence-pillars {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;
+  }
+  .pillar {
+    padding: 2rem 1.6rem;
+    border: 1px solid rgba(168,197,214,0.15);
+    background: rgba(168,197,214,0.04);
+    position: relative; overflow: hidden;
+    transition: border-color 0.3s, background 0.3s;
+  }
+  .pillar::before {
+    content: ''; position: absolute; top: 0; left: 0;
+    width: 3px; height: 100%; background: var(--gold);
+  }
+  .pillar:hover {
+    border-color: rgba(168,197,214,0.35);
+    background: rgba(168,197,214,0.08);
+  }
+  .pillar-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem; font-weight: 900; color: rgba(201,168,76,0.25);
+    line-height: 1; margin-bottom: 0.6rem;
+  }
+  .pillar h3 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.82rem; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--snow); margin-bottom: 0.7rem;
+  }
+  .pillar p {
+    font-size: 0.88rem; line-height: 1.65;
+    color: rgba(245,242,238,0.55);
+  }
+
+  /* ── CONTRAST SECTION ── */
+  .contrast-section { background: var(--deep); }
+  .contrast-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 3px; margin-top: 4rem;
+  }
+  .contrast-card {
+    padding: 3.5rem 3rem;
+    position: relative; overflow: hidden;
+  }
+  .contrast-card.polished {
+    background: linear-gradient(135deg, #1a2332 0%, #0f1921 100%);
+  }
+  .contrast-card.natural {
+    background: linear-gradient(135deg, #1f1a14 0%, #140f0a 100%);
+  }
+  .contrast-card::after {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  }
+  .contrast-card.polished::after { background: var(--ice); }
+  .contrast-card.natural::after { background: var(--rust); }
+  .contrast-tag {
+    display: inline-block; margin-bottom: 1.8rem;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.68rem; letter-spacing: 0.25em; text-transform: uppercase;
+    padding: 0.35rem 0.9rem;
+  }
+  .contrast-card.polished .contrast-tag {
+    background: rgba(168,197,214,0.12); color: var(--ice);
+    border: 1px solid rgba(168,197,214,0.2);
+  }
+  .contrast-card.natural .contrast-tag {
+    background: rgba(184,92,56,0.12); color: #d4836a;
+    border: 1px solid rgba(184,92,56,0.2);
+  }
+  .contrast-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.7rem; font-weight: 700; margin-bottom: 1.2rem;
+  }
+  .contrast-card p {
+    font-size: 0.95rem; line-height: 1.8;
+    color: rgba(245,242,238,0.62); margin-bottom: 1rem;
+  }
+  .contrast-list { list-style: none; margin-top: 1.5rem; }
+  .contrast-list li {
+    font-size: 0.88rem; line-height: 1.6;
+    color: rgba(245,242,238,0.55);
+    padding: 0.55rem 0; border-bottom: 1px solid rgba(245,242,238,0.07);
+    display: flex; gap: 0.8rem; align-items: flex-start;
+  }
+  .contrast-list li::before { content: '—'; opacity: 0.4; flex-shrink: 0; }
+
+  /* ── STRATEGY BAND ── */
+  .strategy-band {
+    background: var(--gold);
+    padding: 4.5rem 4rem;
+  }
+  .strategy-band-inner {
+    display: flex; align-items: center; gap: 5rem;
+    max-width: 1100px;
+  }
+  .strategy-band h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 3vw, 2.8rem);
+    font-weight: 900; color: var(--deep); line-height: 1.1;
+    flex-shrink: 0; max-width: 340px;
+  }
+  .strategy-band p {
+    font-size: 1.0rem; line-height: 1.8;
+    color: rgba(13,13,13,0.72);
+  }
+
+  /* ── TESTIMONIALS ── */
+  .testimonials { background: var(--charcoal); }
+  .testimonials-header {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    margin-bottom: 4rem;
+  }
+  .testimonials-intro {
+    max-width: 420px; font-size: 0.95rem; line-height: 1.75;
+    color: rgba(245,242,238,0.55);
+  }
+  .cards-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5px;
+  }
+  .testimonial-card {
+    background: #141414;
+    padding: 3rem 2.5rem;
+    position: relative; overflow: hidden;
+    transition: background 0.3s;
+  }
+  .testimonial-card:hover { background: #1a1a1a; }
+  .testimonial-card::before {
+    content: '\201C';
+    font-family: 'Playfair Display', serif;
+    font-size: 8rem; line-height: 1; color: rgba(201,168,76,0.08);
+    position: absolute; top: -0.5rem; left: 1.5rem;
+    pointer-events: none;
+  }
+  .testimonial-card blockquote {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem; font-style: italic;
+    line-height: 1.75; color: var(--snow);
+    margin-bottom: 2.2rem; position: relative; z-index: 1;
+  }
+  .testimonial-meta {}
+  .testimonial-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.82rem; font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 0.25rem;
+  }
+  .testimonial-company {
+    font-size: 0.8rem; color: rgba(245,242,238,0.38);
+    letter-spacing: 0.05em;
+  }
+  .accent-bar {
+    position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--gold), transparent);
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .testimonial-card:hover .accent-bar { opacity: 1; }
+
+  /* ── PROCESS ── */
+  .process-section { background: var(--deep); }
+  .process-steps {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 0; margin-top: 5rem; border-top: 1px solid rgba(245,242,238,0.08);
+  }
+  .step {
+    padding: 2.8rem 2rem 2.8rem;
+    border-right: 1px solid rgba(245,242,238,0.08);
+    position: relative;
+  }
+  .step:last-child { border-right: none; }
+  .step-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 3.5rem; font-weight: 900;
+    color: rgba(168,197,214,0.1);
+    line-height: 1; margin-bottom: 1.5rem;
+  }
+  .step h3 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.88rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--snow); margin-bottom: 0.8rem;
+  }
+  .step p {
+    font-size: 0.88rem; line-height: 1.7;
+    color: rgba(245,242,238,0.48);
+  }
+  .step-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--gold); position: absolute; top: -4px; left: 2rem;
+  }
+
+  /* ── CTA ── */
+  .cta-section {
+    background: var(--charcoal);
+    padding: 8rem 4rem;
+    text-align: center;
+  }
+  .cta-section .section-label { justify-content: center; display: block; text-align: center; }
+  .cta-section .section-title { margin: 0 auto 1.5rem; text-align: center; }
+  .cta-section p {
+    max-width: 540px; margin: 0 auto 2.8rem;
+    font-size: 1.0rem; line-height: 1.8;
+    color: rgba(245,242,238,0.55);
+  }
+  .btn-outline {
+    display: inline-block; margin-left: 1rem;
+    padding: 0.9rem 2.4rem;
+    border: 1px solid rgba(245,242,238,0.3);
+    color: var(--snow);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700; font-size: 0.8rem; letter-spacing: 0.18em;
+    text-transform: uppercase; text-decoration: none;
+    transition: border-color 0.25s, background 0.25s;
+  }
+  .btn-outline:hover {
+    border-color: var(--snow); background: rgba(245,242,238,0.06);
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--deep);
+    padding: 2.5rem 4rem;
+    display: flex; justify-content: space-between; align-items: center;
+    border-top: 1px solid rgba(245,242,238,0.07);
+  }
+  footer p {
+    font-size: 0.78rem; color: rgba(245,242,238,0.3);
+    font-family: 'Barlow Condensed', sans-serif; letter-spacing: 0.08em;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    nav { padding: 1.2rem 2rem; }
+    .nav-links { display: none; }
+    section { padding: 5rem 2rem; }
+    .hero { padding: 0 2rem 5rem; }
+    .cadence-grid, .contrast-grid { grid-template-columns: 1fr; gap: 3rem; }
+    .contrast-grid { gap: 3px; }
+    .cards-grid { grid-template-columns: 1fr; gap: 1.5px; }
+    .process-steps { grid-template-columns: 1fr 1fr; }
+    .strategy-band { padding: 3rem 2rem; }
+    .strategy-band-inner { flex-direction: column; gap: 2rem; }
+    .cadence-pillars { grid-template-columns: 1fr; }
+    .testimonials-header { flex-direction: column; gap: 1.5rem; align-items: flex-start; }
+    footer { flex-direction: column; gap: 1rem; text-align: center; }
+    .cta-section { padding: 5rem 2rem; }
+    .cta-section .section-title { max-width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="/" class="nav-logo">Snowy<span>Peak</span> Films</a>
+  <ul class="nav-links">
+    <li><a href="#">Work</a></li>
+    <li><a href="#">Services</a></li>
+    <li><a href="#">Social Media</a></li>
+    <li><a href="#">About</a></li>
+    <li><a href="#">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <p class="hero-eyebrow">Social Media Marketing &nbsp;/&nbsp; Video Content Strategy</p>
+  <h1>Content that<br><em>builds brands</em><br>and drives results.</h1>
+  <p class="hero-sub">A strategic mix of polished paid ads and authentic organic content gives your brand a voice that reaches the right audience — and keeps them coming back.</p>
+  <div class="hero-cta">
+    <a href="#contact" class="btn-primary">Start Your Strategy</a>
+  </div>
+  <div class="hero-line"></div>
+  <span class="hero-scroll">Scroll to explore</span>
+</section>
+
+<!-- CADENCE SECTION -->
+<section class="cadence">
+  <p class="section-label">The Foundation</p>
+  <h2 class="section-title">Consistency is the engine of <em>social media growth</em></h2>
+  <div class="divider"></div>
+  <div class="cadence-grid">
+    <div class="cadence-body">
+      <p>In the world of social media, showing up once is forgettable. Showing up consistently — with purpose and variety — is what separates brands that grow from brands that stagnate. A well-planned content cadence is your roadmap to sustained visibility and audience trust.</p>
+      <p>At Snowy Peak Films, we help brands build a content rhythm that works across platforms and across the full marketing funnel. That means <strong>pairing high-impact paid ads</strong> with a steady drumbeat of organic content that keeps your audience engaged between campaign pushes.</p>
+      <p>Whether you're running weekly paid promotions or publishing daily organic posts, every piece of content has a role to play. The brands that win on social are those who plan intentionally, produce consistently, and analyze relentlessly.</p>
+    </div>
+    <div class="cadence-pillars">
+      <div class="pillar">
+        <div class="pillar-num">01</div>
+        <h3>Paid Ads</h3>
+        <p>Targeted, conversion-focused video that puts your brand in front of cold audiences and drives measurable action.</p>
+      </div>
+      <div class="pillar">
+        <div class="pillar-num">02</div>
+        <h3>Organic Content</h3>
+        <p>Authentic, value-driven posts that nurture your community, build trust, and extend the life of your paid efforts.</p>
+      </div>
+      <div class="pillar">
+        <div class="pillar-num">03</div>
+        <h3>Planned Cadence</h3>
+        <p>A strategic publishing schedule ensures you never go dark — and that each asset reaches your audience at the right moment.</p>
+      </div>
+      <div class="pillar">
+        <div class="pillar-num">04</div>
+        <h3>Asset Library</h3>
+        <p>A growing bank of reusable video content amplifies your investment — one shoot fuels weeks of cross-platform posts.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTRAST SECTION -->
+<section class="contrast-section">
+  <p class="section-label">Two Powerful Formats</p>
+  <h2 class="section-title">Knowing when to polish — and when to <em>keep it real</em></h2>
+  <div class="divider"></div>
+  <div class="contrast-grid">
+    <div class="contrast-card polished">
+      <span class="contrast-tag">Polished Production</span>
+      <h3>The Cinematic Commercial</h3>
+      <p>High-production video content communicates premium quality. It signals to your audience that your brand takes itself seriously — and that they should too. These are your hero assets: the pieces that anchor a paid campaign, run pre-roll on YouTube, or open your website.</p>
+      <p>Carefully crafted cinematography, professional color grading, scripted storytelling, and refined editing make these videos feel like something worth watching. They don't just sell a product — they build a world around your brand.</p>
+      <ul class="contrast-list">
+        <li>Ideal for paid ad campaigns targeting new audiences</li>
+        <li>Reinforces brand authority and premium perception</li>
+        <li>Maximizes production value for lasting shelf life</li>
+        <li>Best suited for high-visibility placements and launches</li>
+      </ul>
+    </div>
+    <div class="contrast-card natural">
+      <span class="contrast-tag">Natural Social Feel</span>
+      <h3>The Authentic Social Ad</h3>
+      <p>Today's social media audiences are savvy. They scroll past anything that feels like an ad — which is exactly why some of the most effective content looks and feels like it wasn't made by a marketing team at all. Native-feeling video builds rapport and drives genuine engagement.</p>
+      <p>Handheld footage, conversational delivery, real customers and real results, and an unscripted energy all signal authenticity. These videos meet your audience where they already are — not interrupting their feed, but fitting naturally into it.</p>
+      <ul class="contrast-list">
+        <li>Resonates with algorithm-savvy, ad-weary audiences</li>
+        <li>Higher engagement rates on organic and boosted posts</li>
+        <li>Drives word-of-mouth credibility and social proof</li>
+        <li>Cost-efficient to produce at volume for ongoing content</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- STRATEGY BAND -->
+<div class="strategy-band">
+  <div class="strategy-band-inner">
+    <h2>The smartest brands use both.</h2>
+    <p>Polished commercials establish authority and attract new customers. Authentic social content maintains that relationship and deepens trust over time. When these two formats work together on a consistent schedule, they create a flywheel effect — each piece of content reinforces the last, and your brand presence compounds month over month. Snowy Peak Films builds you both.</p>
+  </div>
+</div>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+  <div class="testimonials-header">
+    <div>
+      <p class="section-label">Client Case Studies</p>
+      <h2 class="section-title">Real brands.<br><em>Real results.</em></h2>
+      <div class="divider"></div>
+    </div>
+    <p class="testimonials-intro">Don't take our word for it. These are the voices of business owners who committed to a content strategy and saw their credibility, reach, and revenue grow because of it.</p>
+  </div>
+
+  <div class="cards-grid">
+
+    <div class="testimonial-card">
+      <blockquote>"The real impact is the ROI. You can see the return on investment by the growth of the company!"</blockquote>
+      <div class="testimonial-meta">
+        <p class="testimonial-name">Paul Chenevert</p>
+        <p class="testimonial-company">Chenevert's Home Services</p>
+      </div>
+      <div class="accent-bar"></div>
+    </div>
+
+    <div class="testimonial-card">
+      <blockquote>"It's been great working with you guys! I was hesitant at first, but I'm a firm believer and looking forward to continuing our relationship!"</blockquote>
+      <div class="testimonial-meta">
+        <p class="testimonial-name">Rion Buswell</p>
+        <p class="testimonial-company">Back 40 Acres</p>
+      </div>
+      <div class="accent-bar"></div>
+    </div>
+
+    <div class="testimonial-card">
+      <blockquote>"I guarantee that we've benefited greatly from using the assets that you've given us. I go to appointments all the time, and credibility is already all the way up there!"</blockquote>
+      <div class="testimonial-meta">
+        <p class="testimonial-name">Eli Ziegler</p>
+        <p class="testimonial-company">Permanent Holiday Lights</p>
+      </div>
+      <div class="accent-bar"></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="process-section">
+  <p class="section-label">How We Work</p>
+  <h2 class="section-title">From strategy to <em>scroll-stopping content</em></h2>
+  <div class="process-steps">
+    <div class="step">
+      <div class="step-dot"></div>
+      <div class="step-num">01</div>
+      <h3>Strategy &amp; Planning</h3>
+      <p>We audit your current presence, define your audience, and build a content calendar that balances paid and organic across your key platforms.</p>
+    </div>
+    <div class="step">
+      <div class="step-dot"></div>
+      <div class="step-num">02</div>
+      <h3>Production</h3>
+      <p>Our team produces both polished commercial video and authentic social content in a single efficient shoot — maximizing your investment and building your asset library.</p>
+    </div>
+    <div class="step">
+      <div class="step-dot"></div>
+      <div class="step-num">03</div>
+      <h3>Deployment</h3>
+      <p>We format, caption, and schedule your content for every platform — ensuring each post is optimized for its placement and audience.</p>
+    </div>
+    <div class="step">
+      <div class="step-dot"></div>
+      <div class="step-num">04</div>
+      <h3>Analyze &amp; Iterate</h3>
+      <p>Monthly reporting reveals what's working. We refine your cadence, double down on winners, and keep your content evolving as your audience grows.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="contact">
+  <p class="section-label">Ready to grow?</p>
+  <h2 class="section-title">Let's build your content engine.</h2>
+  <p>Whether you're starting from scratch or ready to scale what's already working, Snowy Peak Films will craft a social media video strategy that brings consistency, credibility, and results to your brand.</p>
+  <a href="mailto:hello@snowypeakfilms.com" class="btn-primary">Get in Touch</a>
+  <a href="/work" class="btn-outline">View Our Work</a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>&copy; 2025 Snowy Peak Films &nbsp;|&nbsp; snowypeakfilms.com</p>
+  <p>Social Media &nbsp;·&nbsp; Video Production &nbsp;·&nbsp; Brand Content</p>
+</footer>
+
+</body>
+</html>
