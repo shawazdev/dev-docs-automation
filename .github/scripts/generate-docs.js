@@ -56,7 +56,7 @@ const eventName  = process.env.EVENT_NAME || 'unknown';
 const isPushEvent = eventName === 'push';
 const repoName   = process.env.REPO_NAME || 'unknown-repo';
 
-let entryId, entryTitle, entryBody, entryUrl, entryAuthor, entryTime, labels, shortSha, branchName;
+let entryId, entryTitle, entryBody, entryUrl, entryAuthor, entryTime, labels, shortSha;
 
 // Recognised inline tags developers can include in commit messages or PR
 // titles/descriptions. Useful for direct pushes (which have no PR labels)
@@ -89,7 +89,7 @@ if (isPushEvent) {
   entryUrl    = process.env.COMMIT_URL || '';
   entryAuthor = process.env.COMMIT_AUTHOR || process.env.PUSHER || 'unknown';
   entryTime   = process.env.COMMIT_TIME || new Date().toISOString();
-  branchName  = process.env.BRANCH_NAME || 'unknown-branch';
+  // No GitHub labels on a raw push — extract tags from commit message instead
   labels = extractTagsFromText(entryBody);
 } else {
   entryId     = process.env.PR_NUMBER || '?';
@@ -98,10 +98,11 @@ if (isPushEvent) {
   entryUrl    = process.env.PR_URL || '';
   entryAuthor = process.env.PR_AUTHOR || 'unknown';
   entryTime   = process.env.PR_MERGED_AT || new Date().toISOString();
-  branchName  = process.env.PR_HEAD_BRANCH || 'unknown-branch';  // the branch that was merged
   try {
     labels = JSON.parse(process.env.PR_LABELS || '[]').map(l => l.name.toLowerCase());
   } catch (_) { labels = []; }
+  // Backup: also pick up tags written in the PR title/body, in case a label
+  // wasn't applied. Union with any real labels already set.
   for (const t of extractTagsFromText(`${entryTitle} ${entryBody}`)) {
     if (!labels.includes(t)) labels.push(t);
   }
@@ -576,7 +577,7 @@ function buildFullEntrySegments(parsed, tag) {
   segs.push({ text: '\n' });
 
   // Meta row
-const meta = `${isPushEvent ? `Commit ${shortSha}` : `PR #${entryId}`}  •  Branch: ${branchName} → main  •  ${timeStr}  •  +${additions} / -${deletions} lines  •  ${filesArr.length} file(s)`;
+  const meta = `${isPushEvent ? `Commit ${shortSha}` : `PR #${entryId}`}  •  ${timeStr}  •  +${additions} / -${deletions} lines  •  ${filesArr.length} file(s)`;
   segs.push({ text: meta, style: 'authorMuted' });
   segs.push({ text: '\n' });
   if (entryUrl) {
