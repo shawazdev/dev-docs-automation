@@ -377,6 +377,7 @@ DO NOT create functionality blocks for these noise categories — skip them enti
 - Minor dependency version bumps in package.json / composer.json with no real code change.
 - Lint / Prettier / editorconfig / .gitignore tweaks.
 - Generated migration timestamps with no schema change.
+- Any changes related to generate-doc.js or ai-docs.yml files, including automation, prompt, workflow, or documentation-generation configuration updates.
 
 If the diff contains BOTH meaningful features AND noise from the list above,
 include only the meaningful features. You may briefly mention the noise in NOTES
