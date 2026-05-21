@@ -1,14 +1,14 @@
 /**
  * generate-docs.js
  *
- * Triggered on PR merge or direct push to main.
- * Classifies the change based on file paths, labels, and title/message —
- * tuned for: Shopify themes, Laravel + React, Shopify apps, WordPress.
+ * Triggered on PR merge or direct push to main. Writes rich-formatted
+ * changelog entries to a Google Doc with:
+ *   - Date pill header (background-coloured, bold)
+ *   - One-line title + author
+ *   - Per-functionality breakdown (file path + process steps)
+ *   - Decorative divider between entries
  *
- * De-duplication:
- *   When a PR is merged via GitHub UI, both pull_request and push events
- *   fire. The push handler queries the GitHub API to see if the commit
- *   came from a merged PR. If yes, it skips (the PR handler logs it).
+ * Tuned for: Shopify themes, Laravel + React, Shopify apps, WordPress.
  *
  * Required GitHub Secrets:
  *   GDOCS_SERVICE_JSON  – Google service-account JSON (full string)
@@ -36,7 +36,7 @@ const DEFAULTS = {
   insertAtTop:       true,
   model:           'gpt-4o',
   temperature:        0.3,
-  maxTokens:         1024,
+  maxTokens:         1500,
 };
 
 let CONFIG = { ...DEFAULTS };
@@ -44,7 +44,6 @@ const configPath = '.github/ai-docs.config.json';
 if (fs.existsSync(configPath)) {
   try {
     CONFIG = { ...DEFAULTS, ...JSON.parse(fs.readFileSync(configPath, 'utf8')) };
-    console.log('Loaded config overrides from', configPath);
   } catch (err) {
     console.warn('Could not parse', configPath, '— using defaults:', err.message);
   }
@@ -59,7 +58,6 @@ const repoName   = process.env.REPO_NAME || 'unknown-repo';
 let entryId, entryTitle, entryBody, entryUrl, entryAuthor, entryTime, labels, shortSha;
 
 if (isPushEvent) {
-  // Push event — limited data, no PR metadata
   const sha = process.env.COMMIT_SHA || '';
   shortSha    = sha.slice(0, 7) || 'unknown';
   entryId     = shortSha;
@@ -70,7 +68,6 @@ if (isPushEvent) {
   entryTime   = process.env.COMMIT_TIME || new Date().toISOString();
   labels      = [];
 } else {
-  // PR event — full metadata
   entryId     = process.env.PR_NUMBER || '?';
   entryTitle  = process.env.PR_TITLE || '(no title)';
   entryBody   = process.env.PR_BODY || '';
@@ -93,37 +90,33 @@ const codeDiff = fs.existsSync('code_diff.txt')
   ? fs.readFileSync('code_diff.txt', 'utf8').slice(0, CONFIG.diffMaxChars)
   : '';
 
-const timestamp = entryTime.replace('T', ' ').slice(0, 16) + ' UTC';
-const filesArr  = changedFiles.split('\n').filter(Boolean);
+const dateObj  = new Date(entryTime);
+const datePill = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+const timeStr  = entryTime.replace('T', ' ').slice(0, 16) + ' UTC';
+const filesArr = changedFiles.split('\n').filter(Boolean);
 
-// ─── De-duplication: skip push if it came from a merged PR ───────────────────
+// ─── De-duplication ──────────────────────────────────────────────────────────
 
 async function isCommitFromMergedPR() {
   if (!isPushEvent) return false;
   const sha = process.env.COMMIT_SHA;
   if (!sha) return false;
-
   try {
-    const url = `https://api.github.com/repos/${repoName}/commits/${sha}/pulls`;
-    const response = await fetch(url, {
+    const r = await fetch(`https://api.github.com/repos/${repoName}/commits/${sha}/pulls`, {
       headers: {
         Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
         Accept: 'application/vnd.github+json',
       },
     });
-    if (!response.ok) {
-      console.warn(`PR-association check returned ${response.status} — proceeding with push entry`);
-      return false;
-    }
-    const prs = await response.json();
-    const mergedPR = Array.isArray(prs) && prs.find(pr => pr.merged_at);
-    if (mergedPR) {
-      console.log(`Commit ${sha.slice(0, 7)} is associated with merged PR #${mergedPR.number}.`);
-      console.log('Skipping push entry — PR workflow will produce the higher-quality entry.');
+    if (!r.ok) return false;
+    const prs = await r.json();
+    const merged = Array.isArray(prs) && prs.find(p => p.merged_at);
+    if (merged) {
+      console.log(`Commit ${sha.slice(0, 7)} is from merged PR #${merged.number}. Skipping push entry.`);
       return true;
     }
   } catch (err) {
-    console.warn('Could not check PR association:', err.message);
+    console.warn('PR-association check failed:', err.message);
   }
   return false;
 }
@@ -173,8 +166,7 @@ const isWordPressPlugin = f =>
   /(^|\/)wp-content\/plugins\//i.test(f) ||
   /(^|\/)functions\.php$/i.test(f);
 
-const isBackend = f =>
-  isLaravelBackend(f) || isShopifyAppBackend(f) || isWordPressPlugin(f);
+const isBackend = f => isLaravelBackend(f) || isShopifyAppBackend(f) || isWordPressPlugin(f);
 
 const isShopifyAPI = f =>
   /(^|\/)extensions\//i.test(f) ||
@@ -182,11 +174,9 @@ const isShopifyAPI = f =>
   /(^|\/)app\/.*\.(graphql|gql)$/i.test(f);
 
 const isLiquidTemplate = f => /\.liquid$/i.test(f);
-
 const isWordPressTheme = f =>
   /(^|\/)wp-content\/themes\/.+\.php$/i.test(f) &&
   !/(^|\/)functions\.php$/i.test(f);
-
 const isThemeTemplate = f => isLiquidTemplate(f) || isWordPressTheme(f);
 
 const isReactComponent = f =>
@@ -194,8 +184,6 @@ const isReactComponent = f =>
   (/(^|\/)resources\/js\//i.test(f) || /(^|\/)src\//i.test(f) || /(^|\/)components?\//i.test(f));
 
 const isStyling = f => /\.(css|scss|sass|less|styl)$/i.test(f);
-
-// ─── Title keyword helpers ───────────────────────────────────────────────────
 
 const titleHas = (...words) =>
   words.some(w => new RegExp(`\\b${w}\\b`, 'i').test(entryTitle));
@@ -207,87 +195,62 @@ function classify() {
   if (labels.includes('log-detailed')) return { action: 'full', reason: 'log-detailed label' };
   if (labels.includes('hotfix'))       return { action: 'full', reason: 'hotfix label', tag: 'HOTFIX' };
   if (/^revert/i.test(entryTitle))     return { action: 'full', reason: 'revert', tag: 'REVERT' };
-
-  if (filesArr.length === 0)
-    return { action: 'full', reason: 'no file list — defaulting to full' };
-
-  if (filesArr.every(isDoc))
-    return { action: 'oneline', reason: 'documentation-only update' };
-
-  if (filesArr.every(isTranslation))
-    return { action: 'oneline', reason: 'translations-only update' };
-
-  if (filesArr.some(isDatabase))
-    return { action: 'full', reason: 'database / migration change', tag: 'DB' };
-
+  if (filesArr.length === 0)           return { action: 'full', reason: 'no file list' };
+  if (filesArr.every(isDoc))           return { action: 'oneline', reason: 'documentation-only update' };
+  if (filesArr.every(isTranslation))   return { action: 'oneline', reason: 'translations-only update' };
+  if (filesArr.some(isDatabase))       return { action: 'full', reason: 'database / migration change', tag: 'DB' };
   if (filesArr.some(isConfig) && totalLines > CONFIG.configMinLines)
     return { action: 'full', reason: 'config update', tag: 'CONFIG' };
-
-  if (filesArr.some(isBackend))
-    return { action: 'full', reason: 'backend / server logic change', tag: 'BACKEND' };
-
-  if (filesArr.some(isShopifyAPI))
-    return { action: 'full', reason: 'Shopify checkout / API change', tag: 'SHOPIFY' };
-
-  if (labels.some(l => ['bug', 'bugfix', 'fix'].includes(l)) ||
-      titleHas('fix', 'fixes', 'fixed', 'bug', 'bugfix', 'patch'))
+  if (filesArr.some(isBackend))        return { action: 'full', reason: 'backend / server logic change', tag: 'BACKEND' };
+  if (filesArr.some(isShopifyAPI))     return { action: 'full', reason: 'Shopify checkout / API change', tag: 'SHOPIFY' };
+  if (labels.some(l => ['bug','bugfix','fix'].includes(l)) ||
+      titleHas('fix','fixes','fixed','bug','bugfix','patch'))
     return { action: 'full', reason: 'bug fix', tag: 'FIX' };
-
-  if (labels.some(l => ['feature', 'feat', 'enhancement'].includes(l)) ||
-      titleHas('feat', 'feature', 'add', 'added', 'adds', 'new', 'implement', 'introduce'))
+  if (labels.some(l => ['feature','feat','enhancement'].includes(l)) ||
+      titleHas('feat','feature','add','added','adds','new','implement','introduce'))
     return { action: 'full', reason: 'new feature', tag: 'FEATURE' };
-
-  if (titleHas('refactor', 'refactored', 'refactoring') || labels.includes('refactor')) {
+  if (titleHas('refactor','refactored','refactoring') || labels.includes('refactor')) {
     return totalLines > CONFIG.smallRefactorLines
-      ? { action: 'full',    reason: `large refactor (${totalLines} lines)`, tag: 'REFACTOR' }
+      ? { action: 'full', reason: `large refactor (${totalLines} lines)`, tag: 'REFACTOR' }
       : { action: 'oneline', reason: `small refactor (${totalLines} lines)` };
   }
-
   if (filesArr.every(isThemeTemplate)) {
     return totalLines > CONFIG.themeTemplateLines
-      ? { action: 'full',    reason: `large theme template change (${totalLines} lines)` }
+      ? { action: 'full', reason: `large theme template change (${totalLines} lines)` }
       : { action: 'oneline', reason: `small theme template change (${totalLines} lines)` };
   }
-
   if (filesArr.every(isReactComponent)) {
     return totalLines > CONFIG.reactComponentLines
-      ? { action: 'full',    reason: `large React component change (${totalLines} lines)` }
+      ? { action: 'full', reason: `large React component change (${totalLines} lines)` }
       : { action: 'oneline', reason: `small React component change (${totalLines} lines)` };
   }
-
   if (filesArr.every(isStyling)) {
     return totalLines > CONFIG.stylingLines
-      ? { action: 'full',    reason: `large CSS/styling change (${totalLines} lines)` }
+      ? { action: 'full', reason: `large CSS/styling change (${totalLines} lines)` }
       : { action: 'oneline', reason: `small CSS/styling change (${totalLines} lines)` };
   }
-
   return { action: 'full', reason: 'default (no specific rule matched)' };
 }
 
-// ─── AI prompt ───────────────────────────────────────────────────────────────
+// ─── AI prompt (new structured format) ───────────────────────────────────────
 
-const SYSTEM_PROMPT = `You are a senior technical writer.
-Produce clear, concise changelog entries from git diffs for a team that builds
-Shopify themes, Laravel + React applications, Shopify apps, and WordPress sites.
+const SYSTEM_PROMPT = `You are a senior technical writer producing developer changelog entries.
+The team builds Shopify themes, Laravel + React apps, Shopify apps, and WordPress sites.
 
-Rules:
-- Be specific. "Added JWT auth to /login endpoint" not "improved security"
-- Lead with impact
-- One line per bullet
-- Tag each change: [Feature] [Fix] [Refactor] [Breaking] [API Change] [DB] [Config] [Shopify] [WP]
-- Plain text only — no markdown, no asterisks, no headers`;
+Write clearly and specifically. "Added JWT auth to /login endpoint" — not "improved security".
+Plain text only. No markdown, no asterisks, no headers other than the ones requested.`;
 
 function buildUserPrompt() {
-  const sourceLine = isPushEvent
+  const source = isPushEvent
     ? `Direct push commit ${shortSha}: ${entryTitle}`
     : `PR #${entryId}: ${entryTitle}`;
 
-  return `Write a changelog entry for this merged change.
+  return `Write a structured changelog entry for the following change.
 
 Repository: ${repoName}
-Source: ${sourceLine}
+Source: ${source}
 Author: ${entryAuthor}
-Merged: ${timestamp}
+Merged: ${timeStr}
 URL: ${entryUrl}
 Labels: ${labels.join(', ') || 'none'}
 Lines changed: +${additions} / -${deletions}
@@ -302,24 +265,34 @@ Diff (truncated to ${CONFIG.diffMaxChars} chars):
 ${codeDiff || '(none)'}
 
 ---
-Respond in this exact format (plain text):
+Respond in this EXACT plain-text format. Use the section names exactly as written.
+Group changes by file (or by closely-related file groups). Each functionality block
+describes one logical change in one file/feature area.
 
-SUMMARY
-One sentence describing the overall change.
+TITLE
+[A short title, 5–10 words, describing the overall change]
 
-CHANGES
-• [Tag] Description
-• [Tag] Description
-(3–7 bullets, skip trivial whitespace/formatting changes)
+OVERVIEW
+[One or two sentences summarising the change and its impact]
 
-AFFECTED AREAS
-Comma-separated modules or features touched.
+FUNCTIONALITIES
+Functionality: [Short name describing what was changed in this file]
+File Path: [exact/path/to/file]
+Process:
+- [step or change description]
+- [step or change description]
+- [step or change description]
 
-KEY SNIPPETS
-Up to 3 of the most important code lines, one per line, prefixed with the file path.
+Functionality: [Next change name]
+File Path: [exact/path/to/file]
+Process:
+- [...]
+- [...]
+
+(Up to 5 functionality blocks. If only one file matters, just one block.)
 
 NOTES
-Migration steps, breaking changes, or caveats. Write "None" if nothing special.`;
+[Migration steps, breaking changes, or caveats. Write "None" if nothing special.]`;
 }
 
 // ─── AI call ─────────────────────────────────────────────────────────────────
@@ -329,7 +302,6 @@ async function generateAISummary() {
     'https://models.inference.ai.azure.com',
     new AzureKeyCredential(process.env.GITHUB_TOKEN)
   );
-
   const response = await client.path('/chat/completions').post({
     body: {
       model: CONFIG.model,
@@ -341,65 +313,256 @@ async function generateAISummary() {
       ],
     },
   });
-
   if (response.status !== '200') {
     throw new Error(`GitHub Models error ${response.status}: ${JSON.stringify(response.body)}`);
   }
   return response.body.choices[0].message.content;
 }
 
-// ─── Entry formatters ────────────────────────────────────────────────────────
+// ─── AI response parser ──────────────────────────────────────────────────────
 
-const DIVIDER = '────────────────────────────────────────────────────────────';
+function parseAIResponse(text) {
+  const out = { title: entryTitle, overview: '', functionalities: [], notes: '' };
 
-function entryHeader(tag) {
-  const tagPart = tag ? `[${tag}]  ` : '';
-  if (isPushEvent) {
-    return `${tagPart}[DIRECT PUSH]  Commit ${shortSha}: ${entryTitle}`;
+  const grab = (name) => {
+    const re = new RegExp(`${name}\\s*\\n([\\s\\S]*?)(?=\\n(?:TITLE|OVERVIEW|FUNCTIONALITIES|NOTES)\\s*\\n|$)`, 'i');
+    const m = text.match(re);
+    return m ? m[1].trim() : '';
+  };
+
+  const title = grab('TITLE');
+  if (title) out.title = title.split('\n')[0].trim();
+
+  out.overview = grab('OVERVIEW');
+  out.notes    = grab('NOTES');
+
+  const funcText = grab('FUNCTIONALITIES');
+  if (funcText) {
+    const blocks = funcText.split(/(?=^Functionality:)/m).map(b => b.trim()).filter(Boolean);
+    for (const block of blocks) {
+      const nameMatch = block.match(/Functionality:\s*(.+)/);
+      const pathMatch = block.match(/File Path:\s*(.+)/);
+      const procMatch = block.match(/Process:\s*\n([\s\S]*)/);
+      if (!nameMatch) continue;
+      const steps = procMatch
+        ? procMatch[1].split('\n').map(l => l.replace(/^\s*[-•*]\s*/, '').trim()).filter(Boolean)
+        : [];
+      out.functionalities.push({
+        name: nameMatch[1].trim(),
+        filePath: pathMatch ? pathMatch[1].trim() : '',
+        process: steps,
+      });
+    }
   }
-  return `${tagPart}PR #${entryId}: ${entryTitle}`;
+  return out;
 }
 
-function fullEntry(aiContent, tag) {
-  return [
-    DIVIDER,
-    entryHeader(tag),
-    `Author: ${entryAuthor}    Merged: ${timestamp}`,
-    `Labels: ${labels.join(', ') || 'none'}`,
-    `Link: ${entryUrl}`,
-    `Files changed (${filesArr.length}): ${filesArr.join(', ') || 'none'}`,
-    '',
-    aiContent,
-    '',
-    '',
-  ].join('\n');
+// ─── Rich-formatted entry builder ────────────────────────────────────────────
+//
+// Strategy: build a list of {text, style} segments. Insert the full text at
+// index 1 in a single API call, then apply text-style updates for each
+// segment using tracked character ranges.
+
+const STYLE = {
+  datePill: {
+    bold: true,
+    backgroundColor: { color: { rgbColor: { red: 0.91, green: 0.94, blue: 0.99 } } },
+    foregroundColor: { color: { rgbColor: { red: 0.10, green: 0.20, blue: 0.40 } } },
+    fontSize: { magnitude: 10, unit: 'PT' },
+  },
+  titleBold: {
+    bold: true,
+    fontSize: { magnitude: 12, unit: 'PT' },
+  },
+  authorMuted: {
+    italic: true,
+    foregroundColor: { color: { rgbColor: { red: 0.40, green: 0.40, blue: 0.40 } } },
+  },
+  tagBadge: {
+    bold: true,
+    backgroundColor: { color: { rgbColor: { red: 1.0, green: 0.93, blue: 0.81 } } },
+    foregroundColor: { color: { rgbColor: { red: 0.55, green: 0.25, blue: 0.0 } } },
+    fontSize: { magnitude: 9, unit: 'PT' },
+  },
+  pushBadge: {
+    bold: true,
+    backgroundColor: { color: { rgbColor: { red: 1.0, green: 0.85, blue: 0.85 } } },
+    foregroundColor: { color: { rgbColor: { red: 0.6, green: 0.0, blue: 0.0 } } },
+    fontSize: { magnitude: 9, unit: 'PT' },
+  },
+  sectionLabel: {
+    bold: true,
+    fontSize: { magnitude: 11, unit: 'PT' },
+  },
+  filePath: {
+    weightedFontFamily: { fontFamily: 'Roboto Mono', weight: 400 },
+    foregroundColor: { color: { rgbColor: { red: 0.10, green: 0.50, blue: 0.20 } } },
+    fontSize: { magnitude: 10, unit: 'PT' },
+  },
+  overviewItalic: {
+    italic: true,
+    foregroundColor: { color: { rgbColor: { red: 0.30, green: 0.30, blue: 0.30 } } },
+  },
+  dividerGrey: {
+    foregroundColor: { color: { rgbColor: { red: 0.75, green: 0.75, blue: 0.75 } } },
+  },
+  body: {},
+};
+
+const FIELDS = {
+  datePill:        'bold,backgroundColor,foregroundColor,fontSize',
+  titleBold:       'bold,fontSize',
+  authorMuted:     'italic,foregroundColor',
+  tagBadge:        'bold,backgroundColor,foregroundColor,fontSize',
+  pushBadge:       'bold,backgroundColor,foregroundColor,fontSize',
+  sectionLabel:    'bold,fontSize',
+  filePath:        'weightedFontFamily,foregroundColor,fontSize',
+  overviewItalic:  'italic,foregroundColor',
+  dividerGrey:     'foregroundColor',
+};
+
+function styleRequest(start, end, styleName) {
+  if (!STYLE[styleName] || !FIELDS[styleName]) return null;
+  return {
+    updateTextStyle: {
+      range: { startIndex: start, endIndex: end },
+      textStyle: STYLE[styleName],
+      fields: FIELDS[styleName],
+    },
+  };
 }
 
-function oneLineEntry(reason) {
-  const idLabel = isPushEvent ? `Commit ${shortSha}` : `PR #${entryId}`;
-  const source  = isPushEvent ? ' [DIRECT PUSH]' : '';
-  return `• [${timestamp}]${source} ${idLabel} — ${entryTitle} — ${entryAuthor} (${reason}) — ${entryUrl}\n\n`;
+function resetStyleRequest(start, end) {
+  // Wipe styling on plain body text so it doesn't inherit from previous entries
+  return {
+    updateTextStyle: {
+      range: { startIndex: start, endIndex: end },
+      textStyle: {
+        bold: false, italic: false,
+        backgroundColor: { color: { rgbColor: { red: 1, green: 1, blue: 1 } } },
+        foregroundColor: { color: { rgbColor: { red: 0, green: 0, blue: 0 } } },
+        fontSize: { magnitude: 11, unit: 'PT' },
+        weightedFontFamily: { fontFamily: 'Arial', weight: 400 },
+      },
+      fields: 'bold,italic,backgroundColor,foregroundColor,fontSize,weightedFontFamily',
+    },
+  };
 }
 
-function fallbackEntry(errorMsg) {
-  return [
-    DIVIDER,
-    `[NEEDS REVIEW]  ${entryHeader()}`,
-    `Author: ${entryAuthor}    Merged: ${timestamp}`,
-    `Labels: ${labels.join(', ') || 'none'}`,
-    `Link: ${entryUrl}`,
-    `Files changed (${filesArr.length}): ${filesArr.join(', ') || 'none'}`,
-    '',
-    `AI summary unavailable: ${errorMsg}`,
-    'Please open the link above and add a manual summary if needed.',
-    '',
-    '',
-  ].join('\n');
+function buildFullEntrySegments(parsed, tag) {
+  const segs = [];
+
+  // Header line: [date]  •  title  •  by author
+  segs.push({ text: ` ${datePill} `, style: 'datePill' });
+  segs.push({ text: '  ' });
+
+  if (tag) {
+    segs.push({ text: ` ${tag} `, style: 'tagBadge' });
+    segs.push({ text: '  ' });
+  }
+  if (isPushEvent) {
+    segs.push({ text: ' DIRECT PUSH ', style: 'pushBadge' });
+    segs.push({ text: '  ' });
+  }
+
+  segs.push({ text: parsed.title || entryTitle, style: 'titleBold' });
+  segs.push({ text: '   ' });
+  segs.push({ text: `— by ${entryAuthor}`, style: 'authorMuted' });
+  segs.push({ text: '\n' });
+
+  // Meta row
+  const meta = `${isPushEvent ? `Commit ${shortSha}` : `PR #${entryId}`}  •  ${timeStr}  •  +${additions} / -${deletions} lines  •  ${filesArr.length} file(s)`;
+  segs.push({ text: meta, style: 'authorMuted' });
+  segs.push({ text: '\n' });
+  if (entryUrl) {
+    segs.push({ text: `Link: ${entryUrl}`, style: 'authorMuted' });
+    segs.push({ text: '\n' });
+  }
+  segs.push({ text: '\n' });
+
+  // Overview
+  if (parsed.overview) {
+    segs.push({ text: parsed.overview, style: 'overviewItalic' });
+    segs.push({ text: '\n\n' });
+  }
+
+  // Functionalities
+  for (const f of parsed.functionalities) {
+    segs.push({ text: `Functionality: `, style: 'sectionLabel' });
+    segs.push({ text: f.name, style: 'sectionLabel' });
+    segs.push({ text: '\n' });
+
+    if (f.filePath) {
+      segs.push({ text: `File Path: `, style: 'sectionLabel' });
+      segs.push({ text: f.filePath, style: 'filePath' });
+      segs.push({ text: '\n' });
+    }
+    if (f.process.length) {
+      segs.push({ text: `Process:`, style: 'sectionLabel' });
+      segs.push({ text: '\n' });
+      for (const step of f.process) {
+        segs.push({ text: `   •  ${step}\n` });
+      }
+    }
+    segs.push({ text: '\n' });
+  }
+
+  // Notes
+  if (parsed.notes && parsed.notes.toLowerCase() !== 'none') {
+    segs.push({ text: `Notes: `, style: 'sectionLabel' });
+    segs.push({ text: parsed.notes });
+    segs.push({ text: '\n\n' });
+  }
+
+  // Divider — like the screenshot's sparkle separator
+  segs.push({ text: '────────────────────  ✦  ────────────────────', style: 'dividerGrey' });
+  segs.push({ text: '\n\n' });
+
+  return segs;
+}
+
+function buildOneLineSegments(reason) {
+  const segs = [];
+  segs.push({ text: ` ${datePill} `, style: 'datePill' });
+  segs.push({ text: '  ' });
+  if (isPushEvent) {
+    segs.push({ text: ' DIRECT PUSH ', style: 'pushBadge' });
+    segs.push({ text: '  ' });
+  }
+  segs.push({ text: entryTitle, style: 'titleBold' });
+  segs.push({ text: '   ' });
+  segs.push({ text: `— by ${entryAuthor}  (${reason})`, style: 'authorMuted' });
+  if (entryUrl) {
+    segs.push({ text: '   ' });
+    segs.push({ text: entryUrl, style: 'authorMuted' });
+  }
+  segs.push({ text: '\n' });
+  segs.push({ text: '────────────────────  ✦  ────────────────────', style: 'dividerGrey' });
+  segs.push({ text: '\n\n' });
+  return segs;
+}
+
+function buildFallbackSegments(errMsg) {
+  const segs = [];
+  segs.push({ text: ` ${datePill} `, style: 'datePill' });
+  segs.push({ text: '  ' });
+  segs.push({ text: ' NEEDS REVIEW ', style: 'pushBadge' });
+  segs.push({ text: '  ' });
+  segs.push({ text: entryTitle, style: 'titleBold' });
+  segs.push({ text: '   ' });
+  segs.push({ text: `— by ${entryAuthor}`, style: 'authorMuted' });
+  segs.push({ text: '\n\n' });
+  segs.push({ text: `AI summary unavailable: ${errMsg}\n`, style: 'overviewItalic' });
+  segs.push({ text: `Link: ${entryUrl}\n`, style: 'authorMuted' });
+  segs.push({ text: `Files: ${filesArr.join(', ') || 'none'}\n\n` });
+  segs.push({ text: '────────────────────  ✦  ────────────────────', style: 'dividerGrey' });
+  segs.push({ text: '\n\n' });
+  return segs;
 }
 
 // ─── Google Docs writer ──────────────────────────────────────────────────────
 
-async function insertIntoDoc(text) {
+async function insertRichEntry(segments) {
   const serviceAccount = JSON.parse(process.env.GDOCS_SERVICE_JSON);
   const auth = new google.auth.GoogleAuth({
     credentials: serviceAccount,
@@ -408,18 +571,43 @@ async function insertIntoDoc(text) {
   const docs  = google.docs({ version: 'v1', auth });
   const docId = process.env.GDOC_ID;
 
-  let location;
-  if (CONFIG.insertAtTop) {
-    location = { index: 1 };
-  } else {
-    const doc      = await docs.documents.get({ documentId: docId });
-    const endIndex = doc.data.body.content.slice(-1)[0].endIndex - 1;
-    location = { index: endIndex };
+  // Decide insertion index
+  let insertIndex = 1;
+  if (!CONFIG.insertAtTop) {
+    const doc = await docs.documents.get({ documentId: docId });
+    insertIndex = doc.data.body.content.slice(-1)[0].endIndex - 1;
+  }
+
+  // Build full text and per-segment ranges
+  let fullText = '';
+  const ranges = [];
+  for (const seg of segments) {
+    const start = insertIndex + fullText.length;
+    fullText += seg.text;
+    const end = insertIndex + fullText.length;
+    ranges.push({ start, end, style: seg.style });
+  }
+
+  // Step 1: insert the raw text
+  await docs.documents.batchUpdate({
+    documentId: docId,
+    requestBody: {
+      requests: [{ insertText: { location: { index: insertIndex }, text: fullText } }],
+    },
+  });
+
+  // Step 2: reset styling across the whole entry, then apply per-segment styles
+  const formatRequests = [resetStyleRequest(insertIndex, insertIndex + fullText.length)];
+  for (const r of ranges) {
+    if (r.style && r.end > r.start) {
+      const req = styleRequest(r.start, r.end, r.style);
+      if (req) formatRequests.push(req);
+    }
   }
 
   await docs.documents.batchUpdate({
     documentId: docId,
-    requestBody: { requests: [{ insertText: { location, text } }] },
+    requestBody: { requests: formatRequests },
   });
 
   console.log(`Entry written to https://docs.google.com/document/d/${docId}`);
@@ -431,41 +619,40 @@ async function insertIntoDoc(text) {
   console.log(`Event: ${eventName}`);
   console.log(`Repo:  ${repoName}`);
   console.log(`Title: ${entryTitle}`);
-  console.log(`Author: ${entryAuthor}`);
-  console.log(`Lines:  +${additions} / -${deletions}  (total ${totalLines})`);
-  console.log(`Files:  ${filesArr.length}`);
-  console.log(`Labels: ${labels.join(', ') || 'none'}`);
+  console.log(`Lines: +${additions} / -${deletions}  (total ${totalLines})`);
+  console.log(`Files: ${filesArr.length}    Labels: ${labels.join(', ') || 'none'}`);
 
-  // De-dup: push events that came from a merged PR should be skipped
   if (await isCommitFromMergedPR()) return;
 
   const decision = classify();
   console.log(`Decision: ${decision.action.toUpperCase()} — ${decision.reason}`);
 
   if (decision.action === 'skip') {
-    console.log('Skipping log entry per rules. Done.');
+    console.log('Skipping per rules. Done.');
     return;
   }
 
-  let entry;
+  let segments;
   if (decision.action === 'oneline') {
-    entry = oneLineEntry(decision.reason);
+    segments = buildOneLineSegments(decision.reason);
   } else {
     try {
-      const aiContent = await generateAISummary();
-      entry = fullEntry(aiContent, decision.tag);
+      const aiText = await generateAISummary();
+      const parsed = parseAIResponse(aiText);
+      segments = buildFullEntrySegments(parsed, decision.tag);
     } catch (err) {
       console.error('AI summary failed:', err.message);
-      entry = fallbackEntry(err.message);
+      segments = buildFallbackSegments(err.message);
     }
   }
 
   try {
-    await insertIntoDoc(entry);
+    await insertRichEntry(segments);
   } catch (err) {
     console.error('Failed to write to Google Docs:', err.message);
-    fs.writeFileSync('failed-entry.txt', entry);
-    console.error('Entry saved to failed-entry.txt — uploaded as workflow artifact.');
+    // Plain-text fallback file so the run still preserves data
+    const plain = segments.map(s => s.text).join('');
+    fs.writeFileSync('failed-entry.txt', plain);
     process.exit(1);
   }
 })();
