@@ -56,7 +56,13 @@
             >
             <div class="bundle-product-name">{{ bundle_product.title }}</div>
           {%- else -%}
-            {%- render 'wd-swatch', type: 'colors', value: color.title, selected: selected, name: name -%}
+            {%- render 'wd-swatch',
+              type: 'colors',
+              value: color.title,
+              selected: selected,
+              name: name,
+              show_tooltip: true
+            -%}
             <div class="bundle-product-name">{{ bundle_product.title }}</div>
           {%- endif -%}
         </div>
@@ -94,7 +100,7 @@
           {%- else -%}
             {%- assign selected_color = false -%}
           {%- endif -%}
-          {%- render 'wd-swatch', type: 'colors', value: color.title, href: color_product.url, selected: selected_color -%}
+          {%- render 'wd-swatch', type: 'colors', value: color.title, href: color_product.url, selected: selected_color, show_tooltip: true -%}
         {%- endfor -%}
       </div>
     {%- endif -%}
@@ -106,6 +112,7 @@
   pack_metafield_key: related_pack_products,
   max_packs: 3
 %}
+
 {%- unless product.has_only_default_variant or hide_sold_out_variants and product.available == false -%}
   <variant-picker
     class="variant-picker wd-variant-picker"
@@ -153,27 +160,163 @@
           </div>
           {%- assign size_chart = section.blocks | where: 'type', 'size_chart' | first -%}
           {%- assign mf = product.metafields.prts.size_chart -%}
-          {%- if hide_size_chart != true and size_chart and size_label_list contains option_downcase and mf -%}
+          {%- assign find_your_size_mf = product.metafields.custom.find_your_size -%}
+
+          {%- if hide_size_chart != true
+            and size_chart
+            and size_label_list contains option_downcase
+            and mf
+            or find_your_size_mf
+          -%}
             {%- assign bs = size_chart.settings -%}
             {%- assign chart = mf.value.table | split: ' | ' -%}
             {%- capture drawer_id -%}size-chart-{{ section.id }}-{{ block.id }}{%- endcapture -%}
-            {%- capture chart_html -%}
-              {% comment %} <h2 class="h4" style="padding-bottom: 2rem;">{{ block.settings.title }}</h2> {% endcomment %}
+            {% if mf %}
+              {%- capture chart_html -%}
+               <div class="">
+      <input type="radio" class="tab-toggle" name="tab-toggle" id="tab1" checked>
+      <input type="radio" class="tab-toggle" name="tab-toggle" id="tab2">
+      <ul class="tab-list">
+        <li class="tab-item">
+          <label class="tab-trigger" for="tab1">Inches</label>
+        </li>
+        <li class="tab-item">
+          <label class="tab-trigger" for="tab2">Centimeters</label>
+        </li>
+      </ul>
+      <div class="tab-container">
+        <div class="tab-content">
+          <table border="0" class="size-chart-table" style="--table-spacing: 16px; width: 100%;">
+          {%- for content in chart -%}
+            {%- assign cells = content | split: "," -%}
+            {%- if forloop.first -%}
+                <thead>
+                  <tr>
+                    {%- for cell in cells -%}
+                      <th>{{ cell }}</th>
+                    {%- endfor -%}
+                  </tr>
+                </thead>
+                <tbody>
+            {%- elsif forloop.last -%}
+                <tr>
+                  {%- for cell in cells -%}
+                    {%- if forloop.first -%}
+                    <td>{{ cell }}</td>
+                    {%- else -%}
+                    <td>{{ cell | rstrip }}"</td>
+                    {%- endif -%}
+                  {%- endfor -%}
+                </tr>
+                </tbody>
+            {%- else -%}
+                <tr>
+                  {%- for cell in cells -%}
+                    {%- if forloop.first -%}
+                      <td>{{ cell }}</td>
+                      {%- else -%}
+                      <td>{{ cell | rstrip }}"</td>
+                    {%- endif -%}
+                  {%- endfor -%} 
+                </tr>
+            {%- endif -%}
+          {%- endfor -%}
+          </table>
+        </div>
+        <div class="tab-content">
+          <table border="0" class="size-chart-table" style="--table-spacing: 16px; width: 100%;">
+          {%- for content in chart -%}
+            {%- assign cells = content | split: "," -%}
+            {%- if forloop.first -%}
+                <thead>
+                  <tr>
+                    {%- for cell in cells -%}
+                      <th>{{ cell }}</th>
+                    {%- endfor -%}
+                  </tr>
+                </thead>
+                <tbody>
+            {%- elsif forloop.last -%}
+                <tr>
+                  {%- for cell in cells -%}
+                    {%- if forloop.first -%}
+                    <td>{{ cell }}</td>
+                    {%- else -%}
+                    <td>{{ cell | times: 2.54 | round: 0 }} cm</td>
+                    {%- endif -%}
+                  {%- endfor -%}
+                </tr>
+                </tbody>
+            {%- else -%}
+                <tr>
+                  {%- for cell in cells -%}
+                    {%- if forloop.first -%}
+                      <td>{{ cell }}</td>
+                      {%- else -%}
+                      <td>{{ cell | times: 2.54 | round: 0 }} cm</td>
+                    {%- endif -%}
+                  {%- endfor -%} 
+                </tr>
+            {%- endif -%}
+          {%- endfor -%}
+          </table>
+        </div>
+      </div>
+    </div>
+            {%- endcapture -%}
+            {% endif %}
+            <button
+              type="button"
+              class="text-sm text-subdued"
+              aria-controls="{{ drawer_id | escape }}"
+              aria-expanded="false"
+            >
+              <span class="link">{{ 'product.general.size_chart' | t }}</span>
+            </button>
+
+            <x-drawer id="{{ drawer_id }}" class="drawer drawer--lg wd-chart-drawer">
+              <span class="h5" slot="header">What's My Size?</span>
+
+              <div class="wd-size-content">
+                {%- if mf -%}
+                  <div class="wd-top">
+                    {{ bs.top_text }}
+                  </div>
+                {% endif %}
+                {%- if chart_html -%}
+                  <div class="wd-chart">
+                    {{ chart_html }}
+                  </div>
+                {% endif %}
+
+                {%- if find_your_size_mf -%}
+                  {%- assign fys = find_your_size_mf.value -%}
+                  <div class="wd-middle">
+                    {%- if fys.title != blank -%}
+                      <h3>{{ fys.title }}</h3>
+                    {%- endif -%}
+                    {%- if fys.description != blank -%}
+                      {{ fys.description | metafield_tag }}
+                    {%- endif -%}
+
+                    {%- if fys.table_data != blank -%}
+                      {%- assign fys_chart = fys.table_data | split: '|' -%}
+                      {%- capture fys_chart_html -%}
               <div class="">
-                <input type="radio" class="tab-toggle" name="tab-toggle" id="tab1" checked>
-                <input type="radio" class="tab-toggle" name="tab-toggle" id="tab2">
+                <input type="radio" class="tab-toggle" name="tab-toggle1" id="tab3" checked>
+                <input type="radio" class="tab-toggle" name="tab-toggle1" id="tab4">
                 <ul class="tab-list">
                   <li class="tab-item">
-                    <label class="tab-trigger" for="tab1">Inches</label>
+                    <label class="tab-trigger" for="tab3">Inches</label>
                   </li>
                   <li class="tab-item">
-                    <label class="tab-trigger" for="tab2">Centimeters</label>
+                    <label class="tab-trigger" for="tab4">Centimeters</label>
                   </li>
                 </ul>
                 <div class="tab-container">
                   <div class="tab-content">
                     <table border="0" class="size-chart-table" style="--table-spacing: 16px; width: 100%;">
-                    {%- for content in chart -%}
+                    {%- for content in fys_chart -%}
                       {%- assign cells = content | split: "," -%}
                       {%- if forloop.first -%}
                           <thead>
@@ -190,7 +333,7 @@
                               {%- if forloop.first -%}
                               <td>{{ cell }}</td>
                               {%- else -%}
-                              <td>{{ cell }}"</td>
+                              <td>{{ cell | rstrip }}"</td>
                               {%- endif -%}
                             {%- endfor -%}
                           </tr>
@@ -201,18 +344,17 @@
                               {%- if forloop.first -%}
                                 <td>{{ cell }}</td>
                                 {%- else -%}
-                                <td>{{ cell }}"</td>
+                                <td>{{ cell | rstrip }}"</td>
                               {%- endif -%}
                             {%- endfor -%} 
-                          </tr> 
-                          {% comment %} </tbody> {% endcomment %}
+                          </tr>
                       {%- endif -%}
                     {%- endfor -%}
                     </table>
                   </div>
                   <div class="tab-content">
                     <table border="0" class="size-chart-table" style="--table-spacing: 16px; width: 100%;">
-                    {%- for content in chart -%}
+                    {%- for content in fys_chart -%}
                       {%- assign cells = content | split: "," -%}
                       {%- if forloop.first -%}
                           <thead>
@@ -243,8 +385,7 @@
                                 <td>{{ cell | times: 2.54 | round: 0 }} cm</td>
                               {%- endif -%}
                             {%- endfor -%} 
-                          </tr> 
-                          {% comment %} </tbody> {% endcomment %}
+                          </tr>
                       {%- endif -%}
                     {%- endfor -%}
                     </table>
@@ -252,129 +393,17 @@
                 </div>
               </div>
             {%- endcapture -%}
-            <button
-              type="button"
-              class="text-sm text-subdued"
-              aria-controls="{{ drawer_id | escape }}"
-              aria-expanded="false"
-            >
-              <span class="link">{{ 'product.general.size_chart' | t }}</span>
-            </button>
+                      {{ fys_chart_html }}
+                    {%- endif -%}
+                  </div>
 
-            <x-drawer id="{{ drawer_id }}" class="drawer drawer--lg wd-chart-drawer">
-              <span class="h5" slot="header">What's My Size?</span>
-
-              <div class="wd-size-content">
-                <div class="wd-top">
-                  {{ bs.top_text }}
-                </div>
-                <div class="wd-chart">
-                  {{ chart_html }}
-                </div>
-                <div class="wd-middle">
-                  {{ bs.middle_text }}
-                  {%- assign chart = bs.find_size | split: '|' -%}
-                  {%- capture chart_html -%}
-                    {% comment %} <h2 class="h4" style="padding-bottom: 2rem;">{{ block.settings.title }}</h2> {% endcomment %}
-                    <div class="">
-                      <input type="radio" class="tab-toggle" name="tab-toggle1" id="tab3" checked>
-                      <input type="radio" class="tab-toggle" name="tab-toggle1" id="tab4">
-                      <ul class="tab-list">
-                        <li class="tab-item">
-                          <label class="tab-trigger" for="tab3">Inches</label>
-                        </li>
-                        <li class="tab-item">
-                          <label class="tab-trigger" for="tab4">Centimeters</label>
-                        </li>
-                      </ul>
-                      <div class="tab-container">
-                        <div class="tab-content">
-                          <table border="0" class="size-chart-table" style="--table-spacing: 16px; width: 100%;">
-                          
-                          {%- for content in chart -%}
-                            {%- assign cells = content | split: "," -%}
-                            {%- if forloop.first -%}
-                                <thead>
-                                  <tr>
-                                    {%- for cell in cells -%}
-                                      <th>{{ cell }}</th>
-                                    {%- endfor -%}
-                                  </tr>
-                                </thead>
-                                <tbody>
-                            {%- elsif forloop.last -%}
-                                <tr>
-                                  {%- for cell in cells -%}
-                                    {%- if forloop.first -%}
-                                    <td>{{ cell }}</td>
-                                    {%- else -%}
-                                    <td>{{ cell }}"</td>
-                                    {%- endif -%}
-                                  {%- endfor -%}
-                                </tr>
-                                </tbody>
-                            {%- else -%}
-                                <tr>
-                                  {%- for cell in cells -%}
-                                    {%- if forloop.first -%}
-                                      <td>{{ cell }}</td>
-                                      {%- else -%}
-                                      <td>{{ cell }}"</td>
-                                    {%- endif -%}
-                                  {%- endfor -%} 
-                                </tr> 
-                                {% comment %} </tbody> {% endcomment %}
-                            {%- endif -%}
-                          {%- endfor -%}
-                          </table>
-                        </div>
-                        <div class="tab-content">
-                          <table border="0" class="size-chart-table" style="--table-spacing: 16px; width: 100%;">
-                          {%- for content in chart -%}
-                            {%- assign cells = content | split: "," -%}
-                            {%- if forloop.first -%}
-                                <thead>
-                                  <tr>
-                                    {%- for cell in cells -%}
-                                      <th>{{ cell }}</th>
-                                    {%- endfor -%}
-                                  </tr>
-                                </thead>
-                                <tbody>
-                            {%- elsif forloop.last -%}
-                                <tr>
-                                  {%- for cell in cells -%}
-                                    {%- if forloop.first -%}
-                                    <td>{{ cell }}</td>
-                                    {%- else -%}
-                                    <td>{{ cell | times: 2.54 | round: 0 }} cm</td>
-                                    {%- endif -%}
-                                  {%- endfor -%}
-                                </tr>
-                                </tbody>
-                            {%- else -%}
-                                <tr>
-                                  {%- for cell in cells -%}
-                                    {%- if forloop.first -%}
-                                      <td>{{ cell }}</td>
-                                      {%- else -%}
-                                      <td>{{ cell | times: 2.54 | round: 0 }} cm</td>
-                                    {%- endif -%}
-                                  {%- endfor -%} 
-                                </tr> 
-                                {% comment %} </tbody> {% endcomment %}
-                            {%- endif -%}
-                          {%- endfor -%}
-                          </table>
-                        </div>
-                      </div>
+                  {%- if fys.how_to_measure != blank -%}
+                    <div class="wd-bottom">
+                      <h3>HOW TO MEASURE</h3>
+                      {{ fys.how_to_measure | metafield_tag }}
                     </div>
-                  {%- endcapture -%}
-                  {{ chart_html }}
-                </div>
-                <div class="wd-bottom">
-                  {{ bs.bottom_text }}
-                </div>
+                  {%- endif -%}
+                {%- endif -%}
               </div>
             </x-drawer>
           {%- endif -%}
@@ -515,7 +544,8 @@
                           value: value,
                           selected: selected,
                           name: name,
-                          form: form_id
+                          form: form_id,
+                          show_tooltip: true
                         -%}
                       {%- endif -%}
                     {%- when 'block' -%}
@@ -1004,6 +1034,18 @@
         autoplay: false,
         prevArrow: '<button class="custom-prev-arrow"><i class="fa fa-chevron-left"></i></button>',
         nextArrow: '<button class="custom-next-arrow"><i class="fa fa-chevron-right"></i></button>',
+        // MOBILE PEEK UX: 1 full image + ~20% peek of the next (Rhone-style). Desktop unchanged.
+        // Matches init in product-gallery.liquid so variant-image slider behaves consistently.
+        responsive: [
+          {
+            breakpoint: 768,
+            settings: {
+              slidesToShow: 1,
+              slidesToScroll: 1,
+              variableWidth: true,
+            },
+          },
+        ],
       });
 
       jQuery(`${selector} .zoom-close`).hide();
@@ -1018,9 +1060,11 @@
       jQuery(`${selector} .slider-image`).on('click', function () {
         const slideIndex = jQuery(this).closest('.slick-slide').data('slick-index');
         if (jQuery(`${selector} .zoom-close:visible`).length > 0) {
+          slider.removeClass('is-zoomed');
           slider.slick('slickSetOption', 'slidesToShow', 2, true);
           jQuery(`${selector} .zoom-close`).fadeOut();
         } else {
+          slider.addClass('is-zoomed');
           slider.slick('slickSetOption', 'slidesToShow', 1, true);
           jQuery(`${selector} .zoom-close`).fadeIn();
           slider.slick('slickGoTo', slideIndex);
@@ -1029,6 +1073,7 @@
 
       jQuery(`${selector} .zoom-close`).on('click', function (e) {
         e.stopPropagation();
+        slider.removeClass('is-zoomed');
         slider.slick('slickSetOption', 'slidesToShow', 2, true);
         jQuery(`${selector} .zoom-close`).fadeOut();
       });

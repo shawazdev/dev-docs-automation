@@ -21,13 +21,36 @@
         })(window,document,'script','dataLayer','GTM-5W3FMH37');</script>
       <!-- End Google Tag Manager -->
     {% endcomment %}
-     <!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-KP74CRJD');</script>
-<!-- End Google Tag Manager -->
+    <!-- Google Tag Manager -->
+    <script>
+      (function (w, d, s, l, i) {
+        w[l] = w[l] || [];
+        w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+        var f = d.getElementsByTagName(s)[0],
+          j = d.createElement(s),
+          dl = l != 'dataLayer' ? '&l=' + l : '';
+        j.async = true;
+        j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+        f.parentNode.insertBefore(j, f);
+      })(window, document, 'script', 'dataLayer', 'GTM-KP74CRJD');
+    </script>
+    <!-- End Google Tag Manager -->
+
+    <script>
+      /* >> Heatmap.com :: Snippet << */ (function (h, e, a, t, m, ap) {
+        (h._heatmap_paq = []).push(['setTrackerUrl', (h.heatUrl = e) + a]);
+        h.hErrorLogs = h.hErrorLogs || [];
+        ap = t.createElement('script');
+        ap.src = h.heatUrl + 'preprocessor.min.js?sid=' + m;
+        ap.defer = true;
+        t.head.appendChild(ap);
+        ['error', 'unhandledrejection'].forEach(function (ty) {
+          h.addEventListener(ty, function (et) {
+            h.hErrorLogs.push({ type: ty, event: et });
+          });
+        });
+      })(window, 'https://dashboard.heatmap.com/', 'heatmap.php', document, 5480);
+    </script>
     <meta name="facebook-domain-verification" content="8nuvqpl1g6mqpjf2eq9vcp65lfqq4m">
     <meta charset="utf-8">
     <meta
@@ -71,9 +94,31 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     {%- endunless -%}
 
     {%- render 'social-meta-tags' -%}
-    {%- if request.page_type == 'product' and product != blank -%}
-      {% render 'microdata-schema' %}
-    {%- endif -%}
+    {%- case request.page_type -%}
+      {%- when 'index' -%}
+        {%- render 'wd-schema-organization' -%}
+      {%- when 'product' -%}
+        {%- render 'wd-schema-product-group' -%}
+      {%- when 'collection' -%}
+        {%- render 'wd-schema-collection-page' -%}
+      {%- when 'blog' -%}
+        {%- render 'wd-schema-blog' -%}
+      {%- when 'article' -%}
+        {%- render 'wd-schema-blog-posting' -%}
+      {%- when 'page' -%}
+        {%- case page.handle -%}
+          {%- when 'about', 'about-us' -%}
+            {%- render 'wd-schema-about-page' -%}
+          {%- when 'contact' -%}
+            {%- render 'wd-schema-contact-page' -%}
+          {%- when 'returns-policy' -%}
+            {%- render 'wd-schema-webpage-returns' -%}
+          {%- when 'faq' -%}
+            {%- comment -%}FAQ schema is rendered inside sections/wd-faq.liquid{%- endcomment -%}
+          {%- else -%}
+            {%- render 'wd-schema-webpage-generic' -%}
+        {%- endcase -%}
+    {%- endcase -%}
     {%- render 'css-variables' -%}
     {%- render 'js-variables' -%}
 
@@ -112,7 +157,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         <meta name="robots" content="noindex, nofollow">
       {% endif %}
     {% endfor %}
-  </head>
+  {% include 'pagefly-app-header' %}</head>
 
   <body class="{% if settings.show_page_transition %}page-transition{% endif %} {% if settings.zoom_image_on_hover %}zoom-image--enabled{% endif %}">
     {% comment %}
@@ -120,10 +165,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5W3FMH37" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <!-- End Google Tag Manager (noscript) -->
     {% endcomment %}
-     <!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KP74CRJD"
-height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-<!-- End Google Tag Manager (noscript) -->
+    <!-- Google Tag Manager (noscript) -->
+    <noscript
+      ><iframe
+        src="https://www.googletagmanager.com/ns.html?id=GTM-KP74CRJD"
+        height="0"
+        width="0"
+        style="display:none;visibility:hidden"
+      ></iframe
+    ></noscript>
+    <!-- End Google Tag Manager (noscript) -->
     {%- render 'shadow-dom-templates' -%}
 
     <a href="#main" class="skip-to-content sr-only">{{ 'general.accessibility.skip_to_content' | t }}</a>
@@ -631,39 +682,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       document.querySelectorAll('quick-buy-drawer').forEach((drawer) => {
         quickobserver.observe(drawer, { attributes: true });
       });
-    </script>
-    <!-- Remove Default Shopify ProductGroup Schema -->
-    <script>
-      function removeProductGroupSchemas() {
-        const badSchemas = document.querySelectorAll('script[type="application/ld+json"]');
-        badSchemas.forEach((script) => {
-          if (script.textContent.includes('"@type":"ProductGroup"')) {
-            script.remove();
-            console.log('🧹 Removed unwanted ProductGroup schema');
-          }
-        });
-      }
-
-      // Run once after DOM loads
-      document.addEventListener('DOMContentLoaded', removeProductGroupSchemas);
-
-      // Keep watching for dynamically added scripts (like Shopify's product-model.js)
-      const observer = new MutationObserver(removeProductGroupSchemas);
-      observer.observe(document.documentElement, { childList: true, subtree: true });
-    </script>
-    <script type="text/javascript">
-      (function (c, l, a, r, i, t, y) {
-        c[a] =
-          c[a] ||
-          function () {
-            (c[a].q = c[a].q || []).push(arguments);
-          };
-        t = l.createElement(r);
-        t.async = 1;
-        t.src = 'https://www.clarity.ms/tag/' + i;
-        y = l.getElementsByTagName(r)[0];
-        y.parentNode.insertBefore(t, y);
-      })(window, document, 'clarity', 'script', 'rkmapw2vwd');
     </script>
   </body>
 </html>

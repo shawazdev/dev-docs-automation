@@ -78,7 +78,7 @@
               <p class="collection-featured-product__title text-xs bold">{{ section.settings.featured_product_heading | escape }}</p>
             {%- endif -%}
 
-            <a href="{{ section.settings.featured_product.url }}" class="collection-featured-product__content">
+            <a href="{{ section.settings.featured_product.url | within: collection }}" class="collection-featured-product__content">
               {%- render 'horizontal-product', product: section.settings.featured_product, size: 'sm', output_link: false -%}
             </a>
           </div>

@@ -32,11 +32,12 @@ const DEFAULTS = {
   reactComponentLines: 50,
   stylingLines:        30,
   configMinLines:       5,
-  diffMaxChars:     10000,
+  diffMaxChars:     80000,    // big enough for large multi-file pushes
+  largePushFileCount:  20,    // pushes touching ≥ this many files get extra prompt nudges
   insertAtTop:       true,
   model:           'gpt-4o',
   temperature:        0.3,
-  maxTokens:         1500,
+  maxTokens:         3000,
 };
 
 let CONFIG = { ...DEFAULTS };
@@ -57,6 +58,28 @@ const repoName   = process.env.REPO_NAME || 'unknown-repo';
 
 let entryId, entryTitle, entryBody, entryUrl, entryAuthor, entryTime, labels, shortSha;
 
+// Recognised inline tags developers can include in commit messages or PR
+// titles/descriptions. Useful for direct pushes (which have no PR labels)
+// or as a backup when someone forgets to apply a label on a PR.
+//
+// Format: just write [tag-name] anywhere in the commit message or PR body.
+//   git commit -m "fix: emergency cart bug [hotfix]"
+//   git commit -m "wip: experiments [skip-log]"
+//   git commit -m "feat: full cart drawer rewrite [log-detailed]"
+const KNOWN_TAGS = [
+  'skip-log', 'log-detailed', 'hotfix',
+  'bug', 'bugfix', 'fix',
+  'feature', 'feat', 'enhancement',
+  'refactor',
+];
+
+function extractTagsFromText(text) {
+  if (!text) return [];
+  const pattern = new RegExp(`\\[(${KNOWN_TAGS.join('|')})\\]`, 'gi');
+  const matches = [...text.matchAll(pattern)];
+  return [...new Set(matches.map(m => m[1].toLowerCase()))];
+}
+
 if (isPushEvent) {
   const sha = process.env.COMMIT_SHA || '';
   shortSha    = sha.slice(0, 7) || 'unknown';
@@ -66,7 +89,8 @@ if (isPushEvent) {
   entryUrl    = process.env.COMMIT_URL || '';
   entryAuthor = process.env.COMMIT_AUTHOR || process.env.PUSHER || 'unknown';
   entryTime   = process.env.COMMIT_TIME || new Date().toISOString();
-  labels      = [];
+  // No GitHub labels on a raw push — extract tags from commit message instead
+  labels = extractTagsFromText(entryBody);
 } else {
   entryId     = process.env.PR_NUMBER || '?';
   entryTitle  = process.env.PR_TITLE || '(no title)';
@@ -77,6 +101,11 @@ if (isPushEvent) {
   try {
     labels = JSON.parse(process.env.PR_LABELS || '[]').map(l => l.name.toLowerCase());
   } catch (_) { labels = []; }
+  // Backup: also pick up tags written in the PR title/body, in case a label
+  // wasn't applied. Union with any real labels already set.
+  for (const t of extractTagsFromText(`${entryTitle} ${entryBody}`)) {
+    if (!labels.includes(t)) labels.push(t);
+  }
 }
 
 const additions  = parseInt(process.env.DIFF_ADDITIONS || '0', 10);
@@ -127,6 +156,9 @@ const isDoc = f =>
   /\.(md|markdown|rst|txt|adoc)$/i.test(f) ||
   /(^|\/)(README|LICENSE|CHANGELOG|CONTRIBUTING)/i.test(f) ||
   /(^|\/)docs?\//i.test(f);
+
+const isGithubMeta = f =>
+  /^\.github\//i.test(f);
 
 const isTranslation = f =>
   /(^|\/)(locales?|lang|i18n|translations?)\//i.test(f) ||
@@ -190,19 +222,48 @@ const titleHas = (...words) =>
 
 // ─── Rule engine ─────────────────────────────────────────────────────────────
 
+// Detect "merge from upstream" pushes (e.g. pulling main into feature, then
+// pushing the merge back). These have generic messages and huge file counts
+// but don't represent new work — the original PRs already documented the work.
+function isUpstreamMergeCommit() {
+  if (!isPushEvent) return false;
+  const msg = (process.env.COMMIT_MESSAGE || '').toLowerCase();
+  const looksLikeMergeMsg =
+    /^merge (branch|remote-tracking branch|pull request)/i.test(msg) ||
+    /^pull(ed|ing)? (from|updates from|changes from)/i.test(msg) ||
+    /^sync (with|from) (upstream|main|master)/i.test(msg);
+  return looksLikeMergeMsg && filesArr.length >= CONFIG.largePushFileCount;
+}
+
 function classify() {
   if (labels.includes('skip-log'))     return { action: 'skip', reason: 'skip-log label' };
   if (labels.includes('log-detailed')) return { action: 'full', reason: 'log-detailed label' };
   if (labels.includes('hotfix'))       return { action: 'full', reason: 'hotfix label', tag: 'HOTFIX' };
   if (/^revert/i.test(entryTitle))     return { action: 'full', reason: 'revert', tag: 'REVERT' };
+
+  // .github-only changes (workflow tweaks, this script, config) — never logged.
+  // Avoids the meta-noise of every workflow iteration spamming the dev log.
+  if (filesArr.length > 0 && filesArr.every(isGithubMeta))
+    return { action: 'skip', reason: '.github-only change (workflow / scripts / metadata)' };
+
+  // Upstream merges → one-liner. The real work was documented in the original PRs.
+  if (isUpstreamMergeCommit())
+    return { action: 'oneline', reason: `merge from upstream (${filesArr.length} files)` };
+
   if (filesArr.length === 0)           return { action: 'full', reason: 'no file list' };
   if (filesArr.every(isDoc))           return { action: 'oneline', reason: 'documentation-only update' };
   if (filesArr.every(isTranslation))   return { action: 'oneline', reason: 'translations-only update' };
   if (filesArr.some(isDatabase))       return { action: 'full', reason: 'database / migration change', tag: 'DB' };
-  if (filesArr.some(isConfig) && totalLines > CONFIG.configMinLines)
-    return { action: 'full', reason: 'config update', tag: 'CONFIG' };
   if (filesArr.some(isBackend))        return { action: 'full', reason: 'backend / server logic change', tag: 'BACKEND' };
   if (filesArr.some(isShopifyAPI))     return { action: 'full', reason: 'Shopify checkout / API change', tag: 'SHOPIFY' };
+
+  // Config moved BELOW backend so a push that's mostly backend with one .env
+  // change is tagged BACKEND, not CONFIG. Also requires config to be the
+  // majority of changed files.
+  if (filesArr.filter(isConfig).length >= Math.ceil(filesArr.length / 2) &&
+      totalLines > CONFIG.configMinLines)
+    return { action: 'full', reason: 'config update', tag: 'CONFIG' };
+
   if (labels.some(l => ['bug','bugfix','fix'].includes(l)) ||
       titleHas('fix','fixes','fixed','bug','bugfix','patch'))
     return { action: 'full', reason: 'bug fix', tag: 'FIX' };
@@ -237,13 +298,20 @@ function classify() {
 const SYSTEM_PROMPT = `You are a senior technical writer producing developer changelog entries.
 The team builds Shopify themes, Laravel + React apps, Shopify apps, and WordPress sites.
 
+Your job is to read the diff carefully and produce a SPECIFIC entry. Vague summaries
+like "updated styles" or "improved theme" are unacceptable. Name the actual features,
+components, sliders, modals, sections, endpoints, or behaviours that changed.
+
 Write clearly and specifically. "Added JWT auth to /login endpoint" — not "improved security".
+"Added collection slider with autoplay and snap behaviour" — not "updated templates".
 Plain text only. No markdown, no asterisks, no headers other than the ones requested.`;
 
 function buildUserPrompt() {
   const source = isPushEvent
     ? `Direct push commit ${shortSha}: ${entryTitle}`
     : `PR #${entryId}: ${entryTitle}`;
+
+  const isLargeChange = filesArr.length >= CONFIG.largePushFileCount;
 
   return `Write a structured changelog entry for the following change.
 
@@ -254,45 +322,83 @@ Merged: ${timeStr}
 URL: ${entryUrl}
 Labels: ${labels.join(', ') || 'none'}
 Lines changed: +${additions} / -${deletions}
+File count: ${filesArr.length}
 
-Description / commit body:
+Original commit message / PR description (may be generic — see TITLE rules below):
 ${entryBody || '(none)'}
 
 Changed files (${filesArr.length}):
 ${changedFiles || '(none)'}
 
-Diff (truncated to ${CONFIG.diffMaxChars} chars):
+Diff (up to ${CONFIG.diffMaxChars} characters — scan the WHOLE diff, not just the start):
 ${codeDiff || '(none)'}
 
 ---
 Respond in this EXACT plain-text format. Use the section names exactly as written.
-Group changes by file (or by closely-related file groups). Each functionality block
-describes one logical change in one file/feature area.
 
 TITLE
-[A short title, 5–10 words, describing the overall change]
+A short, SPECIFIC title (5–15 words) describing what actually changed.
+
+CRITICAL: If the commit message or PR title is generic — for example
+"Merge branch X", "Pulled updates from main", "Sync from upstream",
+"WIP", "updates", "changes" — IGNORE it completely and derive the
+title from the diff. Name the actual features that were added, fixed,
+or changed.
+
+  Bad title:  "Pulled updates from main branch"
+  Good title: "Add collection slider, restyle product cards, sync translations"
 
 OVERVIEW
-[One or two sentences summarising the change and its impact]
+Two or three sentences describing the most important things this change
+introduces or modifies. Be concrete. Mention specific features by name.
 
 FUNCTIONALITIES
-Functionality: [Short name describing what was changed in this file]
-File Path: [exact/path/to/file]
-Process:
-- [step or change description]
-- [step or change description]
-- [step or change description]
+List each DISTINCT feature or change as a SEPARATE functionality block.
 
-Functionality: [Next change name]
-File Path: [exact/path/to/file]
-Process:
-- [...]
-- [...]
+RULES:
+- Do NOT group unrelated changes into one block just because they share a
+  file type or folder. "Updated Liquid templates" is NOT acceptable.
+- Each block must describe ONE coherent feature, component, or behaviour
+  (e.g. "Collection slider", "Product variant URL handling", "Cart drawer
+  open/close logic", "Stripe checkout webhook").
+- If a feature spans multiple files, list all relevant files in File Path
+  separated by commas.
+- If one file contains multiple features, split into multiple blocks.
+- Scan the ENTIRE diff for distinct features. Don't stop after the first
+  few changes.
 
-(Up to 5 functionality blocks. If only one file matters, just one block.)
+DO NOT create functionality blocks for these noise categories — skip them entirely:
+- Translation / locale file updates (files in locales/, lang/, i18n/, or .po/.mo files).
+  Translations are routine and not worth a block, even when mixed into a bigger change.
+- Font additions, font-family declarations, or @font-face rule changes on their own.
+- Whitespace, indentation, line-ending, or formatting-only changes.
+- Auto-generated files (lock files, build output, minified bundles).
+- Comment-only edits.
+- Minor dependency version bumps in package.json / composer.json with no real code change.
+- Lint / Prettier / editorconfig / .gitignore tweaks.
+- Generated migration timestamps with no schema change.
+
+If the diff contains BOTH meaningful features AND noise from the list above,
+include only the meaningful features. You may briefly mention the noise in NOTES
+(e.g. "Also includes translation updates and a font addition.") but do not give
+them their own blocks.
+
+${isLargeChange ? `- This is a LARGE change (${filesArr.length} files). Aim for 8–15 functionality
+  blocks covering the most significant features. Skip noise per the list above.` : `- Aim for 3–8 functionality blocks. One block per logical feature.`}
+
+Format for each block:
+
+Functionality: [Specific feature or component name — be concrete]
+File Path: [exact/path/to/file, or comma-separated paths if one feature spans files]
+Process:
+- [What specifically changed about this feature]
+- [Implementation detail or behaviour change]
+- [Impact or how it differs from before]
 
 NOTES
-[Migration steps, breaking changes, or caveats. Write "None" if nothing special.]`;
+Migration steps, breaking changes, dependencies added/removed, or caveats.
+You may also mention skipped noise here (e.g. "Also includes translation updates").
+Write "None" if nothing special.`;
 }
 
 // ─── AI call ─────────────────────────────────────────────────────────────────

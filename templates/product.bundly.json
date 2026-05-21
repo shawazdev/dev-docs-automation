@@ -456,7 +456,7 @@
       "type": "apps",
       "blocks": {
         "aftersell_by_rokt_pdp_upsells_jyYBGt": {
-          "type": "shopify://apps/aftersell-by-rokt/blocks/pdp-upsells/509ec35d-0632-4dfc-a105-fa799cd9d149",
+          "type": "shopify://apps/aftersell/blocks/pdp-upsells/509ec35d-0632-4dfc-a105-fa799cd9d149",
           "settings": {}
         },
         "okendo_reviews_widget_jYcfrK": {
@@ -508,7 +508,7 @@
         "richtext_zUXQNV": {
           "type": "richtext",
           "settings": {
-            "content": "<p>Mix your go-to styles and colors.<br/>Enjoy 20% off 5-packs and 25% off 7-packs.</p>"
+            "content": "<p>Mix your go-to styles and colors. Save 15% on 3-packs, 20% on 5-packs, and 25% on 7-packs.</p>"
           }
         }
       },

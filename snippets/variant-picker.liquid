@@ -108,7 +108,7 @@ Supported variables
                     {%- assign variant_for_value = product.variants | where: name, value | first -%}
                     {%- render 'swatch', type: 'thumbnail', value: value, image: variant_for_value.featured_media, selected: selected, name: name, form: form_id, bordered: true -%}
                   {%- when 'color' -%}
-                    {%- render 'swatch', type: 'colors', value: value, selected: selected, name: name, form: form_id -%}
+                    {%- render 'swatch', type: 'colors', value: value, selected: selected, name: name, form: form_id, show_tooltip: true -%}
                   {%- when 'block' -%}
                     {%- render 'swatch', type: 'block', value: value, selected: selected, name: name, form: form_id -%}
                   {%- when 'block_swatch' -%}

@@ -14,31 +14,31 @@
     "announcement-bar": {
       "type": "announcement-bar",
       "blocks": {
+        "message_bWMqe9": {
+          "type": "message",
+          "disabled": true,
+          "settings": {
+            "text": "20% OFF SITEWIDE WITH CODE FRESHFITS",
+            "url": "shopify://collections/sale"
+          }
+        },
         "message_Xj7wfQ": {
           "type": "message",
           "settings": {
             "text": "FREE SHIPPING & RETURNS",
             "url": "shopify://collections/big-tall-shirts-best-sellers"
           }
-        },
-        "message_bWMqe9": {
-          "type": "message",
-          "disabled": true,
-          "settings": {
-            "text": "HOLIDAY SALE: UP TO 60% OFF SELECT STYLES",
-            "url": "shopify://collections/sale"
-          }
         }
       },
       "block_order": [
-        "message_Xj7wfQ",
-        "message_bWMqe9"
+        "message_bWMqe9",
+        "message_Xj7wfQ"
       ],
       "settings": {
         "enable_sticky": false,
         "text_size": "text-xs",
         "navigation_mode": "arrows",
-        "scrolling_speed": 26,
+        "scrolling_speed": 30,
         "background": "#052b1b",
         "background_gradient": "",
         "text_color": "#ffffff"
