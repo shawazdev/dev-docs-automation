@@ -1,0 +1,458 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<link rel="stylesheet" href="{{ 'wd-member.css' | asset_url }}">
+
+<section class="wd-main-member">
+  <div class="wd-mobile-toolbar wd-hidden-tablet-and-up">
+    <button
+      class="wd-mobile-toolbar__item"
+      is="toggle-button"
+      aria-expanded="false"
+      aria-controls="account-links-popover"
+    >
+      {{- 'customer.member_profile.title' | t -}}
+      {%- render 'icon' with 'chevron' -%}
+    </button>
+  </div>
+
+  <popover-content id="account-links-popover" class="popover">
+    <span class="popover__overlay"></span>
+
+    <header class="popover__header">
+      <span class="popover__title heading h6">{{ 'customer.member_profile.title' | t }}</span>
+
+      <button
+        type="button"
+        class="popover__close-button tap-area tap-area--large"
+        data-action="close"
+        title="{{ 'general.accessibility.close' | t | escape }}"
+      >
+        {%- render 'icon' with 'close' -%}
+      </button>
+    </header>
+
+    <div class="popover__content">
+      <div class="popover__choice-list">
+        <a
+          {% if request.locale.iso_code == 'fr' %}
+            href="/fr/pages/member-profile"
+          {% else %}
+            href="/pages/member-profile"
+          {% endif %}
+          class="popover__choice-item"
+          aria-current="true"
+        >
+          <span class="popover__choice-label">{{ 'customer.member_profile.title' | t }}</span>
+        </a>
+        <a
+          {% if request.locale.iso_code == 'fr' %}
+            href="/fr/pages/perks"
+          {% else %}
+            href="/pages/perks"
+          {% endif -%}
+          class="popover__choice-item text--subdued"
+        >
+          <span class="popover__choice-label">{{ 'customer.perks.title' | t }}</span>
+        </a>
+        <a
+          {% if request.locale.iso_code == 'fr' %}
+            href="/fr/pages/wishlist"
+          {% else %}
+            href="/pages/wishlist"
+          {% endif %}
+          class="popover__choice-item text--subdued"
+        >
+          <span class="popover__choice-label">{{ 'customer.wishlist.title' | t }}</span>
+        </a>
+        <a href="{{ routes.account_url }}" class="popover__choice-item text--subdued">
+          <span class="popover__choice-label">{{ 'customer.orders.title' | t }}</span>
+        </a>
+        <a href="{{ routes.account_addresses_url }}" class="popover__choice-item text--subdued">
+          <span class="popover__choice-label">{{ 'customer.addresses.title' | t }}</span>
+        </a>
+        <a href="{{ routes.account_logout_url }}" class="popover__choice-item text--subdued" data-no-instant>
+          <span class="popover__choice-label">{{ 'customer.logout.title' | t }}</span>
+        </a>
+      </div>
+    </div>
+  </popover-content>
+
+  {% if customer %}
+    {% assign created_tag = null %}
+    {% for tag in customer.tags %}
+      {% if tag.size == 10 and tag contains '-' %}
+        {% assign first_part = tag | slice: 0, 4 %}
+        {% if first_part >= '2000' and first_part <= '2099' %}
+          {% assign created_tag = tag %}
+          {% break %}
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+
+    {% assign current_year = 'now' | date: '%Y' %}
+    {% assign created_year = current_year %}
+
+    {% if created_tag %}
+      {% assign created_year = created_tag | slice: 0, 4 %}
+    {% endif %}
+
+    <div class="wd-header-section">
+      <h1 class="wd-welcome-title">{{ 'customer.general.welcome_title' | t: first_name: customer.first_name }}</h1>
+      <p class="wd-member-since">
+        {{ 'customer.general.member_since' | t }}
+        {{ created_year }}
+      </p>
+    </div>
+    <div class="wd-page-container">
+      <!-- Desktop Sidebar -->
+      <nav class="wd-sidebar wd-hidden-phone">
+        <ul class="wd-nav-list">
+          <li class="wd-nav-item">
+            {% if request.locale.iso_code == 'fr' %}
+              <a href="/fr/pages/member-profile" class="wd-nav-link wd-active">
+                {{- 'customer.member_profile.title' | t -}}
+              </a>
+            {% else %}
+              <a href="/pages/member-profile" class="wd-nav-link wd-active">
+                {{- 'customer.member_profile.title' | t -}}
+              </a>
+            {% endif %}
+          </li>
+          <li class="wd-nav-item">
+            {% if request.locale.iso_code == 'fr' %}
+              <a href="/fr/pages/perks" class="wd-nav-link">{{ 'customer.perks.title' | t }}</a>
+            {% else %}
+              <a href="/pages/perks" class="wd-nav-link">{{ 'customer.perks.title' | t }}</a>
+            {% endif %}
+          </li>
+          <li class="wd-nav-item">
+            {% if request.locale.iso_code == 'fr' %}
+              <a href="/fr/pages/wishlist" class="wd-nav-link">{{ 'customer.wishlist.title' | t }}</a>
+            {% else %}
+              <a href="/pages/wishlist" class="wd-nav-link">{{ 'customer.wishlist.title' | t }}</a>
+            {% endif %}
+          </li>
+          <li class="wd-nav-item">
+            <a href="{{ routes.account_url }}" class="wd-nav-link">{{ 'customer.orders.title' | t }}</a>
+          </li>
+          <li class="wd-nav-item">
+            <a href="{{ routes.account_addresses_url }}" class="wd-nav-link">{{ 'customer.addresses.title' | t }}</a>
+          </li>
+        </ul>
+        <div class="wd-logout-section">
+          <a href="{{ routes.account_logout_url }}" class="wd-logout-btn" data-no-instant>
+            {{- 'customer.logout.title' | t -}}
+          </a>
+        </div>
+      </nav>
+
+      <!-- Main Content -->
+      <div class="wd-newletter-main">
+        {% if settings.member_banner_enabled %}
+          <div class="wd-newsletters" bis_skin_checked="1" style="display:none;">
+            {% if request.locale.iso_code == 'fr' %}
+            <h2 class="wd-perks-title">{{ settings.fr_member_banner_heading }}</h2>
+            {% else %}
+              <h2 class="wd-perks-title hea">{{ settings.member_banner_heading }}</h2>
+            {% endif %}
+            {% if request.locale.iso_code == 'fr' %}
+            <p class="wd-news-detail">
+              {{ settings.fr_member_banner_subheading }}
+            </p>
+            {% else %}
+              <p class="wd-news-detail">
+              {{ settings.member_banner_text }}
+            </p>
+            {% endif %}
+            <a href="#" class="wd-logout-btn stay-loop">
+              {{ 'customer.register.stay_in_loop_button' | t | default: 'Stay in loop' }}
+            </a>
+          </div>
+        {% endif %}
+        <main class="wd-main-content" id="wd-main-content" style="width:100%;">
+          <!-- Content Grid -->
+          <div class="wd-content-grid">
+            <!-- Left Column - Member Details -->
+            <div class="wd-details-section">
+              <div class="wd-detail-item">
+                <label class="wd-detail-label">{{ 'customer.register.first_name' | t }}</label>
+                <p class="wd-detail-value">{{ customer.first_name }}</p>
+              </div>
+              <div class="wd-detail-item">
+                <label class="wd-detail-label">{{ 'customer.register.last_name' | t }}</label>
+                <p class="wd-detail-value">{{ customer.last_name }}</p>
+              </div>
+              <div class="wd-detail-item">
+                <label class="wd-detail-label">{{ 'customer.register.email' | t }}</label>
+                <p class="wd-detail-value">{{ customer.email }}</p>
+              </div>
+              {% comment %}
+                <div class="wd-detail-item">
+                  <label class="wd-detail-label">{{ 'customer.register.phone' | t }}</label>
+                  <p class="wd-detail-value">{{ customer.phone | default: '(514)-000-0000' }}</p>
+                </div>
+              {% endcomment %}
+            </div>
+
+            <!-- Right Column - Member Card -->
+            <div class="wd-card-section">
+              <div class="wd-member-card">
+                <div class="wd-card-header">
+                  <h3 class="wd-card-title">{{ 'customer.general.member_card' | t }}</h3>
+                </div>
+                <div class="wd-qrmain">
+                  <div class="wd-qr-container">
+                    <div id="qrcode"></div>
+                  </div>
+                  <div class="wd-card-footer">
+                    <img src="https://cdn.shopify.com/s/files/1/0568/7735/0964/files/Vector.png?v=1758298796">
+                    <div class="wd-card-info">
+                      <p class="wd-card-email">{{ customer.email | upcase }}</p>
+                      <p class="wd-card-name">
+                        {{ customer.first_name | upcase }}
+                        {{ customer.last_name | upcase }}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Wallet Buttons -->
+              <div class="wd-wallet-section">
+                {% comment %}
+                  <div class="wd-wallet-text">
+                    {{ 'customer.general.enlarge_member_card' | t }}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="25" viewBox="0 0 24 25" fill="none">
+                      <path d="M15 9.77051L20 4.77051M20 4.77051V8.77051M20 4.77051H16M9 15.7705L4 20.7705M4 20.7705V16.7705M4 20.7705H8" stroke="#1A030C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </div>
+                {% endcomment %}
+                <div class="wd-wallet-buttons">
+                  {% comment %}
+                    <a id="apple-wallet-btn" href="#" class="wd-wallet-btn wd-download-pkpass" style="display: none;">
+                      <img
+                        src="https://cdn.shopify.com/s/files/1/0568/7735/0964/files/apple-wallet.png?v=1751541536"
+                        alt="{{ 'gift_card.issued.add_to_apple_wallet' | t }}"
+                      >
+                      <div class="wd-btn-text">
+                        <span class="wd-sm-text">{{ 'gift_card.issued.add_to_apple_wallet' | t | split: ' ' | first }}</span
+                        ><br>
+                        <span>{{ 'gift_card.issued.add_to_apple_wallet' | t | split: ' ' | slice: 1, 2 | join: ' ' }}</span>
+                      </div>
+                    </a>
+                  {% endcomment %}
+                  {% comment %} <a
+                    id="google-wallet-btn"
+                    href="#"
+                    class="wd-wallet-btn wd-download-pkpass"
+                    style="display: inline-flex;"
+                  >
+                    <img
+                      src="https://cdn.shopify.com/s/files/1/0568/7735/0964/files/google-wallet.png?v=1751541536"
+                      alt="{{ 'gift_card.issued.add_to_google_wallet' | t }}"
+                    >
+                    <div class="wd-btn-text">
+                      <span class="wd-sm-text">
+                        {{- 'gift_card.issued.add_to_google_wallet' | t | split: ' ' | first -}}</span
+                      ><br>
+                      <span>
+                        {{- 'gift_card.issued.add_to_google_wallet' | t | split: ' ' | slice: 1, 2 | join: ' ' -}}
+                      </span>
+                    </div>
+                  </a> {% endcomment %}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="wd-perks-section wd-desktop-perks">
+            <h2 class="wd-perks-title">{{ 'customer.perks.title' | t }}</h2>
+            <div class="wd-perks-tags">
+              <span class="wd-perk-tag">{{ 'customer.perks.free_shipping' | t }}</span>
+              <span class="wd-perk-tag">{{ 'customer.perks.receipt_free_returns' | t }}</span>
+              <span class="wd-perk-tag">{{ 'customer.perks.early_access_new_arrivals' | t }}</span>
+              <span class="wd-perk-tag">{{ 'customer.perks.private_member_sales' | t }}</span>
+              <span class="wd-perk-tag">{{ 'customer.perks.jp_member_card' | t }}</span>
+            </div>
+            {% if request.locale.iso_code == 'fr' %}
+              <a href="/fr/pages/perks" class="wd-learn-more-link">{{ 'customer.general.learn_more' | t }}</a>
+            {% else %}
+              <a href="/pages/perks" class="wd-learn-more-link">{{ 'customer.general.learn_more' | t }}</a>
+            {% endif %}
+          </div>
+        </main>
+      </div>
+    </div>
+  {% else %}
+    <p>
+      {{ 'customer.login.wishlistmessage' | t }}
+      <a href="/account/login">{{ 'customer.login.login_link' | t }}</a>.
+    </p>
+    <script>
+      window.location.href = '/account/login';
+    </script>
+  {% endif %}
+</section>
+
+<script>
+  function isAppleDevice() {
+    return false;
+    //return /iPhone|iPad|iPod|Macintosh/.test(navigator.userAgent);
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    {% if customer %}
+    // Show appropriate wallet button
+    if (isAppleDevice()) {
+      //document.getElementById('apple-wallet-btn').style.display = 'inline-flex';
+      //document.getElementById('google-wallet-btn').style.display = 'none';
+    } else {
+      //document.getElementById('apple-wallet-btn').style.display = 'none';
+      //document.getElementById('google-wallet-btn').style.display = 'inline-flex';
+    }
+
+    // Generate QR Code with customer data
+    const customerData = {
+      email: '{{ customer.email }}',
+      name: '{{ customer.first_name }} {{ customer.last_name }}',
+    };
+
+    const qrContent = customerData.email;
+
+    // QR Code
+    new QRCode(document.getElementById('qrcode'), {
+      text: qrContent,
+      width: 100,
+      height: 100,
+      colorDark: "#ffffff",
+      colorLight: "#DB1B5E"
+    });
+
+    // Wallet button functionality - generates pass with customer data
+    document.querySelectorAll('.wd-download-pkpass').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.preventDefault();
+        const url = ``;
+        window.location.href = url;
+      });
+    });
+
+    // ========================================
+    // NEWSLETTER SUBSCRIPTION LOGIC
+    // ========================================
+    const customerEmail = "{{ customer.email }}";
+    const newslettersSection = document.querySelector('.wd-newsletters');
+    const stayLoopBtn = document.querySelector('.stay-loop');
+    
+    let isSubscriptionCheckComplete = false;
+    let userAlreadySubscribed = false;
+    // ✅ FIRST: Check if user is already subscribed
+    if (customerEmail && newslettersSection && stayLoopBtn) {
+      // ✅ SECOND: Setup button click handler (runs independently)
+      stayLoopBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation(); // Prevent event bubbling
+
+        //console.log("🔘 Button clicked!");
+        //console.log("   - Check complete:", isSubscriptionCheckComplete);
+        //console.log("   - Already subscribed:", userAlreadySubscribed);
+        //console.log("   - Button disabled:", stayLoopBtn.disabled);
+
+        // Double-check: Don't subscribe if already subscribed or disabled
+        if (stayLoopBtn.disabled || userAlreadySubscribed) {
+          //console.log("⛔ Subscription blocked - user already subscribed or button disabled");
+          return false;
+        }
+
+        // Prevent multiple clicks
+        stayLoopBtn.disabled = true;
+        stayLoopBtn.textContent = 'Subscribing...';
+
+        const email = "{{ customer.email }}";
+        const name  = "{{ customer.first_name }} {{ customer.last_name }}";
+
+        const url = "";
+        const formData = new FormData();
+        formData.append('email', email);
+        formData.append('name', name);
+
+        //console.log("📤 Sending subscription request for:", email);
+
+        fetch(url, {
+          method: "POST",
+          body: formData
+        })
+        .then(response => response.text())
+        .then(data => {
+          //console.log("✅ Newsletter Response:", data);
+           const storageKey = `klaviyo_sub_status_${customerEmail}`;
+           sessionStorage.setItem(storageKey, 'true');
+             const newsletterSection = document.querySelector('.footer__item--custom-html');
+        const mobilenewsletterSection = document.querySelector('.mobile-klaviyo');
+         newsletterSection.style.display = 'none';
+          if (mobilenewsletterSection) {
+            mobilenewsletterSection.style.display = 'none';
+          }
+          const footers = document.querySelectorAll('footer');
+          footers.forEach(function (footer) {
+            if (!footer.classList.contains('c-footer')) {
+              footer.classList.add('c-footer');
+            }
+          });
+          // Update button to subscribed state
+          stayLoopBtn.textContent = 'Subscribed';
+          stayLoopBtn.style.backgroundColor = '#DB1B5E';
+          stayLoopBtn.style.cursor = 'not-allowed';
+          stayLoopBtn.style.opacity = '0.7';
+          userAlreadySubscribed = true;
+          
+          // Hide the section after successful subscription
+         
+        })
+        .catch(err => {
+          console.error("❌ Newsletter error:", err);
+          stayLoopBtn.disabled = false;
+          stayLoopBtn.textContent = 'Stay in Loop';
+          alert("⚠️ Something went wrong. Please try again.");
+        });
+
+        return false; // Prevent any default action
+      }, { once: false }); // Allow multiple clicks but handle with disabled state
+    }
+    
+    {% endif %}
+  });
+</script>
+{% if request.locale.iso_code == 'fr' %}
+  <style>
+    main.wd-main-content {
+      width: 100% !important;
+    }
+
+    .wd-card-title {
+      font-size: 63px;
+    }
+    @media (max-width: 1024px) {
+      .wd-card-title {
+        font-size: 51px;
+      }
+    }
+    @media (max-width: 1024px) {
+      .wd-card-title {
+        font-size: 49px;
+      }
+    }
+    @media (max-width: 460px) {
+      .wd-card-title {
+        font-size: 43px;
+        line-height: 59px;
+      }
+    }
+    @media (max-width: 401px) {
+      .wd-card-title {
+        font-size: 38px;
+        line-height: 51px;
+        padding-top: 7px;
+        padding-bottom: 6px;
+      }
+    }
+  </style>
+{% endif %}
