@@ -365,7 +365,7 @@ RULES:
   separated by commas.
 - If one file contains multiple features, split into multiple blocks.
 - Scan the ENTIRE diff for distinct features. Don't stop after the first
-  few changes
+  few changes.
 
 DO NOT create functionality blocks for these noise categories — skip them entirely:
 - Translation / locale file updates (files in locales/, lang/, i18n/, or .po/.mo files).
