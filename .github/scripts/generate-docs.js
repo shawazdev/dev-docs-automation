@@ -57,8 +57,6 @@ const isPushEvent = eventName === 'push';
 const repoName   = process.env.REPO_NAME || 'unknown-repo';
 
 let entryId, entryTitle, entryBody, entryUrl, entryAuthor, entryTime, labels, shortSha;
-// FIX 1: Track the branch that was merged in (for push events that include a merge)
-let mergedFromBranch = '';
 
 // Recognised inline tags developers can include in commit messages or PR
 // titles/descriptions. Useful for direct pushes (which have no PR labels)
@@ -82,24 +80,6 @@ function extractTagsFromText(text) {
   return [...new Set(matches.map(m => m[1].toLowerCase()))];
 }
 
-// FIX 1: Extract merged branch name from commit messages like:
-//   "Merge branch 'feature/my-feature' into main"
-//   "Merge pull request #12 from org/feature/my-feature"
-//   "Merged feature/my-feature"
-function extractMergedBranch(commitMessage) {
-  if (!commitMessage) return '';
-  const patterns = [
-    /^Merge branch '([^']+)'/im,
-    /^Merge pull request #\d+ from [^/]+\/(.+)/im,
-    /^Merged? (\S+) into/im,
-  ];
-  for (const re of patterns) {
-    const m = commitMessage.match(re);
-    if (m && m[1]) return m[1].trim();
-  }
-  return '';
-}
-
 if (isPushEvent) {
   const sha = process.env.COMMIT_SHA || '';
   shortSha    = sha.slice(0, 7) || 'unknown';
@@ -111,8 +91,6 @@ if (isPushEvent) {
   entryTime   = process.env.COMMIT_TIME || new Date().toISOString();
   // No GitHub labels on a raw push — extract tags from commit message instead
   labels = extractTagsFromText(entryBody);
-  // FIX 1: Detect if this push was a merge from another branch
-  mergedFromBranch = extractMergedBranch(entryBody);
 } else {
   entryId     = process.env.PR_NUMBER || '?';
   entryTitle  = process.env.PR_TITLE || '(no title)';
@@ -203,17 +181,6 @@ const isConfig = f =>
   /\.config\.(js|ts|json|mjs|cjs)$/i.test(f) ||
   /\.(yml|yaml|toml|ini|conf)$/i.test(f);
 
-// FIX 2: Detect .yml/.yaml workflow/CI files and standalone .js config/tooling files
-// that should never appear as functionality blocks in the documentation.
-const isWorkflowOrToolingFile = f =>
-  /\.(yml|yaml)$/i.test(f) ||                          // all YAML files (CI, workflows, configs)
-  /^\.github\//i.test(f) ||                            // anything under .github/
-  /\.(config|setup|build)\.(js|mjs|cjs)$/i.test(f) || // e.g. vite.config.js, webpack.config.js
-  /(^|\/)\.eslintrc(\.(js|json|yml))?$/i.test(f) ||   // ESLint config
-  /(^|\/)\.prettierrc(\.(js|json|yml))?$/i.test(f) || // Prettier config
-  /(^|\/)jest\.config\.(js|ts)$/i.test(f) ||          // Jest config
-  /(^|\/)babel\.config\.(js|json)$/i.test(f);          // Babel config
-
 const isLaravelBackend = f =>
   /(^|\/)app\/Http\/Controllers\//i.test(f) ||
   /(^|\/)app\/Models?\//i.test(f) ||
@@ -268,43 +235,32 @@ function isUpstreamMergeCommit() {
   return looksLikeMergeMsg && filesArr.length >= CONFIG.largePushFileCount;
 }
 
-// FIX 2: Compute the "meaningful" file list by stripping workflow/tooling files.
-// This filtered list is used for classification and AI prompting so that
-// .yml/.js tooling files mixed into a real feature push don't pollute the doc.
-const meaningfulFilesArr = filesArr.filter(f => !isWorkflowOrToolingFile(f));
-const workflowFilesArr   = filesArr.filter(f => isWorkflowOrToolingFile(f));
-
 function classify() {
-  // FIX 2: Use meaningfulFilesArr for classification so that a push that
-  // touches both feature files and .yml/.js tooling is classified on the
-  // feature files alone.
-  const mf = meaningfulFilesArr;
-
   if (labels.includes('skip-log'))     return { action: 'skip', reason: 'skip-log label' };
   if (labels.includes('log-detailed')) return { action: 'full', reason: 'log-detailed label' };
   if (labels.includes('hotfix'))       return { action: 'full', reason: 'hotfix label', tag: 'HOTFIX' };
   if (/^revert/i.test(entryTitle))     return { action: 'full', reason: 'revert', tag: 'REVERT' };
 
   // .github-only changes (workflow tweaks, this script, config) — never logged.
+  // Avoids the meta-noise of every workflow iteration spamming the dev log.
   if (filesArr.length > 0 && filesArr.every(isGithubMeta))
     return { action: 'skip', reason: '.github-only change (workflow / scripts / metadata)' };
 
-  // If ALL meaningful files are gone after stripping tooling, it's a tooling-only push.
-  if (filesArr.length > 0 && mf.length === 0)
-    return { action: 'skip', reason: 'tooling/workflow-only change (.yml/.js config files)' };
-
-  // Upstream merges → one-liner.
+  // Upstream merges → one-liner. The real work was documented in the original PRs.
   if (isUpstreamMergeCommit())
     return { action: 'oneline', reason: `merge from upstream (${filesArr.length} files)` };
 
-  if (mf.length === 0)             return { action: 'full', reason: 'no file list' };
-  if (mf.every(isDoc))             return { action: 'oneline', reason: 'documentation-only update' };
-  if (mf.every(isTranslation))     return { action: 'oneline', reason: 'translations-only update' };
-  if (mf.some(isDatabase))         return { action: 'full', reason: 'database / migration change', tag: 'DB' };
-  if (mf.some(isBackend))          return { action: 'full', reason: 'backend / server logic change', tag: 'BACKEND' };
-  if (mf.some(isShopifyAPI))       return { action: 'full', reason: 'Shopify checkout / API change', tag: 'SHOPIFY' };
+  if (filesArr.length === 0)           return { action: 'full', reason: 'no file list' };
+  if (filesArr.every(isDoc))           return { action: 'oneline', reason: 'documentation-only update' };
+  if (filesArr.every(isTranslation))   return { action: 'oneline', reason: 'translations-only update' };
+  if (filesArr.some(isDatabase))       return { action: 'full', reason: 'database / migration change', tag: 'DB' };
+  if (filesArr.some(isBackend))        return { action: 'full', reason: 'backend / server logic change', tag: 'BACKEND' };
+  if (filesArr.some(isShopifyAPI))     return { action: 'full', reason: 'Shopify checkout / API change', tag: 'SHOPIFY' };
 
-  if (mf.filter(isConfig).length >= Math.ceil(mf.length / 2) &&
+  // Config moved BELOW backend so a push that's mostly backend with one .env
+  // change is tagged BACKEND, not CONFIG. Also requires config to be the
+  // majority of changed files.
+  if (filesArr.filter(isConfig).length >= Math.ceil(filesArr.length / 2) &&
       totalLines > CONFIG.configMinLines)
     return { action: 'full', reason: 'config update', tag: 'CONFIG' };
 
@@ -319,17 +275,17 @@ function classify() {
       ? { action: 'full', reason: `large refactor (${totalLines} lines)`, tag: 'REFACTOR' }
       : { action: 'oneline', reason: `small refactor (${totalLines} lines)` };
   }
-  if (mf.every(isThemeTemplate)) {
+  if (filesArr.every(isThemeTemplate)) {
     return totalLines > CONFIG.themeTemplateLines
       ? { action: 'full', reason: `large theme template change (${totalLines} lines)` }
       : { action: 'oneline', reason: `small theme template change (${totalLines} lines)` };
   }
-  if (mf.every(isReactComponent)) {
+  if (filesArr.every(isReactComponent)) {
     return totalLines > CONFIG.reactComponentLines
       ? { action: 'full', reason: `large React component change (${totalLines} lines)` }
       : { action: 'oneline', reason: `small React component change (${totalLines} lines)` };
   }
-  if (mf.every(isStyling)) {
+  if (filesArr.every(isStyling)) {
     return totalLines > CONFIG.stylingLines
       ? { action: 'full', reason: `large CSS/styling change (${totalLines} lines)` }
       : { action: 'oneline', reason: `small CSS/styling change (${totalLines} lines)` };
@@ -355,16 +311,7 @@ function buildUserPrompt() {
     ? `Direct push commit ${shortSha}: ${entryTitle}`
     : `PR #${entryId}: ${entryTitle}`;
 
-  // FIX 2: Pass only the meaningful (non-tooling) file list to the AI so it
-  // never generates functionality blocks for .yml/.js workflow files.
-  const meaningfulFileList = meaningfulFilesArr.join('\n') || '(none)';
-  const isLargeChange = meaningfulFilesArr.length >= CONFIG.largePushFileCount;
-
-  // FIX 2: If workflow/tooling files were present but excluded, tell the AI
-  // so it can mention them briefly in NOTES without creating blocks for them.
-  const excludedNote = workflowFilesArr.length > 0
-    ? `\nExcluded from analysis (workflow/tooling files — do NOT create blocks for these):\n${workflowFilesArr.join('\n')}`
-    : '';
+  const isLargeChange = filesArr.length >= CONFIG.largePushFileCount;
 
   return `Write a structured changelog entry for the following change.
 
@@ -375,14 +322,13 @@ Merged: ${timeStr}
 URL: ${entryUrl}
 Labels: ${labels.join(', ') || 'none'}
 Lines changed: +${additions} / -${deletions}
-File count: ${meaningfulFilesArr.length} meaningful file(s) (${filesArr.length} total)
-${mergedFromBranch ? `Merged from branch: ${mergedFromBranch}` : ''}
+File count: ${filesArr.length}
 
 Original commit message / PR description (may be generic — see TITLE rules below):
 ${entryBody || '(none)'}
 
-Changed files — meaningful only (${meaningfulFilesArr.length}):
-${meaningfulFileList}${excludedNote}
+Changed files (${filesArr.length}):
+${changedFiles || '(none)'}
 
 Diff (up to ${CONFIG.diffMaxChars} characters — scan the WHOLE diff, not just the start):
 ${codeDiff || '(none)'}
@@ -405,7 +351,6 @@ or changed.
 OVERVIEW
 Two or three sentences describing the most important things this change
 introduces or modifies. Be concrete. Mention specific features by name.
-${mergedFromBranch ? `Also note that these changes were merged from the '${mergedFromBranch}' branch.` : ''}
 
 FUNCTIONALITIES
 List each DISTINCT feature or change as a SEPARATE functionality block.
@@ -421,11 +366,10 @@ RULES:
 - If one file contains multiple features, split into multiple blocks.
 - Scan the ENTIRE diff for distinct features. Don't stop after the first
   few changes.
-- Only use files from the "Changed files — meaningful only" list above.
-  Do NOT reference any files from the "Excluded" list.
 
 DO NOT create functionality blocks for these noise categories — skip them entirely:
 - Translation / locale file updates (files in locales/, lang/, i18n/, or .po/.mo files).
+  Translations are routine and not worth a block, even when mixed into a bigger change.
 - Font additions, font-family declarations, or @font-face rule changes on their own.
 - Whitespace, indentation, line-ending, or formatting-only changes.
 - Auto-generated files (lock files, build output, minified bundles).
@@ -433,14 +377,13 @@ DO NOT create functionality blocks for these noise categories — skip them enti
 - Minor dependency version bumps in package.json / composer.json with no real code change.
 - Lint / Prettier / editorconfig / .gitignore tweaks.
 - Generated migration timestamps with no schema change.
-- ANY .yml, .yaml, workflow, or JS config/tooling files (these are already excluded above).
 
 If the diff contains BOTH meaningful features AND noise from the list above,
 include only the meaningful features. You may briefly mention the noise in NOTES
-(e.g "Also includes translation updates and a font addition.") but do not give
+(e.g. "Also includes translation updates and a font addition.") but do not give
 them their own blocks.
 
-${isLargeChange ? `- This is a LARGE change (${meaningfulFilesArr.length} files). Aim for 8–15 functionality
+${isLargeChange ? `- This is a LARGE change (${filesArr.length} files). Aim for 8–15 functionality
   blocks covering the most significant features. Skip noise per the list above.` : `- Aim for 3–8 functionality blocks. One block per logical feature.`}
 
 Format for each block:
@@ -455,7 +398,6 @@ Process:
 NOTES
 Migration steps, breaking changes, dependencies added/removed, or caveats.
 You may also mention skipped noise here (e.g. "Also includes translation updates").
-${workflowFilesArr.length > 0 ? `Note: ${workflowFilesArr.length} workflow/tooling file(s) (.yml/.js) were also modified but are not documented here.` : ''}
 Write "None" if nothing special.`;
 }
 
@@ -554,13 +496,6 @@ const STYLE = {
     foregroundColor: { color: { rgbColor: { red: 0.6, green: 0.0, blue: 0.0 } } },
     fontSize: { magnitude: 9, unit: 'PT' },
   },
-  // FIX 1: New badge style for the merged-from-branch indicator
-  branchBadge: {
-    bold: true,
-    backgroundColor: { color: { rgbColor: { red: 0.88, green: 0.97, blue: 0.88 } } },
-    foregroundColor: { color: { rgbColor: { red: 0.05, green: 0.40, blue: 0.05 } } },
-    fontSize: { magnitude: 9, unit: 'PT' },
-  },
   sectionLabel: {
     bold: true,
     fontSize: { magnitude: 11, unit: 'PT' },
@@ -586,7 +521,6 @@ const FIELDS = {
   authorMuted:     'italic,foregroundColor',
   tagBadge:        'bold,backgroundColor,foregroundColor,fontSize',
   pushBadge:       'bold,backgroundColor,foregroundColor,fontSize',
-  branchBadge:     'bold,backgroundColor,foregroundColor,fontSize',   // FIX 1
   sectionLabel:    'bold,fontSize',
   filePath:        'weightedFontFamily,foregroundColor,fontSize',
   overviewItalic:  'italic,foregroundColor',
@@ -634,11 +568,6 @@ function buildFullEntrySegments(parsed, tag) {
   }
   if (isPushEvent) {
     segs.push({ text: ' DIRECT PUSH ', style: 'pushBadge' });
-    segs.push({ text: '  ' });
-  }
-  // FIX 1: Show merged-from-branch badge when applicable
-  if (mergedFromBranch) {
-    segs.push({ text: ` ← ${mergedFromBranch} `, style: 'branchBadge' });
     segs.push({ text: '  ' });
   }
 
@@ -691,7 +620,7 @@ function buildFullEntrySegments(parsed, tag) {
     segs.push({ text: '\n\n' });
   }
 
-  // Divider
+  // Divider — like the screenshot's sparkle separator
   segs.push({ text: '────────────────────  ✦  ────────────────────', style: 'dividerGrey' });
   segs.push({ text: '\n\n' });
 
@@ -704,11 +633,6 @@ function buildOneLineSegments(reason) {
   segs.push({ text: '  ' });
   if (isPushEvent) {
     segs.push({ text: ' DIRECT PUSH ', style: 'pushBadge' });
-    segs.push({ text: '  ' });
-  }
-  // FIX 1: Also show branch badge on one-liner entries
-  if (mergedFromBranch) {
-    segs.push({ text: ` ← ${mergedFromBranch} `, style: 'branchBadge' });
     segs.push({ text: '  ' });
   }
   segs.push({ text: entryTitle, style: 'titleBold' });
@@ -730,18 +654,13 @@ function buildFallbackSegments(errMsg) {
   segs.push({ text: '  ' });
   segs.push({ text: ' NEEDS REVIEW ', style: 'pushBadge' });
   segs.push({ text: '  ' });
-  // FIX 1: Branch badge on fallback entries too
-  if (mergedFromBranch) {
-    segs.push({ text: ` ← ${mergedFromBranch} `, style: 'branchBadge' });
-    segs.push({ text: '  ' });
-  }
   segs.push({ text: entryTitle, style: 'titleBold' });
   segs.push({ text: '   ' });
   segs.push({ text: `— by ${entryAuthor}`, style: 'authorMuted' });
   segs.push({ text: '\n\n' });
   segs.push({ text: `AI summary unavailable: ${errMsg}\n`, style: 'overviewItalic' });
   segs.push({ text: `Link: ${entryUrl}\n`, style: 'authorMuted' });
-  segs.push({ text: `Files: ${meaningfulFilesArr.join(', ') || 'none'}\n\n` });
+  segs.push({ text: `Files: ${filesArr.join(', ') || 'none'}\n\n` });
   segs.push({ text: '────────────────────  ✦  ────────────────────', style: 'dividerGrey' });
   segs.push({ text: '\n\n' });
   return segs;
@@ -807,9 +726,7 @@ async function insertRichEntry(segments) {
   console.log(`Repo:  ${repoName}`);
   console.log(`Title: ${entryTitle}`);
   console.log(`Lines: +${additions} / -${deletions}  (total ${totalLines})`);
-  console.log(`Files: ${filesArr.length} total, ${meaningfulFilesArr.length} meaningful    Labels: ${labels.join(', ') || 'none'}`);
-  if (mergedFromBranch) console.log(`Merged from branch: ${mergedFromBranch}`);
-  if (workflowFilesArr.length) console.log(`Excluded tooling files: ${workflowFilesArr.join(', ')}`);
+  console.log(`Files: ${filesArr.length}    Labels: ${labels.join(', ') || 'none'}`);
 
   if (await isCommitFromMergedPR()) return;
 
