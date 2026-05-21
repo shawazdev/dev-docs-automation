@@ -47,11 +47,11 @@
     "show_page_transition": true,
     "heading_apparition": "none",
     "color_swatch_style": "round",
-    "color_swatch_config": "Heather Charcoal:#565656\nNavy Blazer:#1D2A50\nDark Red:#61373F\nHeather Gray:#C2C3C6\nSpartan Green:#35463D\nArmy Green:#545144\nWashed Black:#39373B\nTobacco:#704214\nMidnight: #353A4C\nSmoke: #C4C6C8\nGray: #BABCC0\nWhite: #FAF9F6\nCement: #BABCC0\nDesert Taupe: #8D7E71\nCali Wine Plaid: SZT11_CALI_WINE_PLAID_08.jpg\nBlack Heather Twill: SZT11_BLACK_HEATHER_TWILL_06.jpg\nGray/Navy: SZT14_BG_SWATCH.jpg\nIron Gray: #4E5055\nSilver Gray: #C6BFB8\nCrown Blue: #535D94\nSlate Blue: #52566C\nCrimson Red: #A53636\nOlive: #6E6E5C\nDesert: #B8B0A1\nStorm Blue: #144364\nGraphite: #3B3B48",
+    "color_swatch_config": "Heather Charcoal:#565656\nNavy Blazer:#282D3C\nDark Red:#61373F\nHeather Gray:#C2C3C6\nSpartan Green:#35463D\nArmy Green:#545144\nWashed Black:#39373B\nTobacco:#704214\nMidnight: #353A4C\nSmoke: #C4C6C8\nGray: #BABCC0\nWhite: #FAF9F6\nCement: #BABCC0\nDesert Taupe: #8D7E71\nCali Wine Plaid: SZT11_CALI_WINE_PLAID_08.jpg\nBlack Heather Twill: SZT11_BLACK_HEATHER_TWILL_06.jpg\nGray/Navy: SZT14_BG_SWATCH.jpg",
     "show_vendor": false,
     "show_product_rating": false,
     "discount_mode": "percentage",
-    "product_color_display": "smart",
+    "product_color_display": "count",
     "product_image_aspect_ratio": "tall_crop",
     "product_info_alignment": "start",
     "cart_type": "drawer",
@@ -119,20 +119,25 @@
         "disabled": false,
         "settings": {
           "hideSubtotal": true,
-          "showCartTotal": true,
-          "showCompareAtPrice": false,
-          "showInlineCartButton": false,
-          "swapButtonOrder": false,
           "parentMarginBottom": 4,
           "infoIconUrl": "https://cdn.savedby.io/logos/savedby/SavedByLogo-small.png",
           "infoBGColor": "#f5f5f5",
           "infoTextColor": "#000000",
           "infoVariant": "SIMPLE",
+          "checkoutButtonBGColor": "#000000",
+          "checkoutButtonTextColor": "#ffffff",
+          "checkoutButtonBorderRadius": 5,
           "continueTextColor": "#000000",
           "continueFontSize": 15,
+          "showLockIcon": false,
+          "showCartTotal": true,
+          "showCompareAtPrice": false,
+          "showInlineCartButton": false,
+          "swapButtonOrder": false,
           "disclaimerLocation": "bottom",
           "disclaimer": "",
           "customCheckoutSelector": "",
+          "tosSelector": "",
           "customCSS": ":host([data-path=\"/cart\"]) div.sb__info-container {\nborder-radius: 26px;\n}\n\n:host([data-path=\"/cart\"]) div.sb__info-wrapper {\nmargin-top: 0;\n}",
           "customJS": "document.head.insertAdjacentHTML(\n\t\"beforeend\",\n\t`\n<style>\nbutton#mu-checkout-button {\nmargin: 0 !important;\n}\n\ndiv#monster-cart-wrapper,\ndiv#monster-upsell-cart div:first-of-type {\nz-index: 2147483646;\n}\n</style>\n`\n);\n\nSavedBy.onCheckout((cart) => {\n\tconst noteElm = document.querySelector(\"div.cart [name='note']\") || document.querySelector(\"[name='note']\");\n\tconst noteValue = noteElm.value;\n\tif (noteValue) {\n\t\tcart.note = noteValue;\n\t}\n\treturn cart;\n});",
           "popupOverride": ""
@@ -183,12 +188,7 @@
       },
       "18356332299842544250": {
         "type": "shopify://apps/b4b-variants-products/blocks/variable_init/4b5ec290-6de8-4c3d-b99f-b8721f30ea87",
-        "disabled": false,
-        "settings": {}
-      },
-      "pagefly-page-builder": {
-        "type": "shopify://apps/pagefly-page-builder/blocks/app-embed/83e179f7-59a0-4589-8c66-c0dddf959200",
-        "disabled": false,
+        "disabled": true,
         "settings": {}
       }
     }

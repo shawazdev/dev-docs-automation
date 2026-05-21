@@ -389,19 +389,6 @@
         autoplaySpeed: 3000,
         prevArrow: '<button class="custom-prev-arrow"><i class="fa fa-chevron-left" aria-hidden="true"></i></button>',
         nextArrow: '<button class="custom-next-arrow"><i class="fa fa-chevron-right" aria-hidden="true"></i></button>',
-        // MOBILE PEEK UX: 1 full image + ~20% peek of the next (Rhone-style). Desktop unchanged.
-        // variableWidth lets Slick read per-slide widths from CSS (see custom-style.css).
-        // Breakpoint 768 aligns with the @media (max-width: 768px) rule in custom-style.css.
-        responsive: [
-          {
-            breakpoint: 768,
-            settings: {
-              slidesToShow: 1,
-              slidesToScroll: 1,
-              variableWidth: true,
-            },
-          },
-        ],
       });
 
       $('.slider-image').on('click', function () {
@@ -411,12 +398,10 @@
         // Check if zoom mode is active
         if ($('.zoom-close:visible').length > 0) {
           // Exit zoom mode
-          slider.removeClass('is-zoomed');
           slider.slick('slickSetOption', 'slidesToShow', 2, true);
           $('.zoom-close').fadeOut();
         } else {
           // Enter zoom mode
-          slider.addClass('is-zoomed');
           slider.slick('slickSetOption', 'slidesToShow', 1, true);
           $('.zoom-close').fadeIn(); // Show close buttons on all slides
           slider.slick('slickGoTo', slideIndex); // Move to clicked slide
@@ -425,7 +410,6 @@
 
       // When zoom is closed
       $('.zoom-close').on('click', function () {
-        slider.removeClass('is-zoomed');
         slider.slick('slickSetOption', 'slidesToShow', 2, true);
         $('.zoom-close').fadeOut(); // Hide all close buttons
       });

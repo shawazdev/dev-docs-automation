@@ -56,11 +56,11 @@ Supported variables
     <div class="v-stack gap-0.5 w-full {% if text_alignment == 'center' %}justify-items-center{% endif %}">
       {%- if settings.show_product_rating and settings.show_vendor == false -%}
         <div class="rating-with-text">
-          <span><a href="{{ product.url | within: collection }}" class="bold">{{ title_placeholder }}</a></span>
+          <span><a href="{{ product.url }}" class="bold">{{ title_placeholder }}</a></span>
           {%- render 'product-rating', show_placeholder: true, display_mode: settings.product_rating_mode -%}
         </div>
       {%- else -%}
-        <span><a href="{{ product.url | within: collection }}" class="bold">{{ title_placeholder }}</a></span>
+        <span><a href="{{ product.url }}" class="bold">{{ title_placeholder }}</a></span>
       {%- endif -%}
 
       <price-list class="price-list {% if text_alignment == 'center' %}justify-center{% endif %}">

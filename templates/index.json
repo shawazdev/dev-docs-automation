@@ -187,14 +187,14 @@
             "button_type": "secondary_with_icon",
             "size": "base",
             "text": "Shop now",
-            "url": "shopify://collections/strongsize-sport"
+            "url": "shopify://collections/big-tall-shirts-best-sellers"
           }
         },
         "subheading_jmEtDT": {
           "type": "subheading",
           "settings": {
-            "text": "Built For All Of It",
-            "font_size": 17,
+            "text": "Welcome to Strongsize",
+            "font_size": 20,
             "font_family": "MDSystem-Regular, serif",
             "font_weight": "400"
           }
@@ -202,7 +202,7 @@
         "heading_zHK9pA": {
           "type": "heading",
           "settings": {
-            "text": "Strongsize SPORT",
+            "text": "Built for Bigger. Made to Fit.",
             "heading_tag": "h1",
             "font_size": 50,
             "font_family": "MDSystemNarrow-Medium, sans-serif",
@@ -212,8 +212,8 @@
         "richtext_WLRtJp": {
           "type": "richtext",
           "settings": {
-            "content": "<p>Performance gear that works as hard as you do. </p>",
-            "font_size": 17,
+            "content": "<p>Premium comfort, durable fabrics,<br/>sizes XL–8XL.</p>",
+            "font_size": 20,
             "font_family": "MDSystem-Regular, serif",
             "font_weight": "400"
           }
@@ -233,43 +233,18 @@
         "video_size": "fill",
         "content_position": "center",
         "text_alignment": "center",
-        "video": "shopify://files/videos/Strongsize_Gym_16x9_1080p (no logo, no audio) (1).mp4",
+        "video": "shopify://files/videos/Fall25-campaign-video16x9_compressed.mp4",
         "external_video_url": "",
-        "mobile_video": "shopify://files/videos/Strongsize_Gym_9x16_1080p (no logo, no audio) (1).mp4",
+        "mobile_video": "shopify://files/videos/Fall25-campaign-video9x16_compressed.mp4",
         "mobile_external_video_url": "",
         "text_color": "#ffffff",
         "overlay_color": "#000000",
         "overlay_opacity": 30
       }
     },
-    "wd2_feature_collection_fxFFFK": {
-      "type": "wd2-feature-collection",
-      "name": "WD2 Featured collection",
-      "settings": {
-        "collection": "strongsize-sport",
-        "products": [],
-        "full_width": true,
-        "stack_products": false,
-        "show_progress_bar": false,
-        "products_count": 10,
-        "products_per_row_mobile": "2",
-        "products_per_row_desktop": 5,
-        "subheading": "",
-        "title": "Strongsize SPORT",
-        "content": "",
-        "link_url": "shopify://collections/strongsize-sport",
-        "link_text": "Shop Now",
-        "background": "",
-        "background_gradient": "",
-        "text_color": "",
-        "heading_color": "",
-        "heading_gradient": "",
-        "product_card_background": "",
-        "product_card_text_color": ""
-      }
-    },
     "wd_featured_collection_ECRDUx": {
       "type": "wd-featured-collection",
+      "disabled": true,
       "settings": {
         "collection": "big-tall-new-arrivals",
         "products": [],
@@ -293,9 +268,35 @@
         "product_card_text_color": ""
       }
     },
-    "wd2_feature_collection_yLHyaF": {
+    "wd2_feature_collection_fxFFFK": {
       "type": "wd2-feature-collection",
       "disabled": true,
+      "name": "WD2 Featured collection",
+      "settings": {
+        "collection": "sale",
+        "products": [],
+        "full_width": true,
+        "stack_products": false,
+        "show_progress_bar": false,
+        "products_count": 10,
+        "products_per_row_mobile": "2",
+        "products_per_row_desktop": 5,
+        "subheading": "",
+        "title": "Winter Styles, Final Call",
+        "content": "",
+        "link_url": "shopify://collections/sale",
+        "link_text": "Shop Now",
+        "background": "",
+        "background_gradient": "",
+        "text_color": "",
+        "heading_color": "",
+        "heading_gradient": "",
+        "product_card_background": "",
+        "product_card_text_color": ""
+      }
+    },
+    "wd2_feature_collection_yLHyaF": {
+      "type": "wd2-feature-collection",
       "name": "WD2 Featured collection",
       "settings": {
         "collection": "big-tall-shirts-best-sellers",
@@ -597,10 +598,10 @@
       ],
       "name": "WD2 Video",
       "settings": {
-        "title": "Big and Tall Clothing That Actually Fits.",
-        "subtitle": "<p>Most brands add a 2XL and call it inclusive. We call that an afterthought. Strongsize <a href=\"/collections/t-shirts\" title=\"T-Shirts\">t-shirts</a> and <a href=\"/collections/polos\" title=\"Polos\">polos</a> are size-exclusive, engineered from XL to 8XL for big men and no one else.</p>",
-        "link_text": "VIEW ALL TOPS",
-        "link_url": "shopify://collections/big-and-tall-tops"
+        "title": "Unrivaled Fit. <br>Sizes XL to 8XL.",
+        "subtitle": "<p>Unlike generic brands that merely scale up sizes, Strongsize is solely dedicated to the big and tall community. Our approach is different: we functionally engineer our clothing from scratch, exclusively for big and tall body types. <strong>Explore our </strong><a href=\"https://strongsize.com/collections/big-and-tall-crewneck-tshirts\"><strong>Crewneck T-Shirts</strong></a><strong>, </strong><a href=\"https://strongsize.com/collections/xl-8xl-big-tall-polo-shirts\"><strong>XL–8XL Polo Shirts</strong></a><strong>, and </strong><a href=\"https://strongsize.com/collections/big-tall-shirt-bundles\"><strong>Shirt Bundles</strong></a><strong> crafted exclusively for big & tall men.</strong></p>",
+        "link_text": "Learn More",
+        "link_url": "shopify://pages/fit-guide"
       }
     },
     "wd_testimonials_KFf6yT": {
@@ -773,8 +774,8 @@
   "order": [
     "wd_slideshow_paiwtn",
     "wd_hero_video_b3RyYh",
-    "wd2_feature_collection_fxFFFK",
     "wd_featured_collection_ECRDUx",
+    "wd2_feature_collection_fxFFFK",
     "wd2_feature_collection_yLHyaF",
     "wd_featured_collection_8ppWL7",
     "rich_text_h9Mnt4",

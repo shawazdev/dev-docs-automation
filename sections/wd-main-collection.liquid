@@ -56,7 +56,6 @@
 </style>
 
 <div class="container">
-  {%- render 'wd-breadcrumb', current_collection: collection -%}
   {%- if collection.all_products_count == 0 -%}
     <div class="empty-state">
       <div class="empty-state__icon-wrapper">
@@ -198,7 +197,7 @@
                       </div>
                     {%- endfor -%}
 
-                    {%- render 'wd-collection-product-card', product: product, stacked: true, show_badges: true -%}
+                    {%- render 'wd-product-card', product: product, stacked: true, show_badges: true -%}
                   {%- endfor -%}
                 </product-list>
               </reveal-items>

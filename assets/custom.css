@@ -8,6 +8,7 @@
   src: url("./Univers-Black.woff") format("woff");
   font-weight: 900;
 }
+
 @font-face {
   font-family: "FragmentMono-Regular";
   src: url("./FragmentMono-Regular.ttf") format("truetype");
@@ -3236,6 +3237,9 @@ inbox-online-store-chat {
   row-gap: unset;
 }
 
+.color-swatch.rounded-full {
+  border: 1px solid #dcdcdc;
+}
 
 .wd-disabled {
   display: flex !important;
@@ -3379,176 +3383,4 @@ iframe#richpanel_messenger_iframe {
   cart-drawer#cart-drawer cart-note.v-stack.gap-4 {
     gap: 10px !important;
   }
-}
-/* ── Breadcrumbs — Strongsize custom metafield system ── */
-.breadcrumb {
-  font-size: var(--font-size-xs, 0.75rem);
-  padding-top: 30px;
-}
-
-.breadcrumb__list {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 4px;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.breadcrumb__item {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-family: 'MDSystemNarrow-Medium';
-    font-size: 16px;
-    font-weight: normal;
-}
-
-/* Separator — added via CSS so it doesn't appear in screen readers */
-.breadcrumb__item:not(:last-child)::after {
-  content: '/';
-  opacity: 0.4;
-  font-size: 0.7em;
-}
-
-.breadcrumb__link {
-  color: currentColor;
-  opacity: 0.6;
-  text-decoration: none;
-  transition: opacity 0.2s;
-}
-
-.breadcrumb__link:hover {
-  opacity: 1;
-  text-decoration: underline;
-}
-
-.breadcrumb__current {
-  opacity: 0.9;
-  font-weight: 500;
-}
-  /* ── Breadcrumb — pull above product grid ── */
-.shopify-section--main-product .breadcrumb {
-  order: -1;
-  grid-column: 1 / -1;
-  padding: 12px 0 4px;
-  font-size: 0.8rem;
-  padding-left: 20px;
-    padding-right: 20px;
-}
-.product {
-    gap: 0rem 1.5rem;
-}
-.product-gallery__zoom {
-  display: none;
-}
-h2.product-info__title.h2{
-  margin-top: 10px;
-}
-.swatch-grid {
-  display: grid;
-  grid-template-columns: repeat(10, 1fr);
-  gap: 1px;
-}
-
-@media (max-width: 768px) {
-  .swatch-grid {
-    grid-template-columns: repeat(7, 1fr);
-  }
-}
-
-@media (max-width: 480px) {
-  .swatch-grid {
-    grid-template-columns: repeat(5, 1fr);
-  }
-}
-
-/* -----------------------------------------------------------------------------
-   Product card image gallery (PLP swipable images)
-   ----------------------------------------------------------------------------- */
-.product-card__gallery {
-  position: relative;
-  display: flex;
-  overflow-x: auto;
-  overflow-y: hidden;
-  scroll-snap-type: x mandatory;
-  overscroll-behavior-x: contain;
-  scrollbar-width: none;
-  -webkit-overflow-scrolling: touch;
-  touch-action: pan-x pan-y;
-}
-
-.product-card__gallery::-webkit-scrollbar {
-  display: none;
-}
-
-.product-card__slide {
-  flex: 0 0 100%;
-  min-width: 0;
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
-  display: block;
-}
-
-.product-card__slide .product-card__image {
-  width: 100%;
-  height: auto;
-}
-
-.wd-main-collection .product-card__gallery-arrow {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 32px;
-  height: 32px;
-  border-radius: 6px;
-  color: #000;
-  border: none;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9;
-  opacity: 1;
-  transition:
-    opacity 0.15s ease-in-out,
-    background-color 0.15s ease-in-out;
-  cursor: pointer;
-}
-
-.wd-main-collection .product-card__gallery-arrow svg {
-  width: 32px;
-  height: 32px;
-  stroke-width: 1;
-}
-
-.wd-main-collection .product-card__gallery-arrow--prev {
-  left: var(--spacing-2, 0.5rem);
-}
-
-.wd-main-collection .product-card__gallery-arrow--next {
-  right: var(--spacing-2, 0.5rem);
-}
-
-.wd-main-collection .product-card__gallery-arrow[disabled] {
-  opacity: 0.4;
-  pointer-events: none;
-  cursor: default;
-}
-
-/* .wd-main-collection .product-card__gallery-arrow:not([disabled]):hover,
-.wd-main-collection .product-card__figure:hover .product-card__gallery-arrow:not([disabled]) {
-  background: rgb(255 255 255);
-} */
-
-/* When the gallery is active, suppress the legacy hover-swap effect */
-.product-card--has-gallery .product-card__image--secondary {
-  display: block;
-  opacity: 1;
-}
-
-.product-card--has-gallery .product-card__figure:hover .product-card__image--primary,
-.product-card--has-gallery .product-card__figure:hover .product-card__image--secondary {
-  opacity: 1;
 }

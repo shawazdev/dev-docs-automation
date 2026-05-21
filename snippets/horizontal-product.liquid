@@ -29,7 +29,7 @@ Supported variables
       {%- if output_link == false -%}
         <span class="text-sm bold">{{ product.title }}</span>
       {%- else -%}
-        <a href="{{ product.url | within: collection }}" data-instant class="text-sm bold">
+        <a href="{{ product.url }}" data-instant class="text-sm bold">
           <span class="reversed-link hover:show">{{ product.title }}</span>
         </a>
       {%- endif -%}

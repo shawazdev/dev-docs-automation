@@ -68,13 +68,6 @@
   {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    "@id": "{{ shop.url }}{{ page.url }}#FAQPage",
-    "name": {{ page.title | json }},
-    "url": "{{ shop.url }}{{ page.url }}",
-    {%- assign faq_description = page.metafields.global.description_tag | default: page.content | strip_html | truncate: 200 -%}
-    {%- if faq_description != blank -%}
-    "description": {{ faq_description | json }},
-    {%- endif -%}
     "mainEntity": [
       {%- for block in section.blocks -%}
         {
@@ -82,7 +75,7 @@
           "name": {{ block.settings.title | json }},
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": {{ block.settings.content | replace: '</p>', ' </p>' | replace: '<br>', ' ' | replace: '<br/>', ' ' | replace: '<br />', ' ' | strip_html | strip_newlines | replace: '  ', ' ' | strip | json }}
+            "text": {{ block.settings.content | json }}
           }
         }{% unless forloop.last %},{% endunless %}
       {%- endfor -%}

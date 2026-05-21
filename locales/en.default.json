@@ -8,12 +8,6 @@
  * ------------------------------------------------------------
  */
 {
-  "404": {
-    "general": {
-      "title": "Page not found",
-      "continue_shopping": "Continue shopping"
-    }
-  },
   "general": {
     "page": "Page {{ page }}",
     "home": "Home",
@@ -93,7 +87,7 @@
       "added_to_cart": "Added to your cart!",
       "sold_out_badge": "Sold Out",
       "on_sale_badge": "On Sale",
-      "discount_badge_html": "Save {{ savings }}",
+      "discount_badge_html": "{{ savings }} Off",
       "sku": "SKU:",
       "variant": "Variant",
       "view_in_space": "View in your space",
@@ -354,6 +348,12 @@
       "error": "One or more error occurred while retrieving shipping rates:"
     }
   },
+  "404": {
+    "general": {
+      "title": "Page not found",
+      "continue_shopping": "Continue shopping"
+    }
+  },
   "search": {
     "general": {
       "title": "Search",
@@ -424,59 +424,6 @@
         "one": "It has received {{ count }} review.",
         "other": "It has received {{ count }} reviews."
       }
-    }
-  },
-  "shopify": {
-    "checkout": {
-      "marketing": {
-        "accept_marketing_checkbox_label": "Notify me about new styles, restocks, and deals.",
-        "accept_sms_checkbox_label": "Notify me about new styles, restocks, and deals."
-      }
-    }
-  },
-  "pagefly": {
-    "products": {
-      "product": {
-        "regular_price": "Regular price",
-        "sold_out": "Sold out",
-        "unavailable": "Unavailable",
-        "on_sale": "Sale",
-        "quantity": "Quantity",
-        "add_to_cart": "Add to cart",
-        "back_to_collection": "Back to {{ title }}",
-        "view_details": "View details"
-      }
-    },
-    "article": {
-      "tags": "Tags:",
-      "all_topics": "All topics",
-      "by_author": "by {{ author }}",
-      "posted_in": "Posted in",
-      "read_more": "Read more",
-      "back_to_blog": "Back to {{ title }}"
-    },
-    "comments": {
-      "title": "Leave a comment",
-      "name": "Name",
-      "email": "Email",
-      "message": "Message",
-      "post": "Post comment",
-      "moderated": "Please note, comments must be approved before they are published",
-      "success_moderated": "Your comment was posted successfully. We will publish it in a little while, as our blog is moderated.",
-      "success": "Your comment was posted successfully! Thank you!",
-      "comments_with_count": {
-        "one": "{{ count }} comment",
-        "other": "{{ count }} comments"
-      }
-    },
-    "password_page": {
-      "login_form_message": "Enter store using password:",
-      "login_form_password_label": "Password",
-      "login_form_password_placeholder": "Your password",
-      "login_form_submit": "Enter",
-      "signup_form_email_label": "Email",
-      "signup_form_success": "We will send you an email right before we open!",
-      "password_link": "Enter using password"
     }
   }
 }

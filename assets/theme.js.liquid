@@ -2735,22 +2735,12 @@ var ProductCard = class extends HTMLElement {
   }
   async _onSwatchChanged(event, target) {
     const firstMatchingVariant = await this._getMatchingVariant(target);
-    this.querySelectorAll(`a[href^="${this.product["url"]}"]`).forEach((link) => {
+    this.querySelectorAll(`a[href^="${this.product["url"]}"`).forEach((link) => {
       const url = new URL(link.href);
       url.searchParams.set("variant", firstMatchingVariant["id"]);
       link.href = `${url.pathname}${url.search}${url.hash}`;
     });
     if (!firstMatchingVariant.hasOwnProperty("featured_media")) {
-      return;
-    }
-    const gallery = this.querySelector(".product-card__gallery");
-    if (gallery) {
-      const targetIndex = Math.max(0, (firstMatchingVariant["featured_media"]["position"] || 1) - 1);
-      const slides = gallery.querySelectorAll(".product-card__slide");
-      const targetSlide = slides[targetIndex];
-      if (targetSlide) {
-        gallery.scrollTo({ left: targetSlide.offsetLeft, behavior: "smooth" });
-      }
       return;
     }
     const primaryMediaElement = this.querySelector(".product-card__image--primary"), secondaryMediaElement = this.querySelector(".product-card__image--secondary");

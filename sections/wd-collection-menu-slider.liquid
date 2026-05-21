@@ -1,0 +1,1552 @@
+{% comment %}
+  Section: WD Collection Menu Slider
+  ─────────────────────────────────────────────────────────────────────────────
+  Strongsize / Impact Theme
+  Uses the theme's native scroll-carousel + scrollbar/floating controls
+  (same pattern as product sliders — no Flickity dependency).
+
+  Two display modes (section setting):
+    • cards — image card carousel (Figma-driven design with 3 size variants)
+    • pills — horizontal pill nav  (like Rhone)
+
+  Cards layout rules (from Figma):
+    >3 items   → "sm" (small, vertical layout, scrollable on desktop)
+     3 items   → "md" (medium, horizontal split layout)
+     2 items   → "lg" (largest, horizontal split layout, NO arrows shown)
+    Mobile     → always vertical "sm" layout with peek of next card
+
+  Metaobject type: slider_item
+  Fields:
+    label           single_line_text_field     card/pill title
+    featured_image  file_reference             card image         (cards)
+    feature_1_icon  file_reference             bullet 1 icon      (cards, optional)
+    feature_1_text  single_line_text_field     bullet 1 text      (cards, optional)
+    feature_2_icon  file_reference             bullet 2 icon      (cards, optional)
+    feature_2_text  single_line_text_field     bullet 2 text      (cards, optional)
+    feature_3_icon  file_reference             bullet 3 icon      (cards, optional)
+    feature_3_text  single_line_text_field     bullet 3 text      (cards, optional)
+    feature_4_icon  file_reference             bullet 4 icon      (cards, optional)
+    feature_4_text  single_line_text_field     bullet 4 text      (cards, optional)
+    link_type       single_line_text_field     predefined choices:
+                    (predefined choices)         collection | product | custom_url
+    collection      collection_reference
+    product         product_reference
+    custom_url      url
+
+  Collection metafields:
+    custom.collection_menu_items   — list.metaobject_reference → slider_item
+    custom.collection_menu_enabled — boolean  (unset = visible when items exist)
+{% endcomment %}
+
+{%- liquid
+  assign items = collection.metafields.custom.collection_menu_items.value
+  assign enabled_raw = collection.metafields.custom.collection_menu_enabled
+  assign mode = section.settings.display_mode
+
+  comment
+    Respect the per-collection boolean toggle.
+    Unset = default visible (backwards-compatible).
+  endcomment
+  if enabled_raw == blank
+    assign slider_enabled = true
+  else
+    assign slider_enabled = enabled_raw.value
+  endif
+
+  comment
+    Section-level override: merchant can force-hide from customizer too.
+  endcomment
+  unless section.settings.enable_slider
+    assign slider_enabled = false
+  endunless
+
+  assign item_count = items.size
+
+  comment
+    Determine card size variant from item count (Figma rule):
+      2 → lg (largest, horizontal layout, no arrows)
+      3 → md (medium, horizontal layout)
+      else → sm (vertical, scrollable)
+  endcomment
+  case item_count
+    when 2
+      assign card_size = 'lg'
+    when 3
+      assign card_size = 'md'
+    else
+      assign card_size = 'sm'
+  endcase
+
+  comment
+    Arrows are always rendered in the DOM. Visibility is handled
+    in CSS so we can hide them on desktop for lg (2 cards fit) but
+    still show them on tablet where lg cards scroll horizontally.
+    Mobile hides the nav globally via the mobile media query.
+  endcomment
+-%}
+
+{%- if slider_enabled and items != blank -%}
+  {%- if mode == 'cards' -%}
+    {%- assign scroll_area_id = 'wd-cms-scroll-' | append: section.id -%}
+
+    <section
+      class="wd-cms-cards"
+      data-card-size="{{ card_size }}"
+      data-item-count="{{ item_count }}"
+      aria-label="{{ collection.title | default: 'Browse categories' | escape }}"
+    >
+      <div class="container">
+        <header class="wd-cms-cards__header">
+          {%- if section.settings.show_section_heading -%}
+            <h2 class="wd-cms-cards__heading">{{ collection.title }}</h2>
+          {%- else -%}
+            <span aria-hidden="true"></span>
+          {%- endif -%}
+
+          <div class="wd-cms-cards__nav" role="group" aria-label="Slider navigation">
+            <button
+              is="prev-button"
+              class="wd-cms-cards__arrow"
+              aria-controls="{{ scroll_area_id }}"
+              disabled
+            >
+              <span class="sr-only">{{ 'general.accessibility.previous' | t }}</span>
+             <svg xmlns="http://www.w3.org/2000/svg" width="8" height="12" viewBox="0 0 8 12" fill="none">
+             <path d="M6.76782 0.883911L1.76782 5.88391L6.76782 10.8839" stroke="#273125" stroke-width="2.5"/>
+             </svg>
+            </button>
+            <button
+              is="next-button"
+              class="wd-cms-cards__arrow"
+              aria-controls="{{ scroll_area_id }}"
+            >
+              <span class="sr-only">{{ 'general.accessibility.next' | t }}</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="8" height="12" viewBox="0 0 8 12" fill="none">
+             <path d="M0.883789 0.883911L5.88379 5.88391L0.883789 10.8839" stroke="#273125" stroke-width="2.5"/>
+                 </svg>
+            </button>
+          </div>
+        </header>
+
+        <scroll-carousel
+          selector=".wd-cms-card"
+          id="{{ scroll_area_id }}"
+          class="scroll-area wd-cms-cards__track{% if card_size == 'sm' %} is-scrollable{% endif %}"
+        >
+          <div class="wd-cms-cards__list">
+            {%- for item in items -%}
+              {%- liquid
+                assign label = item.label.value
+                assign featured_image = item.featured_image.value
+                assign f1_icon = item.feature_1_icon.value
+                assign f1_text = item.feature_1_text.value
+                assign f2_icon = item.feature_2_icon.value
+                assign f2_text = item.feature_2_text.value
+                assign f3_icon = item.feature_3_icon.value
+                assign f3_text = item.feature_3_text.value
+                assign f4_icon = item.feature_4_icon.value
+                assign f4_text = item.feature_4_text.value
+
+                assign has_features = false
+                if f1_text != blank or f2_text != blank or f3_text != blank or f4_text != blank
+                  assign has_features = true
+                endif
+
+                comment
+                  Downcase + replace so "Collection", "Product", "Custom URL"
+                  from Shopify predefined choices all resolve correctly.
+                endcomment
+                assign link_type = item.link_type.value | downcase | replace: ' ', '_'
+
+                case link_type
+                  when 'collection'
+                    assign href = item.collection.value.url
+                  when 'product'
+                    assign href = item.product.value.url
+                  else
+                    assign href = item.custom_url.value
+                endcase
+                if href == blank
+                  assign href = item.collection.value.url
+                endif
+                if href == blank
+                  assign href = item.product.value.url
+                endif
+                if href == blank
+                  assign href = item.custom_url.value
+                endif
+              -%}
+
+              {%- comment -%}
+                Whole card is one anchor — image, title, and "View" all share the same href
+                (per design comment 1: image, title, view CTA should all carry the link).
+              {%- endcomment -%}
+              <a href="{{ href }}" class="wd-cms-card" aria-label="{{ label | escape }}">
+                <div class="wd-cms-card__img-wrap">
+                  {%- if featured_image != blank -%}
+                    <img
+                      src="{{ featured_image | image_url: width: 800 }}"
+                      srcset="
+                        {{ featured_image | image_url: width: 400 }} 400w,
+                        {{ featured_image | image_url: width: 600 }} 600w,
+                        {{ featured_image | image_url: width: 800 }} 800w,
+                        {{ featured_image | image_url: width: 1200 }} 1200w
+                      "
+                      sizes="(max-width: 749px) 80vw, (max-width: 1199px) 33vw, 25vw"
+                      alt="{{ label | escape }}"
+                      loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+                      draggable="false"
+                      width="{{ featured_image.width }}"
+                      height="{{ featured_image.height }}"
+                    >
+                  {%- else -%}
+                    <div class="wd-cms-card__img-placeholder"></div>
+                  {%- endif -%}
+                </div>
+
+                <div class="wd-cms-card__body">
+                  <span class="wd-cms-card__title">{{ label }}</span>
+
+                  {%- if section.settings.show_features and has_features -%}
+                    <ul class="wd-cms-card__features">
+                      {%- if f1_text != blank -%}
+                        <li class="wd-cms-card__feature">
+                          {%- if f1_icon != blank and section.settings.show_feature_icons -%}
+                            <img
+                              class="wd-cms-card__ficon"
+                              src="{{ f1_icon | image_url: width: 48 }}"
+                              alt=""
+                              width="{{ section.settings.card_feature_icon_size }}"
+                              height="{{ section.settings.card_feature_icon_size }}"
+                              loading="lazy"
+                              draggable="false"
+                            >
+                          {%- endif -%}
+                          <span>{{ f1_text }}</span>
+                        </li>
+                      {%- endif -%}
+                      {%- if f2_text != blank -%}
+                        <li class="wd-cms-card__feature">
+                          {%- if f2_icon != blank and section.settings.show_feature_icons -%}
+                            <img
+                              class="wd-cms-card__ficon"
+                              src="{{ f2_icon | image_url: width: 48 }}"
+                              alt=""
+                              width="{{ section.settings.card_feature_icon_size }}"
+                              height="{{ section.settings.card_feature_icon_size }}"
+                              loading="lazy"
+                              draggable="false"
+                            >
+                          {%- endif -%}
+                          <span>{{ f2_text }}</span>
+                        </li>
+                      {%- endif -%}
+                      {%- if f3_text != blank -%}
+                        <li class="wd-cms-card__feature">
+                          {%- if f3_icon != blank and section.settings.show_feature_icons -%}
+                            <img
+                              class="wd-cms-card__ficon"
+                              src="{{ f3_icon | image_url: width: 48 }}"
+                              alt=""
+                              width="{{ section.settings.card_feature_icon_size }}"
+                              height="{{ section.settings.card_feature_icon_size }}"
+                              loading="lazy"
+                              draggable="false"
+                            >
+                          {%- endif -%}
+                          <span>{{ f3_text }}</span>
+                        </li>
+                      {%- endif -%}
+                      {%- if f4_text != blank -%}
+                        <li class="wd-cms-card__feature">
+                          {%- if f4_icon != blank and section.settings.show_feature_icons -%}
+                            <img
+                              class="wd-cms-card__ficon"
+                              src="{{ f4_icon | image_url: width: 48 }}"
+                              alt=""
+                              width="{{ section.settings.card_feature_icon_size }}"
+                              height="{{ section.settings.card_feature_icon_size }}"
+                              loading="lazy"
+                              draggable="false"
+                            >
+                          {%- endif -%}
+                          <span>{{ f4_text }}</span>
+                        </li>
+                      {%- endif -%}
+                    </ul>
+                  {%- endif -%}
+
+                  <span class="wd-cms-card__view">
+                    <span class="wd-cms-card__view-label">{{ section.settings.view_label | default: 'View' }}</span>
+                    <svg class="wd-cms-card__view-arrow" viewBox="0 0 16 16" fill="none" aria-hidden="true" focusable="false">
+                      <path d="M2.5 8h11M9.5 4l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </span>
+                </div>
+              </a>
+            {%- endfor -%}
+          </div>
+        </scroll-carousel>
+      </div>
+    </section>
+
+    <style>
+      /* ═══════════════════════════════════════════════
+         WD Collection Menu Slider — Cards Mode (Figma redesign)
+         3 size variants driven by data-card-size:
+           sm = >3 items (vertical, scrollable)
+           md = 3 items  (horizontal split)
+           lg = 2 items  (horizontal split, no arrows)
+         Mobile collapses md/lg back to vertical "sm" layout
+      ═══════════════════════════════════════════════ */
+
+      .wd-cms-cards {
+        --wd-cms-bg: {{ section.settings.section_bg_color }};
+        --wd-cms-title-color: {{ section.settings.card_title_color }};
+        --wd-cms-feature-color: {{ section.settings.card_feature_color }};
+        --wd-cms-separator: {{ section.settings.separator_color }};
+        --wd-cms-img-bg: {{ section.settings.card_image_bg_color }};
+        --wd-cms-radius: {{ section.settings.card_corner_radius }}px;
+        --wd-cms-gap: 24px;
+        border-bottom: 0.5px solid #A0AAA1;
+        background: var(--wd-cms-bg);
+        padding: {{ section.settings.section_padding_top }}px 0 {{ section.settings.section_padding_bottom }}px;
+      }
+
+      /* ── Header (heading + arrows) ── */
+      .wd-cms-cards__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 28px;
+      }
+      .wd-cms-cards__heading {
+        margin: 0;
+        font-family: {{ section.settings.heading_font_family }};
+        font-size: {{ section.settings.heading_font_size }}px;
+        font-weight: {{ section.settings.heading_font_weight }};
+        color: {{ section.settings.heading_color }};
+        line-height: 46.28px;
+        letter-spacing: -0.3px;
+        text-transform: capitalize;
+      }
+
+      .wd-cms-cards__nav {
+        display: flex;
+        gap: 12px;
+        flex-shrink: 0;
+      }
+      .wd-cms-cards__arrow {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 1px solid {{ section.settings.arrow_border_color }};
+        background: white;
+        color: {{ section.settings.arrow_icon_color }};
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        padding: 0;
+        transition: background-color .2s ease, opacity .2s ease, border-color .2s ease;
+      }
+      .wd-cms-cards__arrow:hover:not(:disabled) {
+        background-color: rgba(5, 43, 27, 0.06);
+      }
+      .wd-cms-cards__arrow:disabled {
+        cursor: not-allowed;
+        opacity: 0.35;
+      }
+      .wd-cms-cards__arrow svg {
+        width: 10px;
+        height: 10px;
+        display: block;
+      }
+
+      /* ── Track (scroll-carousel) ── */
+      .wd-cms-cards__track {
+        display: block;
+        overflow-x: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+      }
+      .wd-cms-cards__track::-webkit-scrollbar { display: none; }
+
+      /* Desktop mouse drag: cursor feedback + suspend snap during drag.
+         Native overflow scroll already handles touch swipe on tablet/mobile. */
+      .wd-cms-cards__track.is-draggable { cursor: grab; }
+      .wd-cms-cards__track.is-dragging {
+        cursor: grabbing;
+        scroll-snap-type: none;
+        user-select: none;
+        -webkit-user-select: none;
+      }
+      .wd-cms-cards__track.is-dragging .wd-cms-card { pointer-events: none; }
+
+      .wd-cms-cards__list {
+        display: flex;
+        gap: var(--wd-cms-gap);
+        align-items: stretch;
+      }
+
+      /* ── Card (shared) ── */
+      .wd-cms-card {
+        flex-shrink: 0;
+        display: flex;
+        text-decoration: none;
+        color: inherit;
+        scroll-snap-align: start;
+      }
+      .wd-cms-card:hover,
+      .wd-cms-card:focus-visible {
+        text-decoration: none;
+        color: inherit;
+      }
+
+      .wd-cms-card__img-wrap {
+        background: var(--wd-cms-img-bg);
+        border-radius: var(--wd-cms-radius);
+        overflow: hidden;
+        flex-shrink: 0;
+      }
+      .wd-cms-card__img-wrap img,
+      .wd-cms-card__img-placeholder {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center top;
+        display: block;
+        transition: transform .45s ease;
+      }
+      {% comment %} .wd-cms-card:hover .wd-cms-card__img-wrap img {
+        transform: scale(1.04);
+      } {% endcomment %}
+
+      /* ── Body (typography shared) ── */
+      .wd-cms-card__body { display: flex; flex-direction: column; }
+
+      .wd-cms-card__title {
+        color: var(--wd-cms-title-color);
+        line-height: 120%; /* 24px @ 16px → 1.5 */
+        letter-spacing: 0;
+      }
+
+      .wd-cms-card__features {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .wd-cms-card__feature {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-family: {{ section.settings.card_feature_font_family }};
+        font-size: {{ section.settings.card_feature_font_size }}px;
+        font-weight: {{ section.settings.card_feature_font_weight }};
+        color: var(--wd-cms-feature-color);
+        text-transform: uppercase;
+        word-spacing: -1px;
+        letter-spacing: 0;
+        line-height: 1.2; /* 120% per Figma */
+      }
+      .wd-cms-card__ficon {
+        width: {{ section.settings.card_feature_icon_size }}px;
+        height: {{ section.settings.card_feature_icon_size }}px;
+        object-fit: contain;
+        flex-shrink: 0;
+        display: block;
+      }
+
+      .wd-cms-card__view {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-family: {{ section.settings.view_font_family }};
+        font-size: {{ section.settings.view_font_size }}px;
+        font-weight: {{ section.settings.view_font_weight }};
+        color: {{ section.settings.view_color }};
+        white-space: nowrap;
+        line-height: 1.2; /* 120% per Figma */
+      }
+      .wd-cms-card__view-arrow {
+        width: 12px;
+        height: 12px;
+        display: block;
+      }
+
+      /* ═══════════════════════════════════
+         SM variant — vertical, > 3 cards
+         (also the mobile fallback for md/lg)
+         ═══════════════════════════════════ */
+      .wd-cms-cards[data-card-size="sm"] .wd-cms-card {
+        flex-direction: column;
+        flex: 0 0 calc((100% - var(--wd-cms-gap) * 3) / 4.15);
+        min-width: 240px;
+      }
+      .wd-cms-cards[data-card-size="sm"] .wd-cms-card__img-wrap {
+        width: 100%;
+        aspect-ratio: {{ section.settings.image_ratio }};
+      }
+      .wd-cms-cards[data-card-size="sm"] .wd-cms-card__body {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        grid-template-areas:
+          "title view"
+          "features features";
+        column-gap: 12px;
+        row-gap: 4px;
+        padding: 16px 0 0;
+      }
+      .wd-cms-cards[data-card-size="sm"] .wd-cms-card__title {
+        grid-area: title;
+        font-family: {{ section.settings.card_title_font_family_sm }};
+        font-weight: {{ section.settings.card_title_font_weight_sm }};
+        font-size: {{ section.settings.card_title_font_size_sm }}px;
+        align-self: center;
+      }
+      .wd-cms-cards[data-card-size="sm"] .wd-cms-card__view {
+        grid-area: view;
+        align-self: center;
+      }
+      .wd-cms-cards[data-card-size="sm"] .wd-cms-card__features {
+        grid-area: features;
+        border-top: 1px solid var(--wd-cms-separator);
+        padding-top: 8px;
+      }
+
+      /* ═══════════════════════════════════
+         MD variant — horizontal, 3 cards
+         (override --wd-cms-gap to 32px so the list gap and the flex
+          calc stay in sync — otherwise 3 cards overflow by ~gap-delta)
+         ═══════════════════════════════════ */
+      .wd-cms-cards[data-card-size="md"] {
+        --wd-cms-gap: 32px;
+      }
+      .wd-cms-cards[data-card-size="md"] .wd-cms-card {
+        flex-direction: row;
+        gap: 16px;
+        align-items: stretch;
+        flex: 0 0 calc((100% - var(--wd-cms-gap) * 2) / 3);
+        /* Tablet: hold the desktop card width so the horizontal split
+           keeps its design proportions; track scrolls horizontally. */
+        min-width: 448px;
+      }
+      .wd-cms-cards[data-card-size="md"] .wd-cms-cards__list {
+        margin-bottom: 32px;
+      }
+      .wd-cms-cards[data-card-size="md"] .wd-cms-card__img-wrap {
+        flex: 0 0 54.9%;
+        aspect-ratio: {{ section.settings.image_ratio }};
+      }
+      .wd-cms-cards[data-card-size="md"] .wd-cms-card__body {
+        flex: 1;
+        min-width: 0;
+        padding: 8px 0;
+      }
+      .wd-cms-cards[data-card-size="md"] .wd-cms-card__title {
+        font-family: {{ section.settings.card_title_font_family_md }};
+        font-weight: {{ section.settings.card_title_font_weight_md }};
+        font-size: {{ section.settings.card_title_font_size_md }}px;
+        margin-bottom: 32px;
+      }
+      .wd-cms-cards[data-card-size="md"] .wd-cms-card__features {
+        margin-top: auto;
+        padding-top: 8px;
+        gap:8px;
+        border-top: 1px solid var(--wd-cms-separator);
+      }
+      .wd-cms-cards[data-card-size="md"] .wd-cms-card__view {
+        margin-top: 32px;
+      }
+      /* No features → still pin view to bottom */
+      .wd-cms-cards[data-card-size="md"] .wd-cms-card__body > .wd-cms-card__view:nth-child(2) {
+        margin-top: auto;
+        padding-top: 16px;
+        border-top: 1px solid var(--wd-cms-separator);
+      }
+
+      /* ═══════════════════════════════════
+         LG variant — horizontal, 2 cards (no arrows)
+         ═══════════════════════════════════ */
+      .wd-cms-cards[data-card-size="lg"] .wd-cms-card {
+        flex-direction: row;
+        gap: 16px;
+        align-items: stretch;
+        /* Tablet (750–919px): show 1 full card + ~30% peek of the next.
+           card_width × 1.3 + gap = viewport, so peek = 30% of card width. */
+        flex: 0 0 calc((100% - var(--wd-cms-gap)) / 1.3);
+        min-width: 0;
+      }
+      .wd-cms-cards[data-card-size="lg"] .wd-cms-card__img-wrap {
+        flex: 0 0 42.9%;
+        aspect-ratio: {{ section.settings.image_ratio }};
+      }
+      .wd-cms-cards[data-card-size="lg"] .wd-cms-card__body {
+        flex: 1;
+        min-width: 0;
+        padding: 12px 0;
+      }
+      .wd-cms-cards[data-card-size="lg"] .wd-cms-card__title {
+        font-family: {{ section.settings.card_title_font_family_lg }};
+        font-weight: {{ section.settings.card_title_font_weight_lg }};
+        font-size: {{ section.settings.card_title_font_size_lg }}px;
+      }
+      .wd-cms-cards[data-card-size="lg"] .wd-cms-card__features {
+        margin-top: auto;
+        padding-top: 8px;
+        border-top: 1px solid var(--wd-cms-separator);
+      }
+      .wd-cms-cards[data-card-size="lg"] .wd-cms-card__view {
+        margin-top: 32px;
+      }
+      .wd-cms-cards[data-card-size="lg"] .wd-cms-card__body > .wd-cms-card__view:nth-child(2) {
+        margin-top: auto;
+        padding-top: 18px;
+        border-top: 1px solid var(--wd-cms-separator);
+      }
+
+      /* JS-driven hide for arrows / nav (overflow + start/end detection).
+         Set on the nav when content fits; on individual arrows at boundaries. */
+      .wd-cms-cards__nav.is-hidden,
+      .wd-cms-cards__arrow.is-hidden {
+        display: none !important;
+      }
+
+
+      /* ═══════════════════════════════════
+         Desktop ≥ 920px — LG (2-card) layout fits both cards fully.
+         Below 920px the default lg rule above shows 1 full + 30% peek
+         of the 2nd card (tablet behavior).
+         Cap each card's max-width and center the list so body dividers
+         don't sprawl across very wide screens.
+         ═══════════════════════════════════ */
+      @media (min-width: 920px) {
+        .wd-cms-cards[data-card-size="lg"] .wd-cms-card {
+          flex: 0 0 calc((100% - var(--wd-cms-gap)) / 2);
+          max-width: 612px;
+        }
+        .wd-cms-cards[data-card-size="lg"] .wd-cms-cards__list {
+          justify-content: center;
+        }
+      }
+
+      /* ═══════════════════════════════════
+         Standard desktop ≥ 1200px — drop tablet min-widths so md and
+         4-item-sm size down proportionally and fit fully (no clipped
+         right edge). Below 1200px the default rules above take over,
+         keeping the 240/448 min-widths so layouts overflow & scroll
+         naturally (including the 4-item sm case using the 4.15 peek).
+         ═══════════════════════════════════ */
+      @media (min-width: 1200px) {
+        .wd-cms-cards[data-card-size="sm"][data-item-count="4"] .wd-cms-card {
+          flex: 0 0 calc((100% - var(--wd-cms-gap) * 3) / 4);
+          min-width: 0;
+        }
+        .wd-cms-cards[data-card-size="md"] .wd-cms-card {
+          min-width: 0;
+        }
+      }
+
+      /* ═══════════════════════════════════
+         Mobile — collapse all variants to vertical
+         + show peek of next card (per comment 3)
+         + hide arrows
+         ═══════════════════════════════════ */
+      @media (max-width: 749px) {
+        .wd-cms-cards {
+          --wd-cms-gap: 16px;
+        }
+        .wd-cms-cards__header {
+          margin-bottom: 20px;
+        }
+        .wd-cms-cards__heading {
+          font-size: {{ section.settings.heading_font_size_mobile }}px;
+        }
+        .wd-cms-cards__nav { display: none; }
+
+        /* On mobile every variant — sm, md, lg — uses the >3 (sm) design:
+           vertical layout, 78% width with peek of next card.
+           [data-card-size] selector bumps specificity so it beats
+           the per-variant default rules above. */
+        .wd-cms-cards[data-card-size] .wd-cms-card {
+          flex-direction: column;
+          flex: 0 0 78%;
+          min-width: 0;
+          gap: 0;
+        }
+        .wd-cms-cards[data-card-size] .wd-cms-card__img-wrap {
+          width: 100%;
+          flex: none;
+          aspect-ratio: {{ section.settings.image_ratio }};
+        }
+        .wd-cms-cards[data-card-size] .wd-cms-card__body {
+          display: grid;
+          grid-template-columns: 1fr auto;
+          grid-template-areas:
+            "title view"
+            "features features";
+          column-gap: 12px;
+          row-gap: 4px;
+          padding: 14px 0 0;
+          margin-top: 0;
+        }
+        .wd-cms-cards[data-card-size] .wd-cms-card__title {
+          grid-area: title;
+          font-family: {{ section.settings.card_title_font_family_sm }};
+          font-weight: {{ section.settings.card_title_font_weight_sm }};
+          font-size: {{ section.settings.card_title_font_size_sm }}px;
+          margin-bottom: 0;
+          align-self: center;
+        }
+        .wd-cms-cards[data-card-size] .wd-cms-card__view {
+          grid-area: view;
+          align-self: center;
+          margin-top: 0;
+          padding-top: 0;
+          border-top: none;
+        }
+        .wd-cms-cards[data-card-size] .wd-cms-card__features {
+          grid-area: features;
+          margin-top: 0;
+          padding-top: 8px;
+          border-top: 1px solid var(--wd-cms-separator);
+        }
+        /* Match also the lone-view fallback */
+        .wd-cms-cards[data-card-size] .wd-cms-card__body > .wd-cms-card__view:nth-child(2) {
+          margin-top: 0;
+          padding-top: 12px;
+          border-top: 1px solid var(--wd-cms-separator);
+        }
+      }
+    </style>
+
+    <script>
+      (function () {
+        var TOL = 2;
+        var DRAG_THRESHOLD = 5;
+
+        function init(section) {
+          if (!section || section.__wdCmsBound) return;
+          section.__wdCmsBound = true;
+
+          var track = section.querySelector('.wd-cms-cards__track');
+          var nav = section.querySelector('.wd-cms-cards__nav');
+          if (!track || !nav) return;
+
+          var rafId = 0;
+
+          // ── Overflow detection: hide the entire nav when content fits.
+          //    Individual prev/next disabled state is handled by the theme's
+          //    PrevButton/NextButton custom elements (scroll:edge-nearing/leaving).
+          function update() {
+            var overflow = (track.scrollWidth - track.clientWidth) > TOL;
+            nav.classList.toggle('is-hidden', !overflow);
+            track.classList.toggle('is-draggable', overflow);
+          }
+
+          function schedule() {
+            if (rafId) return;
+            rafId = requestAnimationFrame(function () {
+              rafId = 0;
+              update();
+            });
+          }
+
+          schedule();
+
+          track.addEventListener('scroll', schedule, { passive: true });
+
+          if (typeof ResizeObserver !== 'undefined') {
+            new ResizeObserver(schedule).observe(track);
+          } else {
+            window.addEventListener('resize', schedule);
+          }
+
+          // scrollWidth depends on images — re-check once each loads.
+          var imgs = track.querySelectorAll('img');
+          for (var i = 0; i < imgs.length; i++) {
+            if (!imgs[i].complete) {
+              imgs[i].addEventListener('load', schedule, { once: true });
+            }
+          }
+
+          // ── Mouse drag (desktop). Touch / pen are skipped so native
+          //    swipe behavior on mobile/tablet is left untouched.
+          var dragPointerId = null;
+          var startX = 0;
+          var startScrollLeft = 0;
+          var dragDistance = 0;
+
+          track.addEventListener('pointerdown', function (e) {
+            if (e.pointerType !== 'mouse') return;
+            if (e.button !== 0) return;
+            if ((track.scrollWidth - track.clientWidth) <= TOL) return;
+            dragPointerId = e.pointerId;
+            startX = e.clientX;
+            startScrollLeft = track.scrollLeft;
+            dragDistance = 0;
+          });
+
+          track.addEventListener('pointermove', function (e) {
+            if (e.pointerId !== dragPointerId) return;
+            var dx = e.clientX - startX;
+            dragDistance = Math.abs(dx);
+            if (dragDistance > DRAG_THRESHOLD) {
+              if (!track.classList.contains('is-dragging')) {
+                track.classList.add('is-dragging');
+                try { track.setPointerCapture(dragPointerId); } catch (err) {}
+              }
+              e.preventDefault();
+            }
+            track.scrollLeft = startScrollLeft - dx;
+          });
+
+          function endDrag(e) {
+            if (dragPointerId === null || (e && e.pointerId !== dragPointerId)) return;
+            try { track.releasePointerCapture(dragPointerId); } catch (err) {}
+            dragPointerId = null;
+            track.classList.remove('is-dragging');
+          }
+
+          track.addEventListener('pointerup', endDrag);
+          track.addEventListener('pointercancel', endDrag);
+          track.addEventListener('lostpointercapture', endDrag);
+
+          // Suppress card click navigation if the user actually dragged.
+          track.addEventListener('click', function (e) {
+            if (dragDistance > DRAG_THRESHOLD) {
+              e.preventDefault();
+              e.stopPropagation();
+              dragDistance = 0;
+            }
+          }, true);
+
+          // Block native image drag-ghost from hijacking the gesture.
+          track.addEventListener('dragstart', function (e) { e.preventDefault(); });
+        }
+
+        function boot() {
+          var nodes = document.querySelectorAll('.wd-cms-cards');
+          for (var i = 0; i < nodes.length; i++) init(nodes[i]);
+        }
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', boot);
+        } else {
+          boot();
+        }
+
+        // Theme editor: re-init when the section is re-rendered.
+        document.addEventListener('shopify:section:load', function (e) {
+          if (!e.target) return;
+          var sec = e.target.querySelector ? e.target.querySelector('.wd-cms-cards') : null;
+          if (sec) init(sec);
+        });
+      })();
+    </script>
+
+  {%- else -%}
+    {%- assign scroll_area_id = 'wd-cms-pills-' | append: section.id -%}
+
+    <div class="container">
+      <nav class="wd-cms-pills" id="wd-cms-pills-{{ section.id }}" aria-label="Browse categories">
+        <div class="floating-controls-container">
+          <scroll-carousel
+            selector=".wd-cms__pill"
+            id="{{ scroll_area_id }}"
+            class="scroll-area bleed wd-cms-pills__track is-scrollable"
+          >
+            <div class="wd-cms-pills__list">
+              {%- for item in items -%}
+                {%- liquid
+                  assign label = item.label.value
+                  assign link_type = item.link_type.value | downcase | replace: ' ', '_'
+
+                  case link_type
+                    when 'collection'
+                      assign href = item.collection.value.url
+                    when 'product'
+                      assign href = item.product.value.url
+                    else
+                      assign href = item.custom_url.value
+                  endcase
+                  if href == blank
+                    assign href = item.collection.value.url
+                  endif
+                  if href == blank
+                    assign href = item.product.value.url
+                  endif
+                  if href == blank
+                    assign href = item.custom_url.value
+                  endif
+
+                  assign is_active = false
+                  if request.path == href
+                    assign is_active = true
+                  endif
+                -%}
+
+                <a
+                  href="{{ href }}"
+                  class="wd-cms__pill{% if is_active %} wd-cms__pill--active{% endif %}"
+                  {% if is_active %}
+                    aria-current="page"
+                  {% endif %}
+                >
+                  <span class="wd-cms__pill-label">{{ label }}</span>
+                </a>
+              {%- endfor -%}
+            </div>
+          </scroll-carousel>
+
+          <button
+            is="prev-button"
+            class="circle-button circle-button--lg circle-button--fill border group"
+            aria-controls="{{ scroll_area_id }}"
+            disabled
+          >
+            <span class="sr-only">{{ 'general.accessibility.previous' | t }}</span>
+            <span class="animated-arrow animated-arrow--reverse"></span>
+          </button>
+          <button
+            is="next-button"
+            class="circle-button circle-button--lg circle-button--fill border group"
+            aria-controls="{{ scroll_area_id }}"
+          >
+            <span class="sr-only">{{ 'general.accessibility.next' | t }}</span>
+            <span class="animated-arrow"></span>
+          </button>
+        </div>
+      </nav>
+    </div>
+
+    <style>
+      /* ═══════════════════════════════════════════════
+         WD Collection Menu Slider — Pill Mode
+      ═══════════════════════════════════════════════ */
+      .wd-cms-pills {
+        width: 100%;
+        overflow: hidden;
+        background-color: {{ section.settings.pills_bg_color }};
+        border-bottom: 1px solid {{ section.settings.pills_border_color }};
+      }
+
+      .wd-cms-pills__track {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+      .wd-cms-pills__track::-webkit-scrollbar { display: none; }
+
+      .wd-cms-pills__list {
+        display: flex;
+        align-items: center;
+        gap: {{ section.settings.pill_gap }}px;
+        padding: {{ section.settings.pill_v_padding }}px var(--page-margin, 20px);
+        white-space: nowrap;
+      }
+
+      .wd-cms__pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        flex-shrink: 0;
+        white-space: nowrap;
+        padding: 7px 16px;
+        border-radius: 999px;
+        text-decoration: none;
+        font-family: {{ section.settings.pill_label_font_family }};
+        font-size: {{ section.settings.pill_label_font_size }}px;
+        font-weight: {{ section.settings.pill_label_font_weight }};
+        color: {{ section.settings.pill_text_color }};
+        background-color: transparent;
+        border: 1px solid transparent;
+        transition: background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+        line-height: 1.25;
+        cursor: pointer;
+        user-select: none;
+        -webkit-user-select: none;
+      }
+      .wd-cms__pill:hover,
+      .wd-cms__pill:focus-visible {
+        background-color: {{ section.settings.pill_hover_bg }};
+        color: {{ section.settings.pill_hover_text }};
+        border-color: {{ section.settings.pill_hover_border }};
+        text-decoration: none;
+        outline: none;
+      }
+      .wd-cms__pill--active {
+        background-color: {{ section.settings.pill_active_bg }};
+        color: {{ section.settings.pill_active_text }};
+        border-color: {{ section.settings.pill_active_bg }};
+        pointer-events: none;
+      }
+
+      @media (max-width: 767px) {
+        .wd-cms__pill {
+          font-size: {{ section.settings.pill_label_font_size | minus: 1 }}px;
+          padding: 6px 12px;
+        }
+      }
+    </style>
+  {%- endif -%}
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "WD Collection Menu Slider",
+  "class": "shopify-section--collection-menu-slider",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Visibility"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_slider",
+      "label": "Enable slider",
+      "default": true,
+      "info": "Quick on/off for the entire section across all collections. The per-collection metafield toggle also applies."
+    },
+
+    {
+      "type": "header",
+      "content": "Display Mode"
+    },
+    {
+      "type": "select",
+      "id": "display_mode",
+      "label": "Display mode",
+      "options": [
+        { "value": "cards", "label": "Cards (image + title + features)" },
+        { "value": "pills", "label": "Pills (text nav)" }
+      ],
+      "default": "cards"
+    },
+
+    {
+      "type": "header",
+      "content": "Cards — Section"
+    },
+    {
+      "type": "paragraph",
+      "content": "Card size is automatic from item count: 2 → largest, 3 → medium, 4+ → small (scrollable). Arrows hide automatically for 2-item layout."
+    },
+    {
+      "type": "color",
+      "id": "section_bg_color",
+      "label": "Section background",
+      "default": "#F4F3F1"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Top padding (px)",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "default": 56
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Bottom padding (px)",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "default": 56
+    },
+
+    {
+      "type": "header",
+      "content": "Cards — Heading (collection title)"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_section_heading",
+      "label": "Show collection title as heading",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#052B1B"
+    },
+    {
+      "type": "range",
+      "id": "heading_font_size",
+      "label": "Heading font size (desktop)",
+      "min": 18,
+      "max": 64,
+      "step": 1,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "heading_font_size_mobile",
+      "label": "Heading font size (mobile)",
+      "min": 18,
+      "max": 48,
+      "step": 1,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "select",
+      "id": "heading_font_family",
+      "label": "Heading font family",
+      "options": [
+        { "value": "MDSystemNarrow-Medium, sans-serif", "label": "MDSystemNarrow-Medium" },
+        { "value": "MDSystemNarrow-Regular, sans-serif", "label": "MDSystemNarrow-Regular" },
+        { "value": "MDSystem-Regular, serif", "label": "MDSystem-Regular" },
+        { "value": "MDSystem-SemiBold, serif", "label": "MDSystem-SemiBold" }
+      ],
+      "default": "MDSystemNarrow-Regular, sans-serif"
+    },
+    {
+      "type": "select",
+      "id": "heading_font_weight",
+      "label": "Heading font weight",
+      "options": [
+        { "value": "300", "label": "Light" },
+        { "value": "400", "label": "Normal" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi Bold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "400"
+    },
+
+    {
+      "type": "header",
+      "content": "Cards — Layout"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Image aspect ratio",
+      "info": "Applied to all variants and mobile.",
+      "options": [
+        { "value": "1/1", "label": "Square (1:1)" },
+        { "value": "4/5", "label": "Portrait (4:5)" },
+        { "value": "3/4", "label": "Portrait (3:4)" },
+        { "value": "2/3", "label": "Portrait (2:3)" },
+        { "value": "4/3", "label": "Landscape (4:3)" }
+      ],
+      "default": "1/1"
+    },
+    {
+      "type": "range",
+      "id": "card_corner_radius",
+      "label": "Image corner radius (px)",
+      "min": 0,
+      "max": 32,
+      "step": 1,
+      "default": 8
+    },
+    {
+      "type": "color",
+      "id": "card_image_bg_color",
+      "label": "Image placeholder background",
+      "default": "#D4D2D1"
+    },
+    {
+      "type": "color",
+      "id": "separator_color",
+      "label": "Separator line color",
+      "default": "#A0AAA1"
+    },
+
+    {
+      "type": "header",
+      "content": "Cards — Arrows"
+    },
+    {
+      "type": "color",
+      "id": "arrow_border_color",
+      "label": "Arrow border",
+      "default": "#A0AAA1"
+    },
+    {
+      "type": "color",
+      "id": "arrow_icon_color",
+      "label": "Arrow icon",
+      "default": "#052B1B"
+    },
+
+    {
+      "type": "header",
+      "content": "Cards — Card Title"
+    },
+    {
+      "type": "color",
+      "id": "card_title_color",
+      "label": "Color",
+      "default": "#052B1B"
+    },
+    {
+      "type": "paragraph",
+      "content": "Small (>3 cards) settings are also used on mobile for all variants."
+    },
+    {
+      "type": "range",
+      "id": "card_title_font_size_sm",
+      "label": "Font size — Small (>3 cards / mobile)",
+      "min": 12,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "select",
+      "id": "card_title_font_family_sm",
+      "label": "Font family — Small (>3 cards / mobile)",
+      "options": [
+        { "value": "MDSystemNarrow-Medium, sans-serif", "label": "MDSystemNarrow-Medium" },
+        { "value": "MDSystemNarrow-Regular, sans-serif", "label": "MDSystemNarrow-Regular" },
+        { "value": "MDSystem-Regular, serif", "label": "MDSystem-Regular" },
+        { "value": "MDSystem-SemiBold, serif", "label": "MDSystem-SemiBold" }
+      ],
+      "default": "MDSystem-SemiBold, serif"
+    },
+    {
+      "type": "select",
+      "id": "card_title_font_weight_sm",
+      "label": "Font weight — Small (>3 cards / mobile)",
+      "options": [
+        { "value": "300", "label": "Light" },
+        { "value": "400", "label": "Normal" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi Bold" },
+        { "value": "700", "label": "Bold" },
+        { "value": "800", "label": "Extra Bold" }
+      ],
+      "default": "600"
+    },
+    {
+      "type": "range",
+      "id": "card_title_font_size_md",
+      "label": "Font size — Medium (3 cards)",
+      "min": 12,
+      "max": 64,
+      "step": 1,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "select",
+      "id": "card_title_font_family_md",
+      "label": "Font family — Medium (3 cards)",
+      "options": [
+        { "value": "MDSystemNarrow-Medium, sans-serif", "label": "MDSystemNarrow-Medium" },
+        { "value": "MDSystemNarrow-Regular, sans-serif", "label": "MDSystemNarrow-Regular" },
+        { "value": "MDSystem-Regular, serif", "label": "MDSystem-Regular" },
+        { "value": "MDSystem-SemiBold, serif", "label": "MDSystem-SemiBold" }
+      ],
+      "default": "MDSystem-Regular, serif"
+    },
+    {
+      "type": "select",
+      "id": "card_title_font_weight_md",
+      "label": "Font weight — Medium (3 cards)",
+      "options": [
+        { "value": "300", "label": "Light" },
+        { "value": "400", "label": "Normal" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi Bold" },
+        { "value": "700", "label": "Bold" },
+        { "value": "800", "label": "Extra Bold" }
+      ],
+      "default": "400"
+    },
+    {
+      "type": "range",
+      "id": "card_title_font_size_lg",
+      "label": "Font size — Largest (2 cards)",
+      "min": 12,
+      "max": 96,
+      "step": 1,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "select",
+      "id": "card_title_font_family_lg",
+      "label": "Font family — Largest (2 cards)",
+      "options": [
+        { "value": "MDSystemNarrow-Medium, sans-serif", "label": "MDSystemNarrow-Medium" },
+        { "value": "MDSystemNarrow-Regular, sans-serif", "label": "MDSystemNarrow-Regular" },
+        { "value": "MDSystem-Regular, serif", "label": "MDSystem-Regular" },
+        { "value": "MDSystem-SemiBold, serif", "label": "MDSystem-SemiBold" }
+      ],
+      "default": "MDSystem-Regular, serif"
+    },
+    {
+      "type": "select",
+      "id": "card_title_font_weight_lg",
+      "label": "Font weight — Largest (2 cards)",
+      "options": [
+        { "value": "300", "label": "Light" },
+        { "value": "400", "label": "Normal" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi Bold" },
+        { "value": "700", "label": "Bold" },
+        { "value": "800", "label": "Extra Bold" }
+      ],
+      "default": "400"
+    },
+
+    {
+      "type": "header",
+      "content": "Cards — “View” Link"
+    },
+    {
+      "type": "text",
+      "id": "view_label",
+      "label": "View link label",
+      "default": "View"
+    },
+    {
+      "type": "color",
+      "id": "view_color",
+      "label": "Color",
+      "default": "#45534D"
+    },
+    {
+      "type": "range",
+      "id": "view_font_size",
+      "label": "Font size",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "select",
+      "id": "view_font_family",
+      "label": "Font family",
+      "options": [
+        { "value": "MDSystemNarrow-Medium, sans-serif", "label": "MDSystemNarrow-Medium" },
+        { "value": "MDSystemNarrow-Regular, sans-serif", "label": "MDSystemNarrow-Regular" },
+        { "value": "MDSystem-Regular, serif", "label": "MDSystem-Regular" },
+        { "value": "MDSystem-SemiBold, serif", "label": "MDSystem-SemiBold" }
+      ],
+      "default": "MDSystem-Regular, serif"
+    },
+    {
+      "type": "select",
+      "id": "view_font_weight",
+      "label": "Font weight",
+      "options": [
+        { "value": "300", "label": "Light" },
+        { "value": "400", "label": "Normal" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi Bold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "400"
+    },
+
+    {
+      "type": "header",
+      "content": "Cards — Feature Bullets"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_features",
+      "label": "Show feature bullets",
+      "default": true,
+      "info": "When off, all feature text and icons are hidden."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_feature_icons",
+      "label": "Show feature icons",
+      "default": true,
+      "info": "When off, bullets show text only even if items have icons uploaded."
+    },
+    {
+      "type": "range",
+      "id": "card_feature_icon_size",
+      "label": "Icon size (px)",
+      "min": 12,
+      "max": 48,
+      "step": 1,
+      "default": 20
+    },
+    {
+      "type": "color",
+      "id": "card_feature_color",
+      "label": "Color",
+      "default": "#45534D"
+    },
+    {
+      "type": "range",
+      "id": "card_feature_font_size",
+      "label": "Font size",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "select",
+      "id": "card_feature_font_family",
+      "label": "Font family",
+      "options": [
+        { "value": "FragmentMono-Regular, ui-monospace, monospace", "label": "FragmentMono-Regular" },
+        { "value": "MDSystemNarrow-Medium, sans-serif", "label": "MDSystemNarrow-Medium" },
+        { "value": "MDSystemNarrow-Regular, sans-serif", "label": "MDSystemNarrow-Regular" },
+        { "value": "MDSystem-Regular, serif", "label": "MDSystem-Regular" },
+        { "value": "MDSystem-SemiBold, serif", "label": "MDSystem-SemiBold" }
+      ],
+      "default": "FragmentMono-Regular, ui-monospace, monospace"
+    },
+    {
+      "type": "select",
+      "id": "card_feature_font_weight",
+      "label": "Font weight",
+      "options": [
+        { "value": "300", "label": "Light" },
+        { "value": "400", "label": "Normal" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi Bold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "400"
+    },
+
+    {
+      "type": "header",
+      "content": "Pills — Label Typography"
+    },
+    {
+      "type": "range",
+      "id": "pill_label_font_size",
+      "label": "Font size",
+      "min": 12,
+      "max": 72,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "select",
+      "id": "pill_label_font_family",
+      "label": "Font family",
+      "options": [
+        { "value": "MDSystemNarrow-Medium, sans-serif", "label": "MDSystemNarrow-Medium" },
+        { "value": "MDSystemNarrow-Regular, sans-serif", "label": "MDSystemNarrow-Regular" },
+        { "value": "MDSystem-Regular, serif", "label": "MDSystem-Regular" },
+        { "value": "MDSystem-SemiBold, serif", "label": "MDSystem-SemiBold" }
+      ],
+      "default": "MDSystemNarrow-Regular, sans-serif"
+    },
+    {
+      "type": "select",
+      "id": "pill_label_font_weight",
+      "label": "Font weight",
+      "options": [
+        { "value": "300", "label": "Light" },
+        { "value": "400", "label": "Normal" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi Bold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "500"
+    },
+
+    {
+      "type": "header",
+      "content": "Pills — Colors"
+    },
+    {
+      "type": "color",
+      "id": "pills_bg_color",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "pills_border_color",
+      "label": "Border / divider",
+      "default": "#e5e5e5"
+    },
+    {
+      "type": "color",
+      "id": "pill_text_color",
+      "label": "Default text",
+      "default": "#444444"
+    },
+    {
+      "type": "color",
+      "id": "pill_hover_bg",
+      "label": "Hover background",
+      "default": "#f2f2f2"
+    },
+    {
+      "type": "color",
+      "id": "pill_hover_text",
+      "label": "Hover text",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "pill_hover_border",
+      "label": "Hover border",
+      "default": "#dddddd"
+    },
+    {
+      "type": "color",
+      "id": "pill_active_bg",
+      "label": "Active background",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "pill_active_text",
+      "label": "Active text",
+      "default": "#ffffff"
+    },
+
+    {
+      "type": "header",
+      "content": "Pills — Spacing"
+    },
+    {
+      "type": "range",
+      "id": "pill_v_padding",
+      "label": "Vertical padding (px)",
+      "min": 6,
+      "max": 28,
+      "step": 2,
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "pill_gap",
+      "label": "Gap between pills (px)",
+      "min": 4,
+      "max": 24,
+      "step": 2,
+      "default": 8
+    }
+  ],
+  "presets": [
+    {
+      "name": "WD Collection Menu Slider"
+    }
+  ]
+}
+{% endschema %}

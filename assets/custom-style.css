@@ -1,15 +1,3 @@
-.product-info.strong-pdp{
-  margin-top: 10px;
-}
-/* Default: only SALE badge OR fallback */
-.product-card__badge-list .on-sale-badge {
-  top: 18 !important;
-  border: 1px solid #971b1b;
-}
-/* When BOTH NEW + SALE exist */
-.product-card__badge-list:has(.badge-right:not(.on-sale-badge)):has(.on-sale-badge) .on-sale-badge {
-  top: 40px !important;
-}
 #alia-root-157515 .alia-style-button-primary {
   font-family: "MDSystemNarrow-Medium", sans-serif;
   font-weight: normal !important; /* Medium weight */
@@ -214,15 +202,12 @@
 .product-info .product-info__description p {
   margin-top: 0;
 }
-.color-swatch--sm{
-  height: 20px;
-  width: 20px;
-}
 .product-info .color-swatch.rounded-full {
+  border: 1px solid #dcdcdc;
   position: relative;
   display: block;
-  height: 38px;
-  width: 38px;
+  height: 1.8rem;
+  width: 1.8rem;
   aspect-ratio: 1;
   border: 0.125rem solid white;
   border-radius: 50%;
@@ -738,15 +723,15 @@ div.okeReviews .oke-w-reviews-writeReview .oke-w-writeReview,
 .badge--on-sale {
   display: flex;
   align-items: center;
-  background-color: #fff;
-  color: #052b1b;
+  background-color: #971b1b;
+  color: #fff;
   border: 1px solid #052b1b;
   font-size: 12px;
   line-height: 1;
   font-weight: normal;
   z-index: 1;
   border-radius: 100px;
-  padding: 4px 10px 2px !important;
+  padding: 4px 10px;
   width: fit-content;
   height: fit-content;
   font-family: "MDSystemNarrow-Regular" !important;
@@ -768,7 +753,7 @@ div.okeReviews .oke-w-reviews-writeReview .oke-w-writeReview,
   font-weight: normal;
   z-index: 1;
   border-radius: 100px;
-  padding: 4px 10px 2px !important;
+  padding: 4px 10px;
   width: fit-content;
   height: fit-content;
   /* text-transform: uppercase; */
@@ -786,21 +771,16 @@ input[type="radio"]:checked + label span {
   display: flex;
   align-items: center;
   background-color: #052b1b;
-  border: 1px solid #052b1b;
   color: #fff;
   font-size: 12px;
   line-height: 1;
   font-weight: normal;
   z-index: 1;
   border-radius: 100px;
-  padding: 4px 10px 2px !important;
+  padding: 4px 10px;
   width: fit-content;
   height: fit-content;
   /* text-transform: uppercase; */
-}
-.wd-main-collection .badge-right{
-  position: fixed;
-  right: 14px;
 }
 .text-lg {
   font-size: 15px;
@@ -1364,70 +1344,4 @@ navigation-drawer .panel-footer__account-link {
 }
 .navigation-drawer a.group.block.w-full{
   display: flex;
-}
-product-recommendations .product-card__badge-list  .badge-right{
-  position: fixed;
-    right: 14px;
-}
-/* Mobile product gallery: 1 full image + ~20% peek (Rhone-style).
-   Pairs with variableWidth:true in Slick's responsive config (product-gallery.liquid
-   and wd-variant-picker.liquid); Slick reads the slide width from CSS to compute
-   track width and transforms. Breakpoint must match Slick's (768px → <=768). */
-@media screen and (max-width: 768px) {
-  .product-image-slider .my-prd-image-item {
-    width: 80vw;
-    box-sizing: border-box;
-  }
-  .product-image-slider .my-prd-image-item .slider-card {
-    width: 100%;
-  }
-  .product-image-slider .slick-list {
-    overflow: hidden;
-  }
-  /* Single-image product: no peek, fill viewport (no trailing empty 20vw). */
-  .product-image-slider .slick-track > .slick-slide:only-child .my-prd-image-item {
-    width: 100vw;
-  }
-  /* Zoom mode: full-viewport slide, no peek. Set BEFORE Slick's reinit so
-     variableWidth picks up the new width. Clear the 2px margin (pre-existing
-     `margin: 0 1px`) so the slide matches the viewport exactly; constrain the
-     inner image/containers to 100% so the close icon is never pushed off-screen.
-     !important guards against Slick/Shopify inline styles and intrinsic image width. */
-  /* Full-bleed the slider when zoomed: break out of the parent's horizontal
-     padding so a 100vw slide doesn't get clipped at the container edge. */
-  .product-image-slider.is-zoomed {
-    width: 100vw !important;
-    max-width: 100vw !important;
-    margin-left: calc(50% - 50vw) !important;
-    margin-right: calc(50% - 50vw) !important;
-  }
-  .product-image-slider.is-zoomed .my-prd-image-item {
-    width: 100vw !important;
-    max-width: 100vw !important;
-    margin: 0 !important;
-    box-sizing: border-box;
-  }
-  .product-image-slider.is-zoomed .slick-slide {
-    width: 100vw !important;
-  }
-  .product-image-slider.is-zoomed .slider-card,
-  .product-image-slider.is-zoomed .slider-image {
-    width: 100% !important;
-    max-width: 100% !important;
-    overflow: hidden;
-  }
-  .product-image-slider.is-zoomed .slider-image img,
-  .product-image-slider.is-zoomed .slider-image video-media,
-  .product-image-slider.is-zoomed .slider-image image-media {
-    width: 100% !important;
-    max-width: 100% !important;
-    height: auto;
-  }
-  /* Anchor the close icon to the viewport edge and ensure it sits above the image */
-  .product-image-slider.is-zoomed .zoom-icon {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    z-index: 10;
-  }
 }

@@ -16,6 +16,12 @@ Supported variables
 * class: an extra class added on the container
 {%- endcomment -%}
 {% assign product = all_products[product.handle] %}
+{% assign metaobject_id = product.metafields.custom.right_badge %}
+{% assign splitted = metaobject_id | split: ',' %}
+{% assign text = splitted[0] %}
+{% assign txtcolor = splitted[1] %}
+{% assign bgcolor = splitted[2] %}
+
 {%- assign badge_types = types | default: 'custom, sold_out, discount' | split: ',' -%}
 {%- assign variant = product.selected_or_first_available_variant -%}
 
@@ -30,22 +36,11 @@ Supported variables
         {%- for custom_badge in custom_badges -%}
           <span class="badge badge--primary">{{ custom_badge }}</span>
         {%- endfor -%}
-        {% assign badge_obj = product.metafields.custom.right_badge_option.value %}
-
-{% if badge_obj %}
-  {% assign badge_value = badge_obj.label | downcase %}
-
-  {% if badge_value == 'new' %}
-    <span class="badge badge-right">New</span>
-
-  {% elsif badge_value == 'sale' %}
-     {% if request.page_type != 'product' %}
-  <span class="badge badge-right on-sale-badge" style="color:#ffffff; background-color:#971b1b;">
-    Sale
-  </span>
-{% endif %}
-  {% endif %}
-{% endif %}
+        {%- if metaobject_id -%}
+            
+             <span class="badge badge-right" style=" color:{{  txtcolor  }}; background-color:{{  bgcolor  }};">{{  text  }}</span>
+           
+        {%- endif -%}
 
       {%- when 'sold_out' -%}
         {%- if settings.show_sold_out_badge -%}
