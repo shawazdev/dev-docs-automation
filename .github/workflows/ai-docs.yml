@@ -1,28 +1,36 @@
 name: AI Documentation Generator
 
-# Triggers only on merged PRs into main/master.
-# Direct pushes to main are intentionally NOT logged — enforce PR-only
-# via branch protection if needed.
+# Triggers on:
+#   - merged PR into main/master (full-quality entry)
+#   - direct push to main/master (reduced-quality entry, for local merges)
+#
+# When a PR is merged via the GitHub UI, BOTH events fire. The script
+# de-duplicates by querying the GitHub API: push events that match an
+# already-merged PR are skipped.
 on:
   pull_request:
     types: [closed]
     branches: [main, master]
+  push:
+    branches: [main, master]
 
 jobs:
   generate-docs:
-    if: github.event.pull_request.merged == true
+    if: |
+      (github.event_name == 'pull_request' && github.event.pull_request.merged == true) ||
+      github.event_name == 'push'
     runs-on: ubuntu-latest
 
     permissions:
       contents: read
-      models: read           # required to call GitHub Models with built-in token
+      models: read
       pull-requests: read
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0     # full history so we can diff base...head
+          fetch-depth: 0
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -32,7 +40,9 @@ jobs:
       - name: Install dependencies
         run: npm install @azure-rest/ai-inference @azure/core-auth @azure/core-sse googleapis
 
-      - name: Collect PR diff and line counts
+      # ── Diff collection: PR merge ─────────────────────────────────────────
+      - name: Collect diff (PR event)
+        if: github.event_name == 'pull_request'
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
@@ -40,8 +50,26 @@ jobs:
           git fetch origin "$BASE_SHA" "$HEAD_SHA" || true
           git diff "$BASE_SHA" "$HEAD_SHA" --name-only > changed_files.txt
           git diff "$BASE_SHA" "$HEAD_SHA" --unified=5 > code_diff.txt
-
           STATS=$(git diff "$BASE_SHA" "$HEAD_SHA" --shortstat)
+          ADD=$(echo "$STATS" | grep -oE '[0-9]+ insertion' | grep -oE '[0-9]+' || echo 0)
+          DEL=$(echo "$STATS" | grep -oE '[0-9]+ deletion'  | grep -oE '[0-9]+' || echo 0)
+          echo "DIFF_ADDITIONS=$ADD" >> "$GITHUB_ENV"
+          echo "DIFF_DELETIONS=$DEL" >> "$GITHUB_ENV"
+
+      # ── Diff collection: direct push ──────────────────────────────────────
+      - name: Collect diff (push event)
+        if: github.event_name == 'push'
+        env:
+          BEFORE_SHA: ${{ github.event.before }}
+          AFTER_SHA:  ${{ github.event.after }}
+        run: |
+          # Brand-new branch pushes have a zero SHA — fall back to HEAD~1
+          if [ "$BEFORE_SHA" = "0000000000000000000000000000000000000000" ]; then
+            BEFORE_SHA=$(git rev-parse HEAD~1 2>/dev/null || git rev-parse HEAD)
+          fi
+          git diff "$BEFORE_SHA" "$AFTER_SHA" --name-only > changed_files.txt
+          git diff "$BEFORE_SHA" "$AFTER_SHA" --unified=5 > code_diff.txt
+          STATS=$(git diff "$BEFORE_SHA" "$AFTER_SHA" --shortstat)
           ADD=$(echo "$STATS" | grep -oE '[0-9]+ insertion' | grep -oE '[0-9]+' || echo 0)
           DEL=$(echo "$STATS" | grep -oE '[0-9]+ deletion'  | grep -oE '[0-9]+' || echo 0)
           echo "DIFF_ADDITIONS=$ADD" >> "$GITHUB_ENV"
@@ -53,7 +81,10 @@ jobs:
           GDOCS_SERVICE_JSON: ${{ secrets.GDOCS_SERVICE_JSON }}
           GDOC_ID:            ${{ secrets.GDOC_ID }}
 
+          EVENT_NAME:   ${{ github.event_name }}
           REPO_NAME:    ${{ github.repository }}
+
+          # PR-specific (empty for push events)
           PR_NUMBER:    ${{ github.event.pull_request.number }}
           PR_TITLE:     ${{ github.event.pull_request.title }}
           PR_BODY:      ${{ github.event.pull_request.body }}
@@ -61,6 +92,14 @@ jobs:
           PR_AUTHOR:    ${{ github.event.pull_request.user.login }}
           PR_MERGED_AT: ${{ github.event.pull_request.merged_at }}
           PR_LABELS:    ${{ toJSON(github.event.pull_request.labels) }}
+
+          # Push-specific (empty for PR events)
+          COMMIT_SHA:      ${{ github.event.head_commit.id }}
+          COMMIT_MESSAGE:  ${{ github.event.head_commit.message }}
+          COMMIT_AUTHOR:   ${{ github.event.head_commit.author.name }}
+          COMMIT_URL:      ${{ github.event.head_commit.url }}
+          COMMIT_TIME:     ${{ github.event.head_commit.timestamp }}
+          PUSHER:          ${{ github.event.pusher.name }}
         run: node .github/scripts/generate-docs.js
 
       - name: Upload failed entry on error

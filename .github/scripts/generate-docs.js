@@ -1,9 +1,14 @@
 /**
  * generate-docs.js
  *
- * Triggered on PR merge to main. Classifies the change based on file paths,
- * PR labels, and PR title — tuned for: Shopify themes, Laravel + React,
- * Shopify apps, and WordPress.
+ * Triggered on PR merge or direct push to main.
+ * Classifies the change based on file paths, labels, and title/message —
+ * tuned for: Shopify themes, Laravel + React, Shopify apps, WordPress.
+ *
+ * De-duplication:
+ *   When a PR is merged via GitHub UI, both pull_request and push events
+ *   fire. The push handler queries the GitHub API to see if the commit
+ *   came from a merged PR. If yes, it skips (the PR handler logs it).
  *
  * Required GitHub Secrets:
  *   GDOCS_SERVICE_JSON  – Google service-account JSON (full string)
@@ -22,11 +27,11 @@ const { google } = require('googleapis');
 // ─── Configuration ───────────────────────────────────────────────────────────
 
 const DEFAULTS = {
-  smallRefactorLines:  50,   // refactor ≤ this → one-line
-  themeTemplateLines:  40,   // .liquid / WP theme ≤ this → one-line
-  reactComponentLines: 50,   // .jsx/.tsx-only ≤ this → one-line
-  stylingLines:        30,   // CSS-only ≤ this → one-line
-  configMinLines:       5,   // config edits ≤ this → ignored (tiny version bumps)
+  smallRefactorLines:  50,
+  themeTemplateLines:  40,
+  reactComponentLines: 50,
+  stylingLines:        30,
+  configMinLines:       5,
   diffMaxChars:     10000,
   insertAtTop:       true,
   model:           'gpt-4o',
@@ -45,23 +50,41 @@ if (fs.existsSync(configPath)) {
   }
 }
 
-// ─── PR context (from workflow env) ──────────────────────────────────────────
+// ─── Event detection & context loading ───────────────────────────────────────
 
-const repoName  = process.env.REPO_NAME     || 'unknown-repo';
-const prNumber  = process.env.PR_NUMBER     || '?';
-const prTitle   = process.env.PR_TITLE      || '(no title)';
-const prBody    = process.env.PR_BODY       || '';
-const prUrl     = process.env.PR_URL        || '';
-const prAuthor  = process.env.PR_AUTHOR     || 'unknown';
-const mergedAt  = process.env.PR_MERGED_AT  || new Date().toISOString();
-const additions = parseInt(process.env.DIFF_ADDITIONS || '0', 10);
-const deletions = parseInt(process.env.DIFF_DELETIONS || '0', 10);
+const eventName  = process.env.EVENT_NAME || 'unknown';
+const isPushEvent = eventName === 'push';
+const repoName   = process.env.REPO_NAME || 'unknown-repo';
+
+let entryId, entryTitle, entryBody, entryUrl, entryAuthor, entryTime, labels, shortSha;
+
+if (isPushEvent) {
+  // Push event — limited data, no PR metadata
+  const sha = process.env.COMMIT_SHA || '';
+  shortSha    = sha.slice(0, 7) || 'unknown';
+  entryId     = shortSha;
+  entryTitle  = (process.env.COMMIT_MESSAGE || '').split('\n')[0] || '(no commit message)';
+  entryBody   = process.env.COMMIT_MESSAGE || '';
+  entryUrl    = process.env.COMMIT_URL || '';
+  entryAuthor = process.env.COMMIT_AUTHOR || process.env.PUSHER || 'unknown';
+  entryTime   = process.env.COMMIT_TIME || new Date().toISOString();
+  labels      = [];
+} else {
+  // PR event — full metadata
+  entryId     = process.env.PR_NUMBER || '?';
+  entryTitle  = process.env.PR_TITLE || '(no title)';
+  entryBody   = process.env.PR_BODY || '';
+  entryUrl    = process.env.PR_URL || '';
+  entryAuthor = process.env.PR_AUTHOR || 'unknown';
+  entryTime   = process.env.PR_MERGED_AT || new Date().toISOString();
+  try {
+    labels = JSON.parse(process.env.PR_LABELS || '[]').map(l => l.name.toLowerCase());
+  } catch (_) { labels = []; }
+}
+
+const additions  = parseInt(process.env.DIFF_ADDITIONS || '0', 10);
+const deletions  = parseInt(process.env.DIFF_DELETIONS || '0', 10);
 const totalLines = additions + deletions;
-
-let labels = [];
-try {
-  labels = JSON.parse(process.env.PR_LABELS || '[]').map(l => l.name.toLowerCase());
-} catch (_) { /* keep empty */ }
 
 const changedFiles = fs.existsSync('changed_files.txt')
   ? fs.readFileSync('changed_files.txt', 'utf8').trim()
@@ -70,8 +93,40 @@ const codeDiff = fs.existsSync('code_diff.txt')
   ? fs.readFileSync('code_diff.txt', 'utf8').slice(0, CONFIG.diffMaxChars)
   : '';
 
-const timestamp = mergedAt.replace('T', ' ').slice(0, 16) + ' UTC';
+const timestamp = entryTime.replace('T', ' ').slice(0, 16) + ' UTC';
 const filesArr  = changedFiles.split('\n').filter(Boolean);
+
+// ─── De-duplication: skip push if it came from a merged PR ───────────────────
+
+async function isCommitFromMergedPR() {
+  if (!isPushEvent) return false;
+  const sha = process.env.COMMIT_SHA;
+  if (!sha) return false;
+
+  try {
+    const url = `https://api.github.com/repos/${repoName}/commits/${sha}/pulls`;
+    const response = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+        Accept: 'application/vnd.github+json',
+      },
+    });
+    if (!response.ok) {
+      console.warn(`PR-association check returned ${response.status} — proceeding with push entry`);
+      return false;
+    }
+    const prs = await response.json();
+    const mergedPR = Array.isArray(prs) && prs.find(pr => pr.merged_at);
+    if (mergedPR) {
+      console.log(`Commit ${sha.slice(0, 7)} is associated with merged PR #${mergedPR.number}.`);
+      console.log('Skipping push entry — PR workflow will produce the higher-quality entry.');
+      return true;
+    }
+  } catch (err) {
+    console.warn('Could not check PR association:', err.message);
+  }
+  return false;
+}
 
 // ─── File-type detection ─────────────────────────────────────────────────────
 
@@ -86,17 +141,17 @@ const isTranslation = f =>
 
 const isDatabase = f =>
   /\.sql$/i.test(f) ||
-  /(^|\/)database\/(migrations?|seeders?|seeds?|factories?)\//i.test(f) ||  // Laravel
-  /(^|\/)(migrations?|seeds?)\//i.test(f) ||                                // generic
-  /(^|\/)prisma\/(schema\.prisma|migrations\/)/i.test(f);                   // Shopify-app Remix
+  /(^|\/)database\/(migrations?|seeders?|seeds?|factories?)\//i.test(f) ||
+  /(^|\/)(migrations?|seeds?)\//i.test(f) ||
+  /(^|\/)prisma\/(schema\.prisma|migrations\/)/i.test(f);
 
 const isConfig = f =>
   /^\.env/i.test(f) ||
-  /(^|\/)wp-config\.php$/i.test(f) ||                                       // WordPress
-  /(^|\/)shopify\.(app|web|extension)\.toml$/i.test(f) ||                   // Shopify apps
-  /(^|\/)composer\.(json|lock)$/i.test(f) ||                                // Laravel
+  /(^|\/)wp-config\.php$/i.test(f) ||
+  /(^|\/)shopify\.(app|web|extension)\.toml$/i.test(f) ||
+  /(^|\/)composer\.(json|lock)$/i.test(f) ||
   /(^|\/)package(-lock)?\.json$/i.test(f) ||
-  /(^|\/)config\//i.test(f) ||                                              // Laravel config
+  /(^|\/)config\//i.test(f) ||
   /(^|\/)Dockerfile$/i.test(f) ||
   /\.config\.(js|ts|json|mjs|cjs)$/i.test(f) ||
   /\.(yml|yaml|toml|ini|conf)$/i.test(f);
@@ -118,10 +173,11 @@ const isWordPressPlugin = f =>
   /(^|\/)wp-content\/plugins\//i.test(f) ||
   /(^|\/)functions\.php$/i.test(f);
 
-const isBackend = f => isLaravelBackend(f) || isShopifyAppBackend(f) || isWordPressPlugin(f);
+const isBackend = f =>
+  isLaravelBackend(f) || isShopifyAppBackend(f) || isWordPressPlugin(f);
 
 const isShopifyAPI = f =>
-  /(^|\/)extensions\//i.test(f) ||                                          // Shopify checkout/UI extensions
+  /(^|\/)extensions\//i.test(f) ||
   /shopify-api|admin-api|storefront-api/i.test(f) ||
   /(^|\/)app\/.*\.(graphql|gql)$/i.test(f);
 
@@ -129,7 +185,7 @@ const isLiquidTemplate = f => /\.liquid$/i.test(f);
 
 const isWordPressTheme = f =>
   /(^|\/)wp-content\/themes\/.+\.php$/i.test(f) &&
-  !/(^|\/)functions\.php$/i.test(f);    // functions.php is plugin-like, counted as backend
+  !/(^|\/)functions\.php$/i.test(f);
 
 const isThemeTemplate = f => isLiquidTemplate(f) || isWordPressTheme(f);
 
@@ -142,86 +198,69 @@ const isStyling = f => /\.(css|scss|sass|less|styl)$/i.test(f);
 // ─── Title keyword helpers ───────────────────────────────────────────────────
 
 const titleHas = (...words) =>
-  words.some(w => new RegExp(`\\b${w}\\b`, 'i').test(prTitle));
+  words.some(w => new RegExp(`\\b${w}\\b`, 'i').test(entryTitle));
 
-// ─── Rule engine (matches scope document table) ──────────────────────────────
+// ─── Rule engine ─────────────────────────────────────────────────────────────
 
 function classify() {
-  // 1–2. Manual overrides
   if (labels.includes('skip-log'))     return { action: 'skip', reason: 'skip-log label' };
   if (labels.includes('log-detailed')) return { action: 'full', reason: 'log-detailed label' };
-
-  // 3. Hotfix
   if (labels.includes('hotfix'))       return { action: 'full', reason: 'hotfix label', tag: 'HOTFIX' };
+  if (/^revert/i.test(entryTitle))     return { action: 'full', reason: 'revert', tag: 'REVERT' };
 
-  // 4. Revert
-  if (/^revert/i.test(prTitle))        return { action: 'full', reason: 'revert PR', tag: 'REVERT' };
+  if (filesArr.length === 0)
+    return { action: 'full', reason: 'no file list — defaulting to full' };
 
-  if (filesArr.length === 0) return { action: 'full', reason: 'no file list available — defaulting to full' };
-
-  // 5. Documentation only
   if (filesArr.every(isDoc))
     return { action: 'oneline', reason: 'documentation-only update' };
 
-  // 6. Translations only
   if (filesArr.every(isTranslation))
     return { action: 'oneline', reason: 'translations-only update' };
 
-  // 7. Database / migrations
   if (filesArr.some(isDatabase))
     return { action: 'full', reason: 'database / migration change', tag: 'DB' };
 
-  // 8. Environment / config
   if (filesArr.some(isConfig) && totalLines > CONFIG.configMinLines)
     return { action: 'full', reason: 'config update', tag: 'CONFIG' };
 
-  // 9. Backend / server logic
   if (filesArr.some(isBackend))
     return { action: 'full', reason: 'backend / server logic change', tag: 'BACKEND' };
 
-  // 10. Shopify checkout / API
   if (filesArr.some(isShopifyAPI))
     return { action: 'full', reason: 'Shopify checkout / API change', tag: 'SHOPIFY' };
 
-  // 11. Bug fix
   if (labels.some(l => ['bug', 'bugfix', 'fix'].includes(l)) ||
       titleHas('fix', 'fixes', 'fixed', 'bug', 'bugfix', 'patch'))
     return { action: 'full', reason: 'bug fix', tag: 'FIX' };
 
-  // 12. New feature
   if (labels.some(l => ['feature', 'feat', 'enhancement'].includes(l)) ||
       titleHas('feat', 'feature', 'add', 'added', 'adds', 'new', 'implement', 'introduce'))
     return { action: 'full', reason: 'new feature', tag: 'FEATURE' };
 
-  // 13/17. Refactor (large vs small)
   if (titleHas('refactor', 'refactored', 'refactoring') || labels.includes('refactor')) {
     return totalLines > CONFIG.smallRefactorLines
       ? { action: 'full',    reason: `large refactor (${totalLines} lines)`, tag: 'REFACTOR' }
       : { action: 'oneline', reason: `small refactor (${totalLines} lines)` };
   }
 
-  // 14. Theme template change (Shopify .liquid OR WordPress theme PHP)
   if (filesArr.every(isThemeTemplate)) {
     return totalLines > CONFIG.themeTemplateLines
       ? { action: 'full',    reason: `large theme template change (${totalLines} lines)` }
       : { action: 'oneline', reason: `small theme template change (${totalLines} lines)` };
   }
 
-  // 15. React component change
   if (filesArr.every(isReactComponent)) {
     return totalLines > CONFIG.reactComponentLines
       ? { action: 'full',    reason: `large React component change (${totalLines} lines)` }
       : { action: 'oneline', reason: `small React component change (${totalLines} lines)` };
   }
 
-  // 16. CSS / styling change
   if (filesArr.every(isStyling)) {
     return totalLines > CONFIG.stylingLines
       ? { action: 'full',    reason: `large CSS/styling change (${totalLines} lines)` }
       : { action: 'oneline', reason: `small CSS/styling change (${totalLines} lines)` };
   }
 
-  // 18. Default
   return { action: 'full', reason: 'default (no specific rule matched)' };
 }
 
@@ -239,18 +278,22 @@ Rules:
 - Plain text only — no markdown, no asterisks, no headers`;
 
 function buildUserPrompt() {
-  return `Write a changelog entry for this merged pull request.
+  const sourceLine = isPushEvent
+    ? `Direct push commit ${shortSha}: ${entryTitle}`
+    : `PR #${entryId}: ${entryTitle}`;
+
+  return `Write a changelog entry for this merged change.
 
 Repository: ${repoName}
-PR #${prNumber}: ${prTitle}
-Author: ${prAuthor}
+Source: ${sourceLine}
+Author: ${entryAuthor}
 Merged: ${timestamp}
-URL: ${prUrl}
+URL: ${entryUrl}
 Labels: ${labels.join(', ') || 'none'}
 Lines changed: +${additions} / -${deletions}
 
-PR description:
-${prBody || '(none)'}
+Description / commit body:
+${entryBody || '(none)'}
 
 Changed files (${filesArr.length}):
 ${changedFiles || '(none)'}
@@ -309,14 +352,21 @@ async function generateAISummary() {
 
 const DIVIDER = '────────────────────────────────────────────────────────────';
 
+function entryHeader(tag) {
+  const tagPart = tag ? `[${tag}]  ` : '';
+  if (isPushEvent) {
+    return `${tagPart}[DIRECT PUSH]  Commit ${shortSha}: ${entryTitle}`;
+  }
+  return `${tagPart}PR #${entryId}: ${entryTitle}`;
+}
+
 function fullEntry(aiContent, tag) {
-  const tagLine = tag ? `[${tag}]  ` : '';
   return [
     DIVIDER,
-    `${tagLine}PR #${prNumber}: ${prTitle}`,
-    `Author: ${prAuthor}    Merged: ${timestamp}`,
+    entryHeader(tag),
+    `Author: ${entryAuthor}    Merged: ${timestamp}`,
     `Labels: ${labels.join(', ') || 'none'}`,
-    `Link: ${prUrl}`,
+    `Link: ${entryUrl}`,
     `Files changed (${filesArr.length}): ${filesArr.join(', ') || 'none'}`,
     '',
     aiContent,
@@ -326,20 +376,22 @@ function fullEntry(aiContent, tag) {
 }
 
 function oneLineEntry(reason) {
-  return `• [${timestamp}] PR #${prNumber} — ${prTitle} — ${prAuthor} (${reason}) — ${prUrl}\n\n`;
+  const idLabel = isPushEvent ? `Commit ${shortSha}` : `PR #${entryId}`;
+  const source  = isPushEvent ? ' [DIRECT PUSH]' : '';
+  return `• [${timestamp}]${source} ${idLabel} — ${entryTitle} — ${entryAuthor} (${reason}) — ${entryUrl}\n\n`;
 }
 
 function fallbackEntry(errorMsg) {
   return [
     DIVIDER,
-    `[NEEDS REVIEW]  PR #${prNumber}: ${prTitle}`,
-    `Author: ${prAuthor}    Merged: ${timestamp}`,
+    `[NEEDS REVIEW]  ${entryHeader()}`,
+    `Author: ${entryAuthor}    Merged: ${timestamp}`,
     `Labels: ${labels.join(', ') || 'none'}`,
-    `Link: ${prUrl}`,
+    `Link: ${entryUrl}`,
     `Files changed (${filesArr.length}): ${filesArr.join(', ') || 'none'}`,
     '',
     `AI summary unavailable: ${errorMsg}`,
-    'Please open the PR link above and add a manual summary if needed.',
+    'Please open the link above and add a manual summary if needed.',
     '',
     '',
   ].join('\n');
@@ -376,12 +428,16 @@ async function insertIntoDoc(text) {
 // ─── Main ────────────────────────────────────────────────────────────────────
 
 (async () => {
-  console.log(`Processing PR #${prNumber} in ${repoName}`);
-  console.log(`  Title:  ${prTitle}`);
-  console.log(`  Author: ${prAuthor}`);
-  console.log(`  Lines:  +${additions} / -${deletions}  (total ${totalLines})`);
-  console.log(`  Files:  ${filesArr.length}`);
-  console.log(`  Labels: ${labels.join(', ') || 'none'}`);
+  console.log(`Event: ${eventName}`);
+  console.log(`Repo:  ${repoName}`);
+  console.log(`Title: ${entryTitle}`);
+  console.log(`Author: ${entryAuthor}`);
+  console.log(`Lines:  +${additions} / -${deletions}  (total ${totalLines})`);
+  console.log(`Files:  ${filesArr.length}`);
+  console.log(`Labels: ${labels.join(', ') || 'none'}`);
+
+  // De-dup: push events that came from a merged PR should be skipped
+  if (await isCommitFromMergedPR()) return;
 
   const decision = classify();
   console.log(`Decision: ${decision.action.toUpperCase()} — ${decision.reason}`);
