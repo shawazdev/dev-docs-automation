@@ -64,19 +64,7 @@
     {%- endif -%}
 {%- endcapture -%}
   
-{%- capture headingtext -%}
-    <div class="{{ classes }} ">
-      {%- if ss.title != blank -%}
-        <h2 class="title">{{ ss.title }}</h2>
-      {%- endif -%}
-      {%- if ss.subtitle -%}
-        <div class="subtitle">{{ ss.subtitle }}</div>
-      {%- endif -%}
-      {%- if ss.link_text != blank -%}
-        <a class="link" href="{{ ss.link_url }}">{{ ss.link_text }}</a>
-      {%- endif -%}
-    </div>
-{%- endcapture -%}
+
 
 {%- capture overlaytext -%}
     <div class="overlay-text">

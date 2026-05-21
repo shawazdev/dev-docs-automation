@@ -14,9 +14,7 @@
     </div>
     <div class="videos">
       {% for block in section.blocks %}
-        <div class="video">
-          {{ block.settings.video | video_tag: autoplay: true, loop: true, muted: true }}
-        </div>
+        
       {% endfor %}
     </div>
   </div>
